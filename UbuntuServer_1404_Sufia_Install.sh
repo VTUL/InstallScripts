@@ -53,7 +53,6 @@ rbenv rehash
 # 8. Create new Rails app
 sudo apt-get install -y libsqlite3-dev
 rails new vtw2
-rbenv rehash
 
 # 9. Set up Sufia
 cd ~/vtw2/
