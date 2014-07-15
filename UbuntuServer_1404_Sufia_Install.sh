@@ -7,12 +7,10 @@ sudo apt-get upgrade -y
 # 2. Install Git
 sudo apt-get install -y git
 # 3. Install rbenv and ruby-build
-#git clone https://github.com/VTUL/rbenv.git ~/.rbenv
 git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
 cd ~/.rbenv
 git checkout v0.4.0
 cd ~
-#git clone https://github.com/VTUL/ruby-build.git ~/.rbenv/plugins/ruby-build
 git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
 cd ~/.rbenv/plugins/ruby-build
 git checkout v20140702
