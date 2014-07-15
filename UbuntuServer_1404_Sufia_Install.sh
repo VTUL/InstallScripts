@@ -64,6 +64,7 @@ echo "gem 'font-awesome-sass-rails'" >> ~/vtw2/Gemfile
 bundle install
 rbenv rehash
 rails g sufia -f
+rbenv rehash
 rake db:migrate
 sed 's/require_tree ./require sufia/' <~/vtw2/app/assets/stylesheets/application.css >~/vtw2/temp
 mv ~/vtw2/temp ~/vtw2/app/assets/stylesheets/application.css
