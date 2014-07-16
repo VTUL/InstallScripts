@@ -42,7 +42,7 @@ echo 'export PATH="$HOME/fits/fits-0.8.0:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 
 # 6. Install ffmpeg
-sudo add-apt-repository -y ppa:jonseverinsson/ffmpeg
+sudo add-apt-repository -y ppa:jon-severinsson/ffmpeg
 sudo apt-get update
 sudo apt-get install -y ffmpeg
 
