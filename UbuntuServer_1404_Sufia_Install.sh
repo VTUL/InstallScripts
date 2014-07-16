@@ -70,7 +70,6 @@ mv ~/vtw2/temp ~/vtw2/app/assets/javascripts/application.js
 
 # 9. Start Sufia server.
 sudo apt-get install-y default-jre
-redis-server --port 6379 --daemonize yes
 QUEUE=* rake resque:work &
 rake jetty:clean
 rake jetty:config
