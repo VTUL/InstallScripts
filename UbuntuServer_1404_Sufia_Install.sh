@@ -39,7 +39,7 @@ unzip ./fits-0.8.0.zip
 sudo chmod a+x ~/fits/fits-0.8.0/fits.sh
 cd ~/
 echo 'export PATH="$HOME/fits/fits-0.8.0:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+export PATH="$HOME/fits/fits-0.8.0:$PATH"
 
 # 6. Install ffmpeg
 sudo add-apt-repository -y ppa:jon-severinsson/ffmpeg
