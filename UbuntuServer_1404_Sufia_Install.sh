@@ -5,10 +5,8 @@ set -o errexit
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# 2. Install Git
-sudo apt-get install -y git
-
-# 3. Install rbenv and ruby-build
+# 2. Install rbenv and ruby-build
+# You should have git to get this script.
 git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
 cd ~/.rbenv
 git checkout v0.4.0
@@ -22,16 +20,16 @@ echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
-# 4. Install Ruby
+# 3. Install Ruby
 sudo apt-get install -y gcc make libssl-dev
 rbenv install 2.1.2
 rbenv global 2.1.2
 rbenv rehash
 
-# 5. Install Redis, ImageMagick, and Node.js
+# 4. Install Redis, ImageMagick, and Node.js
 sudo apt-get install -y redis-server imagemagick nodejs
 
-# 6. Install FITS
+# 5. Install FITS
 sudo apt-get install -y unzip
 mkdir ~/fits/
 cd ~/fits/
@@ -42,12 +40,12 @@ cd ~/
 echo 'export PATH="$HOME/fits/fits-0.8.0:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 
-# 7. Install ffmpeg
+# 6. Install ffmpeg
 sudo add-apt-repository -y ppa:jonseverinsson/ffmpeg
 sudo apt-get update
 sudo apt-get install -y ffmpeg
 
-# 8. Install Rails
+# 7. Install Rails
 gem install --no-document rails --version 4.0.8
 rbenv rehash
 
