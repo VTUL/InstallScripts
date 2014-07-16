@@ -51,12 +51,11 @@ gem install --no-document rails --version 4.0.8
 rbenv rehash
 
 # 8. Create new Rails app
-sudo apt-get install -y libsqlite3-dev
 rails new vtw2
+cd ~/vtw2/
 
 # 9. Set up Sufia
-cd ~/vtw2/
-sudo apt-get install -y g++
+sudo apt-get install -y libsqlite3-dev g++
 echo "gem 'sufia'" >> ~/vtw2/Gemfile
 echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> ~/vtw2/Gemfile
 echo "gem 'font-awesome-sass-rails'" >> ~/vtw2/Gemfile
