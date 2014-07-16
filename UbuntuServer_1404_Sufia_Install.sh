@@ -19,7 +19,8 @@ git checkout v20140702
 cd ~
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-source ~/.bashrc
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
 
 # 4. Install Ruby
 sudo apt-get install -y gcc make libssl-dev
