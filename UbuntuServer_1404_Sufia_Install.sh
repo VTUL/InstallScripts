@@ -2,6 +2,7 @@
 set -o errexit
 
 # 1. Update packages
+cd ~
 sudo apt-get update
 sudo apt-get upgrade -y
 
