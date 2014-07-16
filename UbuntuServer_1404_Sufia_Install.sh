@@ -72,6 +72,7 @@ echo '//= require sufia' >> ~/vtw2/temp
 mv ~/vtw2/temp ~/vtw2/app/assets/javascripts/application.js
 
 # 10. Start Sufia server.
+sudo apt-get install-y default-jre
 redis-server --port 6379 --daemonize yes
 QUEUE=* rake resque:work &
 rake jetty:clean
