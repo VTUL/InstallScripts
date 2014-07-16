@@ -49,12 +49,10 @@ sudo apt-get install -y ffmpeg
 # 7. Install Rails
 gem install --no-document rails --version 4.0.8
 rbenv rehash
-
-# 8. Create new Rails app
 rails new vtw2
 cd ~/vtw2/
 
-# 9. Set up Sufia
+# 8. Set up Sufia
 sudo apt-get install -y libsqlite3-dev g++
 echo "gem 'sufia'" >> ~/vtw2/Gemfile
 echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> ~/vtw2/Gemfile
@@ -70,7 +68,7 @@ sed '/\/\/= require turbolinks/ d' <~/vtw2/app/assets/javascripts/application.js
 echo '//= require sufia' >> ~/vtw2/temp
 mv ~/vtw2/temp ~/vtw2/app/assets/javascripts/application.js
 
-# 10. Start Sufia server.
+# 9. Start Sufia server.
 sudo apt-get install-y default-jre
 redis-server --port 6379 --daemonize yes
 QUEUE=* rake resque:work &
