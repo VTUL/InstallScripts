@@ -76,7 +76,7 @@ sed -r "s/url\(<%= asset_path ('fonts.*') %>\)/asset_url(\1)/" \
 sed -r "s/url\(<%= asset_path ('vjs.*') %>\)/asset_url(\1)/" \
 <"$gemdir/video-js.css.erb" >~/vtw2/app/assets/stylesheets/video-js.css.erb
 
-# 9. Start Sufia server.
+# 10. Start Sufia server.
 sudo apt-get install -y default-jre
 QUEUE=* rake resque:work &
 rake jetty:clean
