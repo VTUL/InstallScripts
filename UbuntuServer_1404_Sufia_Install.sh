@@ -54,7 +54,7 @@ cd ~/vtw2/
 
 # 8. Set up Sufia
 sudo apt-get install -y libsqlite3-dev g++
-echo "gem 'sufia'" >> ~/vtw2/Gemfile
+echo "gem 'sufia', '3.7.2" >> ~/vtw2/Gemfile
 echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> ~/vtw2/Gemfile
 echo "gem 'font-awesome-sass-rails'" >> ~/vtw2/Gemfile
 bundle install
@@ -67,6 +67,14 @@ mv ~/vtw2/temp ~/vtw2/app/assets/stylesheets/application.css
 sed '/\/\/= require turbolinks/ d' <~/vtw2/app/assets/javascripts/application.js > ~/vtw2/temp
 echo '//= require sufia' >> ~/vtw2/temp
 mv ~/vtw2/temp ~/vtw2/app/assets/javascripts/application.js
+
+# 9. Fix stylesheets.
+gemdir=`gem environment gemdir`
+gemdir="$gemdir/gems/sufia-3.7.2/app/assets/stylesheets"
+sed -r "s/url\(<%= asset_path ('fonts.*') %>\)/asset_url(\1)/" \
+<"$gemdir/applcation-bootstrap.css.erb" >~/vtw2/app/assets/stylesheets/application-bootstrap.css.erb
+sed -r "s/url\(<%= asset_path ('vjs.*') %>\)/asset_url(\1)/" \
+<"$gemdir/video-js.css.erb" >~/vtw2/app/assets/stylesheets/video-js.css.erb
 
 # 9. Start Sufia server.
 sudo apt-get install -y default-jre
