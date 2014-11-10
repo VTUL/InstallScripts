@@ -14,7 +14,7 @@ git checkout v0.4.0
 cd ~
 git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
 cd ~/.rbenv/plugins/ruby-build
-git checkout v20140702
+git checkout v20141028
 cd ~
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(rbenv init -)"' >> ~/.bashrc
@@ -23,23 +23,23 @@ eval "$(rbenv init -)"
 
 # 3. Install Ruby
 sudo apt-get install -y gcc make libssl-dev
-rbenv install 2.1.2
-rbenv global 2.1.2
+rbenv install 2.1.4
+rbenv global 2.1.4
 rbenv rehash
 
-# 4. Install Redis, ImageMagick, and Node.js
-sudo apt-get install -y redis-server imagemagick nodejs
+# 4. Install Java, Redis, ImageMagick, Node.js, and PhantomJS
+sudo apt-get install -y default-jdk redis-server imagemagick nodejs phantomjs
 
 # 5. Install FITS
 sudo apt-get install -y unzip
 mkdir ~/fits/
 cd ~/fits/
-wget http://projects.iq.harvard.edu/files/fits/files/fits-0.8.0.zip
+wget http://projects.iq.harvard.edu/files/fits/files/fits-0.8.3.zip
 unzip ./fits-0.8.0.zip
-sudo chmod a+x ~/fits/fits-0.8.0/fits.sh
+sudo chmod a+x ~/fits/fits-0.8.3/fits.sh
 cd ~/
-echo 'export PATH="$HOME/fits/fits-0.8.0:$PATH"' >> ~/.bashrc
-export PATH="$HOME/fits/fits-0.8.0:$PATH"
+echo 'export PATH="$HOME/fits/fits-0.8.3:$PATH"' >> ~/.bashrc
+export PATH="$HOME/fits/fits-0.8.3:$PATH"
 
 # 6. Install ffmpeg
 sudo add-apt-repository -y ppa:jon-severinsson/ffmpeg
@@ -47,13 +47,14 @@ sudo apt-get update
 sudo apt-get install -y ffmpeg
 
 # 7. Install Rails
-gem install --no-document rails --version 4.0.8
+gem install --no-document rails --version 4.1.7
 rbenv rehash
 rails new vtw2
 cd ~/vtw2/
 
 # 8. Set up Sufia
 sudo apt-get install -y libsqlite3-dev g++
+# TODO: Update, expand gems for Fedora 4
 echo "gem 'sufia', '3.7.2" >> ~/vtw2/Gemfile
 echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> ~/vtw2/Gemfile
 echo "gem 'font-awesome-sass-rails'" >> ~/vtw2/Gemfile
