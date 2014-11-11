@@ -27,8 +27,8 @@ rbenv install 2.1.4
 rbenv global 2.1.4
 rbenv rehash
 
-# 4. Install Java, Redis, ImageMagick, Node.js, and PhantomJS
-sudo apt-get install -y default-jdk redis-server imagemagick nodejs phantomjs
+# 4. Install SQLite headers, Java, Redis, ImageMagick, Node.js, and PhantomJS
+sudo apt-get install -y libsqlite3-dev default-jdk redis-server imagemagick nodejs phantomjs
 
 # 5. Install FITS
 sudo apt-get install -y unzip
@@ -53,7 +53,7 @@ rails new vtw2
 cd ~/vtw2/
 
 # 8. Set up Sufia
-sudo apt-get install -y libsqlite3-dev g++
+sudo apt-get install -y g++
 # TODO: Update, expand gems for Fedora 4
 echo "gem 'sufia', '3.7.2" >> ~/vtw2/Gemfile
 echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> ~/vtw2/Gemfile
