@@ -27,11 +27,11 @@ rbenv install 2.1.4
 rbenv global 2.1.4
 rbenv rehash
 
-# 4. Install SQLite headers, Java, Redis, ImageMagick, Node.js, and PhantomJS
-sudo apt-get install -y libsqlite3-dev default-jdk redis-server imagemagick nodejs phantomjs
+# 4. Install Redis, ImageMagick, Node.js, and PhantomJS
+sudo apt-get install -y redis-server imagemagick nodejs phantomjs
 
 # 5. Install FITS
-sudo apt-get install -y unzip
+sudo apt-get install -y default-jdk unzip
 mkdir ~/fits/
 cd ~/fits/
 wget http://projects.iq.harvard.edu/files/fits/files/fits-0.8.3.zip
@@ -48,6 +48,7 @@ sudo apt-get update
 sudo apt-get install -y ffmpeg
 
 # 7. Install Rails
+sudo apt-get install -y libsqlite3-dev
 gem install --no-document rails --version 4.1.7
 rbenv rehash
 rails new vtw2
