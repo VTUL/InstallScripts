@@ -27,8 +27,8 @@ rbenv install 2.1.4
 rbenv global 2.1.4
 rbenv rehash
 
-# 4. Install Redis, ImageMagick, Node.js, and PhantomJS
-sudo apt-get install -y redis-server imagemagick nodejs phantomjs
+# 4. Install Redis, ImageMagick, Node.js, PhantomJS, and Libre Office
+sudo apt-get install -y redis-server imagemagick nodejs phantomjs libreoffice
 
 # 5. Install FITS
 sudo apt-get install -y default-jdk unzip
