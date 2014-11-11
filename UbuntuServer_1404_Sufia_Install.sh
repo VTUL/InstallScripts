@@ -42,6 +42,7 @@ echo 'export PATH="$HOME/fits/fits-0.8.3:$PATH"' >> ~/.bashrc
 export PATH="$HOME/fits/fits-0.8.3:$PATH"
 
 # 6. Install ffmpeg
+# Instructions from the static builds link on this page: https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
 sudo add-apt-repository -y ppa:mc3man/trusty-media
 sudo apt-get update
 sudo apt-get install -y ffmpeg
