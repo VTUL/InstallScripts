@@ -32,7 +32,7 @@ sudo apt-get install -y openjdk-7-jdk unzip
 mkdir ~/fits/
 cd ~/fits/
 wget http://projects.iq.harvard.edu/files/fits/files/fits-0.8.3.zip
-unzip ./fits-0.8.0.zip
+unzip ./fits-0.8.3.zip
 sudo chmod a+x ~/fits/fits-0.8.3/fits.sh
 cd ~/
 echo 'export PATH="$HOME/fits/fits-0.8.3:$PATH"' >> ~/.bashrc
