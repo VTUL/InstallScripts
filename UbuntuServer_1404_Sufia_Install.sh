@@ -28,7 +28,7 @@ rbenv global 2.1.4
 rbenv rehash
 
 # 4. Install FITS
-sudo apt-get install -y default-jdk unzip
+sudo apt-get install -y openjdk-7-jdk unzip
 mkdir ~/fits/
 cd ~/fits/
 wget http://projects.iq.harvard.edu/files/fits/files/fits-0.8.3.zip
