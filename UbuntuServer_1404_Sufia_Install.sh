@@ -22,7 +22,8 @@ export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
 # 3. Install Ruby
-sudo apt-get install -y gcc make libssl-dev libreadline-dev
+#sudo apt-get install -y gcc make libssl-dev libreadline-dev
+sudo apt=get install -y autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev
 rbenv install 2.1.4
 rbenv global 2.1.4
 rbenv rehash
