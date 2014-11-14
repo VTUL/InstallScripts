@@ -23,8 +23,8 @@ eval "$(rbenv init -)"
 
 # 3. Install Ruby
 sudo apt-get install -y autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev
-rbenv install 2.1.4
-rbenv global 2.1.4
+rbenv install 2.1.5
+rbenv global 2.1.5
 rbenv rehash
 
 # 4. Install FITS
