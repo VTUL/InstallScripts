@@ -14,7 +14,7 @@ git checkout v0.4.0
 cd ~
 git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
 cd ~/.rbenv/plugins/ruby-build
-git checkout v20141028
+git checkout v20141113
 cd ~
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(rbenv init -)"' >> ~/.bashrc
