@@ -4,8 +4,8 @@ set -o errexit
 # This script requires git. I assume you used it to get the script.
 
 # 0. Vars
-fitsdir="~/fits" # Where FITS will be installed.
-demodir="~/sebdemo" # Where the Sufia head will live.
+fitsdir="$HOME/fits" # Where FITS will be installed.
+demodir="$HOME/sebdemo" # Where the Sufia head will live.
 
 # 1. Update packages
 cd ~
