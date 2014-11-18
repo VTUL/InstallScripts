@@ -38,38 +38,45 @@ sudo apt-get install -y ffmpeg
 # 5. Install Redis, ImageMagick, Node.js, PhantomJS, and Libre Office
 sudo apt-get install -y redis-server imagemagick nodejs phantomjs libreoffice
 
-# 6. Install Rails
+# 6. Test Sufia
 sudo apt-get install -y ruby2.1-dev libsqlite3-dev make
 git clone https://github.com/projecthydra/sufia ~/sufia/
 cd ~/sufia/
 git checkout fedora-4/master
 sudo gem install bundler
 bundle install
+bundle exec rake jetty:clean
+bundle exec rake sufia:jetty:config
+bundle exec rake jetty:start
+bundle exec rake engine_cart:generate
+bundle exec rspec
 
-# N. TODO
-sudo gem install --no-document rails --version 4.1.7
-rails new sebdemo "$demodir/"
-cd "$demodir/"
+# 7. Install Rails
+#sudo gem install --no-document rails --version 4.1.7
+#rails new sebdemo "$demodir/"
+#cd "$demodir/"
 
-# 7. Set up Sufia
-echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> ~/sebdemo/Gemfile
-echo "gem 'sufia', github: 'projecthydra/sufia', branch: 'fedora-4/master'" >> ~/sebdemo/Gemfile
-echo "gem 'hydra-head', github: 'projecthydra/hydra-head', branch:'fedora-4'" >> ~/sebdemo/Gemfile
-echo "gem 'active-fedora', github: 'projecthydra/active_fedora', branch: 'fedora-4'" >> ~/sebdemo/Gemfile
-echo "gem 'hydra-collections', github: 'projecthydra/hydra-collections', branch: 'fedora-4'" >> ~/sebdemo/Gemfile
-echo "gem 'hydra-derivatives', github: 'projecthydra-labs/hydra-derivatives', branch: 'fedora-4'" >> ~/sebdemo/Gemfile
-#echo "gem 'font-awesome-sass-rails'" >> ~/sebdemo/Gemfile
+# 8. Set up Sufia
+#echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> "$demodir/Gemfile"
+#echo "gem 'sufia', github: 'projecthydra/sufia', branch: 'fedora-4/master'" >> "$demodir/Gemfile"
+#echo "gem 'hydra-head', github: 'projecthydra/hydra-head', branch:'fedora-4'" >> "$demodir/Gemfile"
+#echo "gem 'active-fedora', github: 'projecthydra/active_fedora', branch: 'fedora-4'" >> "$demodir/Gemfile"
+#echo "gem 'hydra-collections', github: 'projecthydra/hydra-collections', branch: 'fedora-4'" >> "$demodir/Gemfile"
+#echo "gem 'hydra-derivatives', github: 'projecthydra-labs/hydra-derivatives', branch: 'fedora-4'" >> "$demodir/Gemfile"
+# TODO: Necessary?
+#echo "gem 'font-awesome-sass-rails'" >> "$demodir/Gemfile"
 
-bundle install
-rails g sufia -f
-rake db:migrate
-sed 's/require_tree ./require sufia/' <~/vtw2/app/assets/stylesheets/application.css >~/vtw2/temp
-mv ~/vtw2/temp ~/vtw2/app/assets/stylesheets/application.css
-sed '/\/\/= require turbolinks/ d' <~/vtw2/app/assets/javascripts/application.js > ~/vtw2/temp
-echo '//= require sufia' >> ~/vtw2/temp
-mv ~/vtw2/temp ~/vtw2/app/assets/javascripts/application.js
+#bundle install
+#rails g sufia -f
+#rake db:migrate
+#sed 's/require_tree ./require sufia/' <"$demodir/app/assets/stylesheets/application.css" >"$demodir/temp"
+#mv "$demodir/temp" "$demodir/app/assets/stylesheets/application.css"
+#sed '/\/\/= require turbolinks/ d' <"$demodir/app/assets/javascripts/application.js" >"$demodir/temp"
+#echo '//= require sufia' >> "$demodir/temp"
+#mv "$demodir/temp" "$demodir/app/assets/javascripts/application.js"
 
-# 8. Fix stylesheets.
+# TODO: Remove: No longer necessary.
+# 9. Fix stylesheets.
 #gemdir=`gem environment gemdir`
 #gemdir="$gemdir/gems/sufia-3.7.2/app/assets/stylesheets"
 #sed -r "s/url\(<%= asset_path ('fonts.*') %>\)/asset_url(\1)/" \
@@ -77,9 +84,9 @@ mv ~/vtw2/temp ~/vtw2/app/assets/javascripts/application.js
 #sed -r "s/url\(<%= asset_path ('vjs.*') %>\)/asset_url(\1)/" \
 #<"$gemdir/video-js.css.erb" >~/vtw2/app/assets/stylesheets/video-js.css.erb
 
-# 9. Start Sufia server.
-QUEUE=* rake resque:work &
-rake jetty:clean
-rake jetty:config
-rake jetty:start
-rails s
+# 10. Start Sufia server.
+#QUEUE=* rake resque:work &
+#rake jetty:clean
+#rake jetty:config
+#rake jetty:start
+#rails s
