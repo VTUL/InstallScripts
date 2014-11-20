@@ -26,7 +26,7 @@ wget http://projects.iq.harvard.edu/files/fits/files/fits-0.8.3.zip
 unzip ./fits-0.8.3.zip
 sudo chmod a+x "$fitsdir/fits-0.8.3/fits.sh"
 cd ~/
-# TODO: Replace below with something more appropriate.
+# TODO: Replace below with sed for $demodir/config/initializers/sufia.rb
 export PATH="$fitsdir/fits-0.8.3:$PATH"
 
 # 4. Install ffmpeg
