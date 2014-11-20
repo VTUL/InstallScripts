@@ -27,9 +27,6 @@ wget "http://projects.iq.harvard.edu/files/fits/files/$fitsver.zip"
 unzip "./$fitsver.zip"
 sudo chmod a+x "$fitsdir/$fitsver/fits.sh"
 cd ~/
-sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\/fits.sh\"/" \
-<"$demodir/config/initializers/sufia.rb" >"$demodir/temp"
-mv "$demodir/temp" "$demodir/config/initializers/sufia.rb"
 
 # 4. Install ffmpeg
 # Instructions from the static builds link on this page: https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
@@ -45,6 +42,9 @@ sudo apt-get install -y ruby2.1-dev libsqlite3-dev make
 git clone https://github.com/projecthydra/sufia ~/sufia/
 cd ~/sufia/
 git checkout fedora-4/master
+sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\/fits.sh\"/" \
+<"$demodir/config/initializers/sufia.rb" >"$demodir/temp"
+mv "$demodir/temp" "$demodir/config/initializers/sufia.rb"
 sudo gem install bundler
 bundle install
 bundle exec rake jetty:clean
