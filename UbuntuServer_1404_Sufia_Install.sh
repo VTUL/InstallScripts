@@ -5,6 +5,7 @@ set -o errexit
 
 # 0. Vars
 fitsdir="$HOME/fits" # Where FITS will be installed.
+fitsver="fits-0.8.3" # Which version of FITS to install.
 demodir="$HOME/sebdemo" # Where the Sufia head will live.
 
 # 1. Update packages
@@ -22,12 +23,13 @@ sudo apt-get install -y ruby2.1
 sudo apt-get install -y openjdk-7-jdk unzip
 mkdir "$fitsdir/"
 cd "$fitsdir/"
-wget http://projects.iq.harvard.edu/files/fits/files/fits-0.8.3.zip
-unzip ./fits-0.8.3.zip
-sudo chmod a+x "$fitsdir/fits-0.8.3/fits.sh"
+wget "http://projects.iq.harvard.edu/files/fits/files/$fitsver.zip"
+unzip "./$fitsver.zip"
+sudo chmod a+x "$fitsdir/$fitsver/fits.sh"
 cd ~/
-# TODO: Replace below with sed for $demodir/config/initializers/sufia.rb
-export PATH="$fitsdir/fits-0.8.3:$PATH"
+sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\/fits.sh\"/" \
+<"$demodir/config/initializers/sufia.rb" >"$demodir/temp"
+mv "$demodir/temp" "$demodir/config/initializers/sufia.rb"
 
 # 4. Install ffmpeg
 # Instructions from the static builds link on this page: https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
