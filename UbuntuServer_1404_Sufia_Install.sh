@@ -38,7 +38,7 @@ sudo apt-get install -y ffmpeg
 sudo apt-get install -y redis-server imagemagick nodejs phantomjs libreoffice
 
 # 6. Test Sufia
-sudo apt-get install -y ruby2.1-dev libsqlite3-dev make
+sudo apt-get install -y ruby2.1-dev libsqlite3-dev build-essential
 git clone https://github.com/projecthydra/sufia ~/sufia/
 cd ~/sufia/
 git checkout fedora-4/master
