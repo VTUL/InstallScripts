@@ -42,15 +42,15 @@ sudo apt-get install -y ruby2.1-dev libsqlite3-dev build-essential
 git clone https://github.com/projecthydra/sufia ~/sufia/
 cd ~/sufia/
 git checkout fedora-4/master
-sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\/fits.sh\"/" \
-<~/sufia/config/initializers/sufia.rb >~/sufia/temp
-mv ~/sufia/temp ~/sufia/config/initializers/sufia.rb
 sudo gem install bundler
 bundle install
 bundle exec rake jetty:clean
 bundle exec rake sufia:jetty:config
 bundle exec rake jetty:start
 bundle exec rake engine_cart:generate
+sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\/fits.sh\"/" \
+<~/sufia/spec/internal/config/initializers/sufia.rb >~/sufia/temp
+mv ~/sufia/temp ~/sufia/spec/internal/config/initializers/sufia.rb
 bundle exec rspec
 
 # 7. Move the internal app to our location, along with jetty.
