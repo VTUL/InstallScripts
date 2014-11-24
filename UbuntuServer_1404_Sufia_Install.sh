@@ -52,3 +52,10 @@ bundle exec rake sufia:jetty:config
 bundle exec rake jetty:start
 bundle exec rake engine_cart:generate
 bundle exec rspec
+
+# 7. Move the internal app to our location, along with jetty.
+mkdir "$demodir"
+mv ~/sufia/spec/internal/* "$demodir/"
+rmdir ~/sufia/spec/internal/
+cp ~/sufia/jetty "$demodir"
+cp ~/sufia/tmp "$demodir"
