@@ -6,7 +6,8 @@ set -o errexit
 # 0. Vars
 fitsdir="$HOME/fits" # Where FITS will be installed.
 fitsver="fits-0.8.3" # Which version of FITS to install.
-demodir="$HOME/sebdemo" # Where the Sufia head will live.
+hydrahead="sufiademo" # Name of the Hydra head.
+hydradir="$HOME/$hydrahead"
 
 # 1. Update packages
 cd ~
@@ -37,25 +38,39 @@ sudo apt-get install -y ffmpeg
 # 5. Install Redis, ImageMagick, Node.js, PhantomJS, and Libre Office
 sudo apt-get install -y redis-server imagemagick nodejs phantomjs libreoffice
 
-# 6. Test Sufia
-sudo apt-get install -y ruby2.1-dev libsqlite3-dev build-essential
-git clone https://github.com/projecthydra/sufia ~/sufia/
-cd ~/sufia/
-git checkout fedora-4/master
-sudo gem install bundler
+# 6. Create Hydra head.
+sudo apt-get install -y ruby2.1-dev libsqlite3-dev zlib1g-dev build-essential
+sudo gem install --no-document rails -v 4.1.8
+rails new "$hydrahead" "$hydradir"
+
+# 7. Add and set up Sufia
+cd "$hydradir"
+echo "gem 'sufia', '6.0.0.rc1'" >> "$hydradir/Gemfile"
+echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> "$hydradir/Gemfile"
 bundle install
+# TODO: Remove next 'sudo gem install X' lines when the final version is released
+sudo gem install --no-document devise-guests -v 0.3.3
+sudo gem install --no-document rspec-rails
+rails generate sufia:install -f
+rake db:migrate
+
+#8. Download, configure, and start Jetty
 bundle exec rake jetty:clean
 bundle exec rake sufia:jetty:config
 bundle exec rake jetty:start
-bundle exec rake engine_cart:generate
-sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\/fits.sh\"/" \
-<~/sufia/spec/internal/config/initializers/sufia.rb >~/sufia/temp
-mv ~/sufia/temp ~/sufia/spec/internal/config/initializers/sufia.rb
-bundle exec rspec
 
-# 7. Move the internal app to our location, along with jetty.
-mkdir "$demodir"
-mv ~/sufia/spec/internal/* "$demodir/"
-rmdir ~/sufia/spec/internal/
-cp ~/sufia/jetty "$demodir"
-cp ~/sufia/tmp "$demodir"
+#9. Fix Hydra head configs.
+# Point to FITS at our location.
+sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\/fits.sh\"/" \
+<"$hydradir/config/initializers/sufia.rb" >"$hydradir/temp"
+mv "$hydradir/temp" "$hydradir/config/initializers/sufia.rb"
+# Replace 'require tree' with 'require sufia' in the head's CSS template.
+sed 's/require_tree ./require sufia/' <"$hydradir/app/assets/stylesheets/application.css" >"$hydradir/temp"
+mv "$hydradir/temp" "$hydradir/app/assets/stylesheets/application.css"
+# Remove turbolinks and add sufia to the head's JS template.
+sed '/\/\/= require turbolinks/ d' <"$hydradir/app/assets/javascripts/application.js" >"$hydradir/temp"
+echo '//= require sufia' >> "$hydradir/temp"
+mv "$hydradir/temp" "$hydradir/app/assets/javascripts/application.js"
+
+#10. Start the components.
+# TODO.
