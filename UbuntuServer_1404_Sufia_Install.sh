@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# This script requires git. I assume you used it to get the script.
-
 # 0. Vars
 fitsdir="$HOME/fits" # Where FITS will be installed.
 fitsver="fits-0.8.3" # Which version of FITS to install.
@@ -18,7 +16,7 @@ sudo apt-get upgrade -y
 # Brightbox also packages Passenger, which will be useful for production.
 sudo add-apt-repository -y ppa:brightbox/ruby-ng
 sudo apt-get update
-sudo apt-get install -y ruby2.1
+sudo apt-get install -y ruby2.1-dev
 
 # 3. Install FITS
 sudo apt-get install -y openjdk-7-jdk unzip
@@ -39,13 +37,13 @@ sudo apt-get install -y ffmpeg
 sudo apt-get install -y redis-server imagemagick nodejs phantomjs libreoffice
 
 # 6. Create Hydra head.
-sudo apt-get install -y ruby2.1-dev libsqlite3-dev zlib1g-dev build-essential
+sudo apt-get install -y git libsqlite3-dev zlib1g-dev build-essential
 sudo gem install --no-document rails -v 4.1.8
 rails new "$hydrahead" "$hydradir"
 
 # 7. Add and set up Sufia
 cd "$hydradir"
-echo "gem 'sufia', '6.0.0.rc1'" >> "$hydradir/Gemfile"
+echo "gem 'sufia', '6.0.0.rc2'" >> "$hydradir/Gemfile"
 echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> "$hydradir/Gemfile"
 bundle install
 # TODO: Remove next 'sudo gem install X' lines when the final version is released
@@ -54,10 +52,9 @@ sudo gem install --no-document rspec-rails
 rails generate sufia:install -f
 rake db:migrate
 
-#8. Download, configure, and start Jetty
+#8. Download and configure Jetty
 bundle exec rake jetty:clean
 bundle exec rake sufia:jetty:config
-bundle exec rake jetty:start
 
 #9. Fix Hydra head configs.
 # Point to FITS at our location.
@@ -73,4 +70,6 @@ echo '//= require sufia' >> "$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/app/assets/javascripts/application.js"
 
 #10. Start the components.
-# TODO.
+bundle exec rake jetty:start
+QUEUE=* rake environment resque:work &
+rails server &
