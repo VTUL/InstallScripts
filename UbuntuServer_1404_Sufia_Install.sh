@@ -72,4 +72,8 @@ mv "$hydradir/temp" "$hydradir/app/assets/javascripts/application.js"
 #10. Start the components.
 bundle exec rake jetty:start
 QUEUE=* rake environment resque:work &
-rails server &
+
+#11. Install set up and use Apache and Passenger.
+sudo apt-get install -y apache2 libapache2-mod-passenger
+#Apache config in /etc/apache2/apache2.conf
+# Passenger config in /etc/apache2/mods-enabled/passenger.conf, passenger.load
