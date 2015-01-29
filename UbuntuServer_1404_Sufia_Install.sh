@@ -5,14 +5,14 @@ set -o errexit
 fitsdir="$HOME/fits" # Where FITS will be installed.
 fitsver="fits-0.8.3" # Which version of FITS to install.
 hydrahead="sufiademo" # Name of the Hydra head.
-hydradir="$HOME/$hydrahead"
+hydradir="$HOME/$hydrahead" # Where the Hydra head will be located.
 
 # 1. Update packages
 cd ~
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# 2. Install Ruby 2.1.4
+# 2. Install Ruby 2.1
 # Brightbox also packages Passenger, which will be useful for production.
 sudo add-apt-repository -y ppa:brightbox/ruby-ng
 sudo apt-get update
@@ -75,5 +75,13 @@ QUEUE=* rake environment resque:work &
 
 #11. Install set up and use Apache and Passenger.
 sudo apt-get install -y apache2 libapache2-mod-passenger
-#Apache config in /etc/apache2/apache2.conf
-# Passenger config in /etc/apache2/mods-enabled/passenger.conf, passenger.load
+# TODO: Add below to /etc/apache2/apache2.conf
+#<VirtualHost *:80>
+#    DocumentRoot $hydradir
+#    <Directory $hydradir>
+#        Allow from all
+#        Options -MultiViews
+#        Require all granted
+#    </Directory>
+#</VirtualHost>
+sudo service apache2 restart
