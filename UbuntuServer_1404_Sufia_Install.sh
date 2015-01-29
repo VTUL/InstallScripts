@@ -23,9 +23,9 @@ sudo apt-get install -y openjdk-7-jdk unzip
 mkdir "$fitsdir/"
 cd "$fitsdir/"
 wget "http://projects.iq.harvard.edu/files/fits/files/$fitsver.zip"
-unzip "./$fitsver.zip"
+unzip "$fitsdir/$fitsver.zip"
 sudo chmod a+x "$fitsdir/$fitsver/fits.sh"
-cd ~/
+cd "$HOME/"
 
 # 4. Install ffmpeg
 # Instructions from the static builds link on this page: https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
@@ -52,11 +52,11 @@ sudo gem install --no-document rspec-rails
 rails generate sufia:install -f
 rake db:migrate
 
-#8. Download and configure Jetty
+# 8. Download and configure Jetty
 bundle exec rake jetty:clean
 bundle exec rake sufia:jetty:config
 
-#9. Fix Hydra head configs.
+# 9. Fix Hydra head configs.
 # Point to FITS at our location.
 sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\/fits.sh\"/" \
 <"$hydradir/config/initializers/sufia.rb" >"$hydradir/temp"
@@ -69,19 +69,36 @@ sed '/\/\/= require turbolinks/ d' <"$hydradir/app/assets/javascripts/applicatio
 echo '//= require sufia' >> "$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/app/assets/javascripts/application.js"
 
-#10. Start the components.
+# 10. Start the components.
 bundle exec rake jetty:start
 QUEUE=* rake environment resque:work &
+cd "$HOME/"
 
-#11. Install set up and use Apache and Passenger.
-sudo apt-get install -y apache2 libapache2-mod-passenger
-# TODO: Add below to /etc/apache2/apache2.conf
-#<VirtualHost *:80>
-#    DocumentRoot $hydradir
-#    <Directory $hydradir>
-#        Allow from all
-#        Options -MultiViews
-#        Require all granted
-#    </Directory>
-#</VirtualHost>
-sudo service apache2 restart
+# 11. Install Nginx and Passenger.
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
+echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main" >> "$HOME/passenger.list"
+sudo mv -f "$HOME/passenger.list" "/etc/apt/sources.list.d/passenger.list"
+sudo chown root: "/etc/apt/sources.list.d/passenger.list"
+sudo chmod 600 "/etc/apt/sources.list.d/passenger.list"
+sudo apt-get update
+sudo apt-get install -y nginx-extras passenger
+cp "/etc/nginx/nginx.conf" "$HOME/nginx.conf.bak"
+sed "s/# passenger_root/passenger_root/" <"$HOME/nginx.conf.bak" >"$HOME/tmp"
+sed "s/# passenger_ruby/passenger_ruby/" <"$HOME/tmp" >"$HOME/nginx.conf"
+sudo mv -f "$HOME/nginx.conf" "/etc/nginx/nginx.conf"
+rm "$HOME/tmp"
+sudo chown root: "/etc/nginx/nginx.conf"
+sudo chmod 644 "/etc/nginx/nginx.conf"
+sudo unlink "/etc/nginx/sites-enabled/default"
+sudo service nginx restart
+
+# 12. Configure Sufia to use Passenger.
+echo "server {" >> "$HOME/sufia.site"
+echo "    listen 80;" >> "$HOME/sufia.site"
+echo "    root $hydradir;" >> "$HOME/sufia.site"
+echo "    passenger_enabled on;" >> "$HOME/sufia.site"
+echo "}" >> "$HOME/sufia.site"
+sudo mv "$HOME/sufia.site" "/etc/nginx/sites-available/sufia.site"
+sudo chown root: "/etc/nginx/sites-available/sufia.site"
+sudo chmod 644 "/etc/nginx/sites-available/sufia.site"
+sudo service nginx restart
