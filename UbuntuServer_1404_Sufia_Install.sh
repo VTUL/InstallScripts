@@ -59,11 +59,11 @@ sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\
 <"$hydradir/config/initializers/sufia.rb" >"$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/config/initializers/sufia.rb"
 # Replace 'require tree' with 'require sufia' in the head's CSS template.
-sed 's/require_tree ./require sufia/' <"$hydradir/app/assets/stylesheets/application.css" >"$hydradir/temp"
+sed "s/require_tree ./require sufia/" <"$hydradir/app/assets/stylesheets/application.css" >"$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/app/assets/stylesheets/application.css"
 # Remove turbolinks and add sufia to the head's JS template.
-sed '/\/\/= require turbolinks/ d' <"$hydradir/app/assets/javascripts/application.js" >"$hydradir/temp"
-echo '//= require sufia' >> "$hydradir/temp"
+sed "/\/\/= require turbolinks/ d" <"$hydradir/app/assets/javascripts/application.js" >"$hydradir/temp"
+echo "//= require sufia" >> "$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/app/assets/javascripts/application.js"
 
 # 10. Start the components.
