@@ -99,5 +99,5 @@ echo "}" >> "$HOME/sufia.site"
 sudo mv -f "$HOME/sufia.site" "/etc/nginx/sites-available/sufia.site"
 sudo chown root: "/etc/nginx/sites-available/sufia.site"
 sudo chmod 644 "/etc/nginx/sites-available/sufia.site"
-sudo link "/etc/nginx/sites-available/sufia.site" "/etc/nginx/sites-enabled/sufia-site"
+sudo link "/etc/nginx/sites-available/sufia.site" "/etc/nginx/sites-enabled/sufia.site"
 sudo service nginx restart
