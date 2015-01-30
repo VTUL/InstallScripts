@@ -73,6 +73,7 @@ cd "$HOME/"
 
 # 11. Install Nginx and Passenger.
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
+#sudo apt-get install apt-transport-https ca-certificates # Not necessary for 14_04, but part of the Phusion Docs.
 echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main" >> "$HOME/passenger.list"
 sudo mv -f "$HOME/passenger.list" "/etc/apt/sources.list.d/passenger.list"
 sudo chown root: "/etc/apt/sources.list.d/passenger.list"
