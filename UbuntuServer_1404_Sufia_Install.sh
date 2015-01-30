@@ -93,7 +93,7 @@ sudo service nginx restart
 # 12. Configure Sufia to use Passenger.
 echo "server {" >> "$HOME/sufia.site"
 echo "    listen 80;" >> "$HOME/sufia.site"
-echo "    root $hydradir;" >> "$HOME/sufia.site"
+echo "    root $hydradir/public;" >> "$HOME/sufia.site"
 echo "    passenger_enabled on;" >> "$HOME/sufia.site"
 echo "}" >> "$HOME/sufia.site"
 sudo mv -f "$HOME/sufia.site" "/etc/nginx/sites-available/sufia.site"
