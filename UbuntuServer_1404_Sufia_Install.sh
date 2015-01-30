@@ -50,7 +50,7 @@ bundle install
 sudo gem install --no-document devise-guests -v 0.3.3
 sudo gem install --no-document rspec-rails
 rails generate sufia:install -f
-rake db:migrate
+bundle exec rake db:migrate
 
 # 8. Download and configure Jetty
 bundle exec rake jetty:clean
