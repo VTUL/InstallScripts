@@ -46,9 +46,6 @@ cd "$hydradir"
 echo "gem 'sufia', '6.0.0.rc2'" >> "$hydradir/Gemfile"
 echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> "$hydradir/Gemfile"
 bundle install
-# TODO: Remove next 'sudo gem install X' lines when the final version is released
-sudo gem install --no-document devise-guests -v 0.3.3
-sudo gem install --no-document rspec-rails
 rails generate sufia:install -f
 bundle exec rake db:migrate
 
