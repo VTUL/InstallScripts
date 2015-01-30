@@ -16,7 +16,7 @@ sudo apt-get upgrade -y
 # Brightbox also packages Passenger, which will be useful for production.
 sudo add-apt-repository -y ppa:brightbox/ruby-ng
 sudo apt-get update
-sudo apt-get install -y ruby2.1-dev
+sudo apt-get install -y ruby2.1
 
 # 3. Install FITS
 sudo apt-get install -y openjdk-7-jdk unzip
@@ -37,7 +37,7 @@ sudo apt-get install -y ffmpeg
 sudo apt-get install -y redis-server imagemagick nodejs phantomjs libreoffice
 
 # 6. Create Hydra head.
-sudo apt-get install -y git libsqlite3-dev zlib1g-dev build-essential
+sudo apt-get install -y ruby2.1-dev git libsqlite3-dev zlib1g-dev build-essential
 sudo gem install --no-document rails -v 4.1.8
 rails new "$hydrahead" "$hydradir"
 
