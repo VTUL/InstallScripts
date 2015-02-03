@@ -90,7 +90,7 @@ sudo chmod 644 "/etc/nginx/nginx.conf"
 sudo unlink "/etc/nginx/sites-enabled/default"
 sudo service nginx restart
 
-# 12. Configure Sufia to use Passenger.
+# 12. Configure Passenger to serve our site.
 echo "server {" >> "$HOME/sufia.site"
 echo "    listen 80;" >> "$HOME/sufia.site"
 echo "    root $hydradir/public;" >> "$HOME/sufia.site"
@@ -100,4 +100,5 @@ sudo mv -f "$HOME/sufia.site" "/etc/nginx/sites-available/sufia.site"
 sudo chown root: "/etc/nginx/sites-available/sufia.site"
 sudo chmod 644 "/etc/nginx/sites-available/sufia.site"
 sudo link "/etc/nginx/sites-available/sufia.site" "/etc/nginx/sites-enabled/sufia.site"
+# TODO: Bundler issues?
 sudo service nginx restart
