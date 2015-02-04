@@ -100,5 +100,11 @@ sudo mv -f "$HOME/sufia.site" "/etc/nginx/sites-available/sufia.site"
 sudo chown root: "/etc/nginx/sites-available/sufia.site"
 sudo chmod 644 "/etc/nginx/sites-available/sufia.site"
 sudo link "/etc/nginx/sites-available/sufia.site" "/etc/nginx/sites-enabled/sufia.site"
-# TODO: Bundler issues?
+#export RAILS_ENV=development
 sudo service nginx restart
+
+# Deployment steps.
+bundle install --deployment
+# blacklight secret token
+# devise secret token
+# secrets.yml secret token
