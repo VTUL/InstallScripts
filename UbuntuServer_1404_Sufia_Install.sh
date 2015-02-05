@@ -91,11 +91,14 @@ sudo unlink "/etc/nginx/sites-enabled/default"
 sudo service nginx restart
 
 # 12. Configure Passenger to serve our site.
-echo "server {" >> "$HOME/sufia.site"
-echo "    listen 80;" >> "$HOME/sufia.site"
-echo "    root $hydradir/public;" >> "$HOME/sufia.site"
-echo "    passenger_enabled on;" >> "$HOME/sufia.site"
-echo "}" >> "$HOME/sufia.site"
+cat >> "$HOME/sufia.site" <<HereDoc
+server {
+    listen 80;
+    root $hydradir/public;
+    passenger_enabled on;
+}
+HereDoc
+
 sudo mv -f "$HOME/sufia.site" "/etc/nginx/sites-available/sufia.site"
 sudo chown root: "/etc/nginx/sites-available/sufia.site"
 sudo chmod 644 "/etc/nginx/sites-available/sufia.site"
