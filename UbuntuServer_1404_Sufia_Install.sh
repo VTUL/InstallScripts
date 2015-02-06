@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -o errexit
 
+# For Ubuntu Server 14_04
+# Installs the default Sufia application and all of it's dependencies.
+# Runs the application with Passenger/Nginx in production mode.
+
 # 0. Vars
 fitsdir="$HOME/fits" # Where FITS will be installed.
 fitsver="fits-0.8.3" # Which version of FITS to install.
@@ -69,9 +73,13 @@ mv "$hydradir/temp" "$hydradir/app/assets/javascripts/application.js"
 # 10. Start the components.
 bundle exec rake jetty:start
 QUEUE=* rake environment resque:work &
-cd "$HOME/"
+
+# For a development server, stop here and run:
+#bundle exec rails server
+# The server will start on port 3000.
 
 # 11. Install Nginx and Passenger.
+cd "$HOME/"
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
 #sudo apt-get install apt-transport-https ca-certificates # Not necessary for 14_04, but part of the Phusion Docs.
 echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main" >> "$HOME/passenger.list"
@@ -103,11 +111,10 @@ sudo mv -f "$HOME/sufia.site" "/etc/nginx/sites-available/sufia.site"
 sudo chown root: "/etc/nginx/sites-available/sufia.site"
 sudo chmod 644 "/etc/nginx/sites-available/sufia.site"
 sudo link "/etc/nginx/sites-available/sufia.site" "/etc/nginx/sites-enabled/sufia.site"
-#export RAILS_ENV=development
 sudo service nginx restart
 
-# Deployment steps.
+# Application Deployment steps.
+cd "$hydradir"
 bundle install --deployment
-# blacklight secret token
-# devise secret token
-# secrets.yml secret token
+# TODO: secrets.yml secret token
+# TODO: production db
