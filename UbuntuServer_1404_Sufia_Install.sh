@@ -116,5 +116,6 @@ sudo service nginx restart
 # Application Deployment steps.
 cd "$hydradir"
 bundle install --deployment
-# TODO: secrets.yml secret token
-# TODO: production db
+# TODO: add secrets.yml secret token
+# TODO: Create production db
+# TODO: Fix production solr url in ./config/solr.rb
