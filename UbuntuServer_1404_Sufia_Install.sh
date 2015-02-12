@@ -125,3 +125,6 @@ sed "s/<%= ENV\[\"SECRET_KEY_BASE\"\] %>/$(bundle exec rake secret)" \
 mv "$hydradir/temp" "$hydradir/config/secrets.yml"
 RAILS_ENV=production bundle exec rake db:setup
 RAILS_ENV=production bundle exec rake assets:precompile
+sed "s|your.production.server:8080/bl_solr/core0|localhost:8983/solr/development|" \
+<"$hydradir/config/solr.yml" >"$hydradir/temp"
+mv "$hydradir/temp" "$hydradir/config/solr.yml"
