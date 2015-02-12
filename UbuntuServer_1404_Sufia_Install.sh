@@ -131,4 +131,6 @@ mv "$hydradir/temp" "$hydradir/config/solr.yml"
 sed "s/Resque.redis.namespace/#Resque.redis.namespace/" \
 <"$hydradir/config/initializers/resque_config" >"$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/config/initializers/resque_config"
-RAILS_ENV=production QUEUE='*' bundle exec rake resque:work
+touch "$hydradir/tmp/restart.txt"
+
+RAILS_ENV=production QUEUE='*' bundle exec rake resque:work &
