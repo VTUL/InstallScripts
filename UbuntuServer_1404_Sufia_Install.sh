@@ -120,3 +120,5 @@ sudo service nginx restart
 # Application Deployment steps.
 cd "$hydradir"
 bundle install --deployment
+RAILS_ENV=production bundle exec rake db:setup
+RAILS_ENV=production bundle exec rake assets:precompile
