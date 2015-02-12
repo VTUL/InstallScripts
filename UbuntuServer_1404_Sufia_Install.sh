@@ -5,24 +5,24 @@ set -o errexit
 # Installs the default Sufia application and all of it's dependencies.
 # Runs the application with Passenger/Nginx in production mode.
 
-# 0. Vars
+# Vars
 fitsdir="$HOME/fits" # Where FITS will be installed.
 fitsver="fits-0.8.3" # Which version of FITS to install.
 hydrahead="sufiademo" # Name of the Hydra head.
 hydradir="$HOME/$hydrahead" # Where the Hydra head will be located.
 
-# 1. Update packages
+# Update packages
 cd ~
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# 2. Install Ruby 2.1
+# Install Ruby 2.1
 # Brightbox also packages Passenger, which will be useful for production.
 sudo add-apt-repository -y ppa:brightbox/ruby-ng
 sudo apt-get update
 sudo apt-get install -y ruby2.1
 
-# 3. Install FITS
+# Install FITS
 sudo apt-get install -y openjdk-7-jdk unzip
 mkdir "$fitsdir/"
 cd "$fitsdir/"
@@ -31,7 +31,7 @@ unzip "$fitsdir/$fitsver.zip"
 sudo chmod a+x "$fitsdir/$fitsver/fits.sh"
 cd "$HOME/"
 
-# 4. Install ffmpeg
+# Install ffmpeg
 # Instructions from the static builds link on this page: https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
 sudo add-apt-repository -y ppa:mc3man/trusty-media
 sudo apt-get update
@@ -41,15 +41,15 @@ sudo apt-get install -y ffmpeg
 curl -sL https://deb.nodesource.com/setup | sudo bash -
 sudo apt-get install -y nodejs
 
-# 5. Install Redis, ImageMagick, PhantomJS, and Libre Office
+# Install Redis, ImageMagick, PhantomJS, and Libre Office
 sudo apt-get install -y redis-server imagemagick phantomjs libreoffice
 
-# 6. Create Hydra head.
+# Create Hydra head.
 sudo apt-get install -y ruby2.1-dev git sqlite3 libsqlite3-dev zlib1g-dev build-essential
 sudo gem install --no-document rails -v 4.1.8
 rails new "$hydrahead" "$hydradir"
 
-# 7. Add and set up Sufia
+# Add and set up Sufia
 cd "$hydradir"
 echo "gem 'sufia', '6.0.0.rc3'" >> "$hydradir/Gemfile"
 echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> "$hydradir/Gemfile"
@@ -57,11 +57,11 @@ bundle install
 rails generate sufia:install -f
 bundle exec rake db:migrate
 
-# 8. Download and configure Jetty
+# Download and configure Jetty
 bundle exec rake jetty:clean
 bundle exec rake sufia:jetty:config
 
-# 9. Fix Hydra head configs.
+# Fix Hydra head configs.
 # Point to FITS at our location.
 sed "s/# config.fits_path = \"fits.sh\"/config.fits_path = \"$fitsdir\/$fitsver\/fits.sh\"/" \
 <"$hydradir/config/initializers/sufia.rb" >"$hydradir/temp"
@@ -74,7 +74,7 @@ sed "/\/\/= require turbolinks/ d" <"$hydradir/app/assets/javascripts/applicatio
 echo "//= require sufia" >> "$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/app/assets/javascripts/application.js"
 
-# 10. Start the components.
+# Start the components.
 bundle exec rake jetty:start
 QUEUE=* rake environment resque:work &
 
@@ -82,7 +82,7 @@ QUEUE=* rake environment resque:work &
 #bundle exec rails server
 # The server will start on port 3000.
 
-# 11. Install Nginx and Passenger.
+# Install Nginx and Passenger.
 cd "$HOME/"
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
 #sudo apt-get install apt-transport-https ca-certificates # Not necessary for 14_04, but part of the Phusion Docs.
@@ -102,7 +102,7 @@ sudo chmod 644 "/etc/nginx/nginx.conf"
 sudo unlink "/etc/nginx/sites-enabled/default"
 sudo service nginx restart
 
-# 12. Configure Passenger to serve our site.
+# Configure Passenger to serve our site.
 cat >> "$HOME/sufia.site" <<HereDoc
 server {
     listen 80;
