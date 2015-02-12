@@ -76,9 +76,9 @@ mv "$hydradir/temp" "$hydradir/app/assets/javascripts/application.js"
 
 # Start the components.
 bundle exec rake jetty:start
-QUEUE=* rake environment resque:work &
 
 # For a development server, stop here and run:
+#QUEUE=* rake environment resque:work &
 #bundle exec rails server
 # The server will start on port 3000.
 
