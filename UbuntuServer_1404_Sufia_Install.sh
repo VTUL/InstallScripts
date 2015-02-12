@@ -37,8 +37,12 @@ sudo add-apt-repository -y ppa:mc3man/trusty-media
 sudo apt-get update
 sudo apt-get install -y ffmpeg
 
-# 5. Install Redis, ImageMagick, Node.js, PhantomJS, and Libre Office
-sudo apt-get install -y redis-server imagemagick nodejs phantomjs libreoffice
+# Install nodejs from Nodesource
+curl -sL https://deb.nodesource.com/setup | sudo bash -
+sudo apt-get install -y nodejs
+
+# 5. Install Redis, ImageMagick, PhantomJS, and Libre Office
+sudo apt-get install -y redis-server imagemagick phantomjs libreoffice
 
 # 6. Create Hydra head.
 sudo apt-get install -y ruby2.1-dev git sqlite3 libsqlite3-dev zlib1g-dev build-essential
