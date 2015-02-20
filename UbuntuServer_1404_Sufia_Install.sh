@@ -51,7 +51,7 @@ rails new "$hydrahead" "$hydradir"
 
 # Add and set up Sufia
 cd "$hydradir"
-echo "gem 'sufia', '6.0.0.rc3'" >> "$hydradir/Gemfile"
+echo "gem 'sufia', '6.0.0.rc4'" >> "$hydradir/Gemfile"
 echo "gem 'kaminari', github: 'harai/kaminari', branch: 'route_prefix_prototype'" >> "$hydradir/Gemfile"
 bundle install
 rails generate sufia:install -f
