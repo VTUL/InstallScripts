@@ -129,8 +129,8 @@ sed "s|your.production.server:8080/bl_solr/core0|localhost:8983/solr/development
 <"$hydradir/config/solr.yml" >"$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/config/solr.yml"
 sed "s/Resque.redis.namespace/#Resque.redis.namespace/" \
-<"$hydradir/config/initializers/resque_config" >"$hydradir/temp"
-mv "$hydradir/temp" "$hydradir/config/initializers/resque_config"
+<"$hydradir/config/initializers/resque_config.rb" >"$hydradir/temp"
+mv "$hydradir/temp" "$hydradir/config/initializers/resque_config.rb"
 touch "$hydradir/tmp/restart.txt"
 
 RAILS_ENV=production QUEUE='*' bundle exec rake resque:work &
