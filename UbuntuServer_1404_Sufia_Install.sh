@@ -119,7 +119,7 @@ sudo service nginx restart
 
 # Application Deployment steps.
 cd "$hydradir"
-bundle install --deployment
+bundle install --deployment --without development test
 sed "s/<%= ENV\[\"SECRET_KEY_BASE\"\] %>/$(bundle exec rake secret)" \
 <"$hydradir/confing/secrets.yml" >"$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/config/secrets.yml"
