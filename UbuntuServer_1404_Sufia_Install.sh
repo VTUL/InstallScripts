@@ -24,7 +24,7 @@ sudo apt-get install -y ruby2.1
 
 # Install FITS
 sudo apt-get install -y openjdk-7-jdk unzip
-mkdir "$fitsdir/"
+mkdir -p "$fitsdir/"
 cd "$fitsdir/"
 wget "http://projects.iq.harvard.edu/files/fits/files/$fitsver.zip"
 unzip "$fitsdir/$fitsver.zip"
