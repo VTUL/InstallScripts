@@ -45,7 +45,7 @@ sudo apt-get install -y nodejs
 sudo apt-get install -y redis-server imagemagick phantomjs libreoffice
 
 # Create Hydra head.
-sudo apt-get install -y ruby2.1-dev git sqlite3 libsqlite3-dev zlib1g-dev build-essential
+sudo apt-get install -y ruby2.2-dev git sqlite3 libsqlite3-dev zlib1g-dev build-essential
 sudo gem install --no-document rails -v '>=4.2'
 rails new "$hydrahead" "$hydradir"
 
