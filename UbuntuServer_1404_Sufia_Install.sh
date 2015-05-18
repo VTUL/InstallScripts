@@ -16,11 +16,11 @@ cd ~
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# Install Ruby 2.1
+# Install Ruby 2.2
 # Brightbox also packages Passenger, which will be useful for production.
 sudo add-apt-repository -y ppa:brightbox/ruby-ng
 sudo apt-get update
-sudo apt-get install -y ruby2.1
+sudo apt-get install -y ruby2.2
 
 # Install FITS
 sudo apt-get install -y openjdk-7-jdk unzip
