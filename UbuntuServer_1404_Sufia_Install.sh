@@ -7,7 +7,7 @@ set -o errexit
 
 # Vars
 fitsdir="$HOME/fits" # Where FITS will be installed.
-fitsver="fits-0.8.3" # Which version of FITS to install.
+fitsver="fits-0.6.2" # Which version of FITS to install.
 hydrahead="sufiademo" # Name of the Hydra head.
 hydradir="$HOME/$hydrahead" # Where the Hydra head will be located.
 
