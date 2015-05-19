@@ -1,0 +1,24 @@
+# vi: set ft=ruby :
+
+$runserver=<<EOF
+cd "$HOME/data-repo/"
+bundle exec rake jetty:start
+sleep 15
+QUEUE=* rake environment resque:work &
+sleep 10
+bundle exec rails server --binding=0.0.0.0 --daemon
+echo "The server should be running at 127.0.0.1:3000"
+echo "The site exists in /root/data-repo/"
+EOF
+
+Vagrant.configure(2) do |config|
+  config.vm.box = 'ubuntu/trusty64'
+  config.vm.provider 'virtualbox' do |vb|
+    vb.name = 'data-repo-dev'
+    vb.cpus = 2
+    vb.memory = 2048
+  end
+  config.vm.network :forwarded_port, host: 3000, guest: 3000
+  config.vm.provision :shell, path: 'bootstrap.sh'
+  config.vm.provision :shell, run: 'always', inline: $runserver
+end
