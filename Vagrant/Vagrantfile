@@ -3,8 +3,7 @@
 $runserver=<<EOF
 cd "$HOME/data-repo/"
 bundle exec rake jetty:start
-QUEUE=* rake environment resque:work &
-sleep 10
+PIDFILE="$HOME/data-repo/tmp/pids/resque.pid" BACKGROUND=yes QUEUE=* rake environment resque:work
 bundle exec rails server --binding=0.0.0.0 --daemon
 echo "The server should be running at 127.0.0.1:3000"
 echo "The site exists in /root/data-repo/"
