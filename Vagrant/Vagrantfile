@@ -3,7 +3,6 @@
 $runserver=<<EOF
 cd "$HOME/data-repo/"
 bundle exec rake jetty:start
-sleep 15
 QUEUE=* rake environment resque:work &
 sleep 10
 bundle exec rails server --binding=0.0.0.0 --daemon
