@@ -1,4 +1,4 @@
- vi: set ft=ruby :
+# vi: set ft=ruby :
 
 hydrahead = "data-repo"
 gitrepo = "VTUL/" + hydrahead
