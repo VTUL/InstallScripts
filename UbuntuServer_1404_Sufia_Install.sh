@@ -121,7 +121,7 @@ sudo service nginx restart
 cd "$hydradir"
 bundle install --deployment --without development test
 sed "s/<%= ENV\[\"SECRET_KEY_BASE\"\] %>/$(bundle exec rake secret)" \
-<"$hydradir/confing/secrets.yml" >"$hydradir/temp"
+<"$hydradir/config/secrets.yml" >"$hydradir/temp"
 mv "$hydradir/temp" "$hydradir/config/secrets.yml"
 RAILS_ENV=production bundle exec rake db:setup
 RAILS_ENV=production bundle exec rake assets:precompile
