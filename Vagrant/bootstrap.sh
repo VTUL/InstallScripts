@@ -3,6 +3,7 @@ set -o errexit
 
 # For Ubuntu Server 14_04
 # Installs the default Sufia application and all of it's dependencies.
+echo "Version 1.0"
 
 # Vars
 basedir="/home/vagrant"
