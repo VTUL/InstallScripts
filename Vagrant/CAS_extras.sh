@@ -49,7 +49,6 @@ echo "That was expected to fail!"
 
 # Application Deployment steps.
 cd "$hydradir"
-git checkout -f omniauth
 bundle install
 rails g migration AddOmniauthToUsers provider uid
 rake db:migrate
@@ -57,8 +56,6 @@ bundle install --deployment --without development test
 sed --in-place=".bak" --expression="s|<%= ENV\[\"SECRET_KEY_BASE\"\] %>|$(bundle exec rake secret)|" "$hydradir/config/secrets.yml"
 RAILS_ENV=production bundle exec rake db:setup
 RAILS_ENV=production bundle exec rake assets:precompile
-sed --in-place=".bak" --expression="s|your.production.server:8080/bl_solr/core0|localhost:8983/solr/development|" "$hydradir/config/solr.yml"
-sed --in-place=".bak" --expression="s|blacklight-core|development|" "$hydradir/config/blacklight.yml"
 touch "$hydradir/tmp/restart.txt"
 
 echo "run the following command to generate a self-signed cert:"
