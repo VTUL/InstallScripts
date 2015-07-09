@@ -1,13 +1,14 @@
 # vi: set ft=ruby :
 
+installuser = "vagrant"
 hydrahead = "data-repo"
 gitrepo = "VTUL/" + hydrahead
 
 runserver = <<EOF
-cd "/home/vagrant/$1/"
+cd "/home/$1/$2/"
 bundle exec rake jetty:start
-PIDFILE=/home/vagrant/$1/tmp/pids/resque.pid BACKGROUND=yes QUEUE=* rake environment resque:work \
-  1> /home/vagrant/$1/log/resque.log 2> /home/vagrant/$1/log/resque.log
+PIDFILE=/home/$1/$2/tmp/pids/resque.pid BACKGROUND=yes QUEUE=* rake environment resque:work \
+  1> /home/$1/$2/log/resque.log 2> /home/$1/$2/log/resque.log
 bundle exec rails server --binding=0.0.0.0 --daemon
 echo "The server should be running at 127.0.0.1:3000"
 echo "The site exists in /home/vagrant/$1"
@@ -23,7 +24,7 @@ Vagrant.configure(2) do |config|
   config.vm.network :forwarded_port, host: 3000, guest: 3000
   config.vm.network :forwarded_port, host: 8080, guest: 8080
   config.vm.network :forwarded_port, host: 4433, guest: 4433
-  config.vm.provision :shell, args: [hydrahead, gitrepo], privileged: false,
-    path: 'https://raw.githubusercontent.com/VTUL/InstallScripts/master/Vagrant/bootstrap.sh'
-  config.vm.provision :shell, args:[hydrahead], run: 'always', privileged: false, inline: runserver
+  config.vm.provision :shell, args: [installuser, hydrahead, gitrepo], privileged: true,
+    path: 'bootstrap.sh'
+  config.vm.provision :shell, args:[installuser, hydrahead], run: 'always', privileged: false, inline: runserver
 end
