@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -o errexit
+set -x -o errexit
 
 # For Ubuntu Server 14_04
 # Installs the default Sufia application and all of it's dependencies.
