@@ -15,10 +15,12 @@ sudo chmod 600 "/etc/apt/sources.list.d/passenger.list"
 sudo apt-get update
 sudo apt-get install -y nginx-extras passenger
 cp "/etc/nginx/nginx.conf" "$basedir/nginx.conf.bak"
-sed "s/# passenger_root/passenger_root/" <"$basedir/nginx.conf.bak" >"$basedir/tmp"
-sed "s/# passenger_ruby/passenger_ruby/" <"$basedir/tmp" >"$basedir/nginx.conf"
+sed "s/# passenger_root/passenger_root/" <"$basedir/nginx.conf.bak" >"$basedir/nginx.conf.bak2"
+sed "s/# passenger_ruby/passenger_ruby/" <"$basedir/nginx.conf.bak2" >"$basedir/nginx.conf.bak3"
+sed "1ienv PATH;" <"$basedir/nginx.conf.bak3" >"$basedir/nginx.conf"
 sudo mv -f "$basedir/nginx.conf" "/etc/nginx/nginx.conf"
-rm "$basedir/tmp"
+rm "$basedir/nginx.conf.bak2"
+rm "$basedir/nginx.conf.bak3"
 sudo chown root: "/etc/nginx/nginx.conf"
 sudo chmod 644 "/etc/nginx/nginx.conf"
 sudo unlink "/etc/nginx/sites-enabled/default"
@@ -56,11 +58,11 @@ bundle install --deployment --without development test
 sed --in-place=".bak" --expression="s|<%= ENV\[\"SECRET_KEY_BASE\"\] %>|$(bundle exec rake secret)|" "$hydradir/config/secrets.yml"
 RAILS_ENV=production bundle exec rake db:setup
 RAILS_ENV=production bundle exec rake assets:precompile
+RAILS_ENV=production bundle exec rake datarepo:setup_defaults
+bash "$hydradir/scripts/restart_resque.sh production"
 touch "$hydradir/tmp/restart.txt"
 
 echo "run the following command to generate a self-signed cert:"
 echo "sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/local/private/$hydrahead.key -out /etc/ssl/local/certs/$hydrahead.crt"
 echo "You'll need to restart Nginx, too:"
 echo "sudo service nginx restart"
-echo "If you reach a error page with no CSS, add the following to the top of the Nginx.conf and restart it again:"
-echo "env PATH;"
