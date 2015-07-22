@@ -7,11 +7,11 @@ gitrepo = "VTUL/" + hydrahead
 runserver = <<EOF
 cd "/home/$1/$2/"
 bundle exec rake jetty:start
-PIDFILE=/home/$1/$2/tmp/pids/resque.pid BACKGROUND=yes QUEUE=* rake environment resque:work \
-  1> /home/$1/$2/log/resque.log 2> /home/$1/$2/log/resque.log
-bundle exec rails server --binding=0.0.0.0 --daemon
-echo "The server should be running at 127.0.0.1:3000"
-echo "The site exists in /home/vagrant/$1"
+# Assume CAS_extras.sh has been run
+bash ./scripts/restart_resque.sh production
+echo "The server should be running at localhost:8080"
+echo "If you generated a certificate, you can also use https://localhost:4433"
+echo "The site exists in /home/$1/$2"
 EOF
 
 Vagrant.configure(2) do |config|
