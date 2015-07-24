@@ -3,14 +3,15 @@ set -x -o errexit
 
 # For Ubuntu Server 14_04
 # Installs the default Sufia application and all of it's dependencies.
-echo "Version 1.0"
+echo "Version 2.0"
 
 # Vars
 installuser="ubuntu" # Name of user to install under (must already exist)
 hydrahead="data-repo" # Name of the Hydra head.
 gitrepo="VTUL/data-repo" # The git repository to pull changes from during setup.
-SERVER_HOSTNAME="localhost"
-# Override installuser, hydrahead, gitrepo, and SERVER_HOSTNAME via shell script arguments
+SERVER_HOSTNAME="localhost" # The hostname of the server being installed.
+app_env="production" # What environment the app should run in. Should be 'development' or 'production'
+# Override installuser, hydrahead, gitrepo, SERVER_HOSTNAME, and app_env via shell script arguments
 if [ $# -ge 1 ]; then
   installuser="$1"
 fi
@@ -22,6 +23,9 @@ if [ $# -ge 3 ]; then
 fi
 if [ $# -ge 4 ]; then
   SERVER_HOSTNAME="$4"
+fi
+if [ $# -ge 5 ] && [ "$5" == 'development' ]; then
+  app_env="$5"
 fi
 basedir="/home/$installuser"
 fitsdir="$basedir/fits" # Where FITS will be installed.
@@ -112,6 +116,7 @@ server {
     listen 443 ssl;
     root $hydradir/public;
     passenger_enabled on;
+    passenger_app_env $app_env;
     server_name $SERVER_HOSTNAME;
     ssl_certificate $SSL_CERT;
     ssl_certificate_key $SSL_KEY;
@@ -203,12 +208,14 @@ cd "$hydradir"
 $RUN_AS_INSTALLUSER bundle install
 $RUN_AS_INSTALLUSER rails g migration AddOmniauthToUsers provider uid
 $RUN_AS_INSTALLUSER rake db:migrate
-$RUN_AS_INSTALLUSER bundle install --deployment --without development test
-$RUN_AS_INSTALLUSER sed --in-place=".bak" --expression="s|<%= ENV\[\"SECRET_KEY_BASE\"\] %>|$(bundle exec rake secret)|" "$hydradir/config/secrets.yml"
-$RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake db:setup
-$RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake assets:precompile
-$RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake datarepo:setup_defaults
-$RUN_AS_INSTALLUSER bash $hydradir/scripts/restart_resque.sh production
+if [ "$app_env" == "production" ]; then
+    $RUN_AS_INSTALLUSER bundle install --deployment --without development test
+    $RUN_AS_INSTALLUSER sed --in-place=".bak" --expression="s|<%= ENV\[\"SECRET_KEY_BASE\"\] %>|$(bundle exec rake secret)|" "$hydradir/config/secrets.yml"
+    $RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake db:setup
+    $RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake assets:precompile
+    $RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake datarepo:setup_defaults
+fi
+$RUN_AS_INSTALLUSER bash "$hydradir/scripts/restart_resque.sh" "$app_env"
 $RUN_AS_INSTALLUSER bundle exec rake jetty:start
 # Start Nginx
 service nginx start

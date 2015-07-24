@@ -1,14 +1,13 @@
-# vi: set ft=ruby :
-
 installuser = "vagrant"
 hydrahead = "data-repo"
 gitrepo = "VTUL/" + hydrahead
 server_hostname = "localhost"
+app_env = "development"
 
 runserver = <<EOF
 cd "/home/$1/$2/"
 bundle exec rake jetty:start
-bash ./scripts/restart_resque.sh production
+bash ./scripts/restart_resque.sh "$3"
 sudo service nginx restart
 echo "The server should be running at localhost:8080"
 echo "(You can also use https://localhost:4443)"
@@ -25,7 +24,7 @@ Vagrant.configure(2) do |config|
   config.vm.network :forwarded_port, host: 8983, guest: 8983
   config.vm.network :forwarded_port, host: 8080, guest: 80
   config.vm.network :forwarded_port, host: 4443, guest: 443
-  config.vm.provision :shell, args: [installuser, hydrahead, gitrepo, server_hostname],
+  config.vm.provision :shell, args: [installuser, hydrahead, gitrepo, server_hostname, app_env],
     privileged: true, path: 'bootstrap.sh'
-  config.vm.provision :shell, args:[installuser, hydrahead], run: 'always', privileged: false, inline: runserver
+  config.vm.provision :shell, args:[installuser, hydrahead, app_env], run: 'always', privileged: false, inline: runserver
 end
