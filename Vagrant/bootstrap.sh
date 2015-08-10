@@ -3,7 +3,7 @@ set -x -o errexit
 
 # For Ubuntu Server 14_04
 # Installs the default Sufia application and all of it's dependencies.
-echo "Version 2.0"
+echo "Version 3.0"
 
 # Vars
 installuser="ubuntu" # Name of user to install under (must already exist)
@@ -38,13 +38,30 @@ SSL_CERT_DIR="/etc/ssl/local/certs"
 SSL_CERT="$SSL_CERT_DIR/$hydrahead-crt.pem"
 SSL_KEY_DIR="/etc/ssl/local/private"
 SSL_KEY="$SSL_KEY_DIR/$hydrahead-key.pem"
+SOLR_USER="solr" # User under which Solr runs.  We adopt the default, "solr"
+SOLR_VERSION="5.2.1"
+SOLR_MIRROR="http://www.gtlib.gatech.edu/pub/apache/lucene/solr/$SOLR_VERSION/"
+SOLR_DIST="solr-$SOLR_VERSION"
+SOLR_INSTALL="/opt"
+SOLR_MUTABLE="/var/solr"
+SOLR_DATA="$SOLR_MUTABLE/data" # Where Solr cores live
+TOMCAT_CONF="/etc/tomcat7"
+FEDORA4_REPO="https://github.com/fcrepo4/fcrepo4.git"
+FEDORA4_BRANCH="fcrepo-4.2.0"
+FEDORA4_VER="4.2.0"
+FCREPO4_DATA="$basedir/fedora-data"
+FCREPO4_APP_DIR="/var/lib/tomcat7/webapps"
+FCREPO4_USER="tomcat7"
+FCREPO4_GROUP="tomcat7"
+JDK_HOME="/usr/lib/jvm/java-8-oracle"
 
 fitsver="fits-0.6.2" # The version of FITS to install.
 rubyver="ruby2.2" # The version of Ruby to install.
-railsver=">=4.2" # The version of Rails to install.
+railsver="~> 4.2" # The version of Rails to install.
 sufiaver="6.2.0" # The version of Sufia to install.
 
 RUN_AS_INSTALLUSER="sudo -H -u $installuser"
+RUN_AS_SOLR_USER="sudo -H -u $SOLR_USER"
 
 # Update packages
 cd "$basedir/"
@@ -84,6 +101,53 @@ apt-get install -y nodejs
 
 # Install Redis, ImageMagick, PhantomJS, and Libre Office
 apt-get install -y redis-server imagemagick phantomjs libreoffice
+
+# Install Solr
+# Fetch the Solr distribution and unpack the install script
+wget "$SOLR_MIRROR/$SOLR_DIST.tgz"
+tar xzf $SOLR_DIST.tgz $SOLR_DIST/bin/install_solr_service.sh --strip-components=2
+# Install and start the service using the install script
+bash ./install_solr_service.sh $SOLR_DIST.tgz -u $SOLR_USER -d $SOLR_MUTABLE -i $SOLR_INSTALL
+# Remove Solr distribution
+rm $SOLR_DIST.tgz
+# Stop Solr until we have created the core
+service solr stop
+
+# Install Tomcat and Fedora 4
+apt-get -y install tomcat7 tomcat7-admin
+usermod -a -G tomcat7 $installuser
+# Stop Tomcat until everything is installed
+service tomcat7 stop
+# Create Fedora roles (taken from fcrepo4-labs/fcrepo4-vagrant project)
+if ! grep -q "role rolename=\"fedoraAdmin\"" $TOMCAT_CONF/tomcat-users.xml ; then
+  sed -i '$i<role rolename="fedoraUser"/>
+  $i<role rolename="fedoraAdmin"/>
+  $i<role rolename="manager-gui"/>
+  $i<user username="testuser" password="password1" roles="fedoraUser"/>
+  $i<user username="adminuser" password="password2" roles="fedoraUser"/>
+  $i<user username="fedoraAdmin" password="fedoraAdmin" roles="fedoraAdmin"/>
+  $i<user username="fedora4" password="fedora4password" roles="manager-gui"/>' $TOMCAT_CONF/tomcat-users.xml
+fi
+if ! grep -q "$JDK_HOME" /etc/default/tomcat7 ; then
+  echo "JAVA_HOME=$JDK_HOME" >> /etc/default/tomcat7
+fi
+if ! grep -q 'fcrepo.home=' /etc/default/tomcat7 ; then
+  echo "JAVA_OPTS=\"${JAVA_OPTS} -Dfcrepo.home=$FCREPO4_DATA\"" >> /etc/default/tomcat7
+fi
+# Create Fedora data directory and make sure Tomcat 7 can write to it
+mkdir -p $FCREPO4_DATA
+chown ${FCREPO4_USER}:${FCREPO4_GROUP} $FCREPO4_DATA
+chmod 770 $FCREPO4_DATA
+# Build Fedora 4 from sources
+apt-get install -y git maven
+$RUN_AS_INSTALLUSER git clone --branch $FEDORA4_BRANCH --depth 1 $FEDORA4_REPO
+cd fcrepo4
+$RUN_AS_INSTALLUSER MAVEN_OPTS="-Xmx1024m" mvn install
+# Copy Fedora 4 application to webapps directory
+install -o $FCREPO4_USER -g $FCREPO4_GROUP -m 444 fcrepo-webapp/target/fcrepo-webapp-${FEDORA4_VER}.war $FCREPO4_APP_DIR/fedora.war
+# Clean up after ourselves
+cd ..
+rm -rf fcrepo4
 
 # Install Nginx and Passenger.
 # Install the Phusion Passenger APT repository
@@ -159,9 +223,6 @@ $RUN_AS_INSTALLUSER bundle install
 $RUN_AS_INSTALLUSER rails generate sufia:install -f
 $RUN_AS_INSTALLUSER bundle exec rake db:migrate
 
-# Download and configure Jetty
-$RUN_AS_INSTALLUSER bundle exec rake jetty:clean sufia:jetty:config
-
 # Pull from git. This fixes application configuration
 $RUN_AS_INSTALLUSER git init
 $RUN_AS_INSTALLUSER git remote add origin "https://github.com/$gitrepo.git"
@@ -215,7 +276,29 @@ if [ "$app_env" == "production" ]; then
     $RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake assets:precompile
     $RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake datarepo:setup_defaults
 fi
+# Fix up configuration files
+# 1. FITS
+$RUN_AS_INSTALLUSER sed -i "s@config.fits_path = \".*\"@config.fits_path = \"$fitsdir/$fitsver/fits.sh\"@" config/initializers/sufia.rb
+# 2. Create Sufia Solr core
+cd $SOLR_DATA
+$RUN_AS_SOLR_USER mkdir -p $app_env/conf # We name the cores after their environment
+$RUN_AS_SOLR_USER echo "name=$app_env" > $app_env/core.properties
+install -o $SOLR_USER -m 444 $hydradir/solr_conf/conf/solrconfig.xml $app_env/conf/solrconfig.xml
+install -o $SOLR_USER -m 444 $hydradir/solr_conf/conf/schema.xml $app_env/conf/schema.xml
+# Make links to keep the Hydra Solr solrconfig.xml paths happy
+$RUN_AS_SOLR_USER ln -s $SOLR_INSTALL/solr/contrib
+$RUN_AS_SOLR_USER ln -s $SOLR_INSTALL/solr/dist
+$RUN_AS_SOLR_USER mkdir lib
+$RUN_AS_SOLR_USER ln -s $SOLR_INSTALL/solr/contrib lib/contrib
+cd $hydradir
+# 3. Make the solr.yml file point to an appropriate $app_env core
+sed -i '/production:/ {N; s@^production:.*development@production:\n  url: http://localhost:8983/solr/production@}' config/solr.yml
+# 4. Make the blacklight.yml file point to an appropriate $app_env core
+sed -i '/production:/ {N; N; s@^production:\(.*\)/development@production:\1/production@}' config/blacklight.yml
+# 5. Make the fedora.yml point to Tomcat 7 port, not to hydra-jetty port 8983
+sed -i 's/url:\(.*\):8983/url:\1:8080/' config/fedora.yml
 $RUN_AS_INSTALLUSER bash "$hydradir/scripts/restart_resque.sh" "$app_env"
-$RUN_AS_INSTALLUSER bundle exec rake jetty:start
-# Start Nginx
+# Start services
+service tomcat7 start
+service solr start
 service nginx start
