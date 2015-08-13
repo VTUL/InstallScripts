@@ -4,7 +4,7 @@ Install Scripts for Data Repository Application
 These scripts install the [Data Repository
 application](https://github.com/VTUL/data-repo) on a target server. They can be
 used to install the application either to a VM under VirtualBox
-via[Vagrant](https://www.vagrantup.com/) or to a server running under Amazon Web
+via [Vagrant](https://www.vagrantup.com/) or to a server running under Amazon Web
 Services (AWS).
 
 When installing the Data Repository application, first application settings are
@@ -22,7 +22,7 @@ work on Mac OSX.
 
 To utilise the `vagrant` option, [Vagrant](https://www.vagrantup.com/) must
 already been installed on the local system with
-the[VirtualBox](http://www.virtualbox.org) provider working.
+the [VirtualBox](http://www.virtualbox.org) provider working.
 
 For the `aws` option to work, [awscli](https://aws.amazon.com/cli/) must be
 installed and configured on the local system. (Under Mac OSX, this is most
@@ -79,6 +79,8 @@ or`production`.
 - `AWS_KEY_PAIR`: the AWS SSH key pair used to access the deployed server. The
 secret key of this SSH key *must* exist on the local system beforehand,
 otherwise the user will not be able to SSH in to the deployed server.
+- `AWS_EBS_SIZE`: the size of the EBS root volume in GB for the server being
+created in AWS.
 
 Note that many AWS-related settings refer to AWS entities such as AMIs, key
 pairs, security groups, etc. These must all exist in the AWS account being used

@@ -32,6 +32,7 @@ bootstrap_aws()
     --instance-type $AWS_INSTANCE_TYPE \
     --associate-public-ip-address \
     --user-data file://${TMPDIR}/aws_bootstrapper.sh \
+    --block-device-mappings "[{\"DeviceName\":\"/dev/sda1\", \"Ebs\":{\"VolumeSize\":$AWS_EBS_SIZE}}]" \
     --output text \
     --query 'Instances[*].InstanceId')
   # Wait for AWS server $ID to go out of "pending" state
