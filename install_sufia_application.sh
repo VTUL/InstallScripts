@@ -70,6 +70,7 @@ cat > $TMPFILE <<HereDoc
 server {
     listen 80;
     listen 443 ssl;
+    client_max_body_size 200M;
     root ${HYDRA_HEAD_DIR}/public;
     passenger_enabled on;
     passenger_app_env ${APP_ENV};
