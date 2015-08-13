@@ -140,12 +140,12 @@ Several ports in the running VM are made accessible on the local machine.
 Accessing the local port in a Web browser will actually result in the forwarded
 port being accessed on the VM. These ports are as follows:
 
-Local | VM | Description
------ | -- | -----------
-8983 | 8983 | Solr services
-8888 | 8080 | Tomcat (Fedora 4)
-8080 | 80 | Data Repository (HTTP)
-4443 | 443 | Data Respository (HTTPS)
+Local | VM   | Description
+----- | ---- | -----------
+8983  | 8983 | Solr services
+8888  | 8080 | Tomcat (Fedora 4)
+8080  | 80   | Data Repository (HTTP)
+4443  | 443  | Data Respository (HTTPS)
 
 To access the Solr admin page in the VM from the local machine you would access
 this URL: `http://localhost:8983/solr`
