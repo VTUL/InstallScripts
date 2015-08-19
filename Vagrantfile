@@ -1,19 +1,4 @@
 # Vagrantfile to install Data Repository application under VirtualBox
-runserver = <<EOF
-SCRIPTS_DIR="$1"
-# Source settings, if present
-if [ -f ${SCRIPTS_DIR}/config.sh ]; then
-  . ${SCRIPTS_DIR}/config.sh
-fi
-if [ -f ${SCRIPTS_DIR}/config_vagrant.sh ]; then
-  . ${SCRIPTS_DIR}/config_vagrant.sh
-fi
-cd "${HYDRA_HEAD_DIR}"
-bash ./scripts/restart_resque.sh "${APP_ENV}"
-echo "The server should be running at ${SERVER_HOSTNAME}:8080"
-echo "(You can also use https://${SERVER_HOSTNAME}:4443)"
-echo "The application exists in ${HYDRA_HEAD_DIR}"
-EOF
 
 Vagrant.configure(2) do |config|
   config.vm.box = 'ubuntu/trusty64'
@@ -32,6 +17,4 @@ Vagrant.configure(2) do |config|
   config.vm.network :forwarded_port, host: 4443, guest: 443
   config.vm.provision :shell, args: ["vagrant", "/vagrant"], privileged: true,
     path: 'bootstrap_server.sh'
-  config.vm.provision :shell, args: ["/vagrant"], run: 'always',
-    privileged: false, inline: runserver
 end
