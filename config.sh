@@ -4,6 +4,7 @@
 
 HYDRA_HEAD="data-repo" # Name of the Hydra head.
 HYDRA_HEAD_GIT_REPO="VTUL/data-repo" # The git repository to pull changes from during setup.
+HYDRA_HEAD_GIT_BRANCH="master" # The branch of the repository to pull.
 SERVER_HOSTNAME="localhost" # The hostname of the server being installed.
 APP_ENV="development" # What environment the app should run in. Should be 'development' or 'production'
 PASSENGER_REPO="/etc/apt/sources.list.d/passenger.list"
