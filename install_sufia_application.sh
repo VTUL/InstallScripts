@@ -94,61 +94,23 @@ install -o root -m 400 ${BOOTSTRAP_DIR}/files/key $SSL_KEY
 apt-get install -y git sqlite3 libsqlite3-dev zlib1g-dev build-essential
 gem install --no-document rails -v "$RAILS_VERSION"
 $RUN_AS_INSTALLUSER rails new $HYDRA_HEAD $HYDRA_HEAD_DIR
-
-# Add and set up Sufia
-cd $HYDRA_HEAD_DIR
-$RUN_AS_INSTALLUSER echo "gem 'sufia', '$SUFIA_VERSION'" >> $HYDRA_HEAD_DIR/Gemfile
-$RUN_AS_INSTALLUSER echo "gem 'kaminari', github: 'jcoyne/kaminari', branch: 'sufia'" >> $HYDRA_HEAD_DIR/Gemfile
-$RUN_AS_INSTALLUSER bundle install
-$RUN_AS_INSTALLUSER rails generate sufia:install -f
-$RUN_AS_INSTALLUSER bundle exec rake db:migrate
+$RUN_AS_INSTALLUSER rm "$HYDRA_HEAD_DIR/README.rdoc"
 
 # Pull from git. This fixes application configuration
+cd $HYDRA_HEAD_DIR
 $RUN_AS_INSTALLUSER git init
 $RUN_AS_INSTALLUSER git remote add origin "https://github.com/$HYDRA_HEAD_GIT_REPO.git"
 $RUN_AS_INSTALLUSER git fetch --all
 $RUN_AS_INSTALLUSER git reset --hard origin/master
-$RUN_AS_INSTALLUSER bundle install
+$RUN_AS_INSTALLUSER git branch --set-upstream-to=remotes/origin/master master
+$RUN_AS_INSTALLUSER git checkout "$HYDRA_HEAD_GIT_BRANCH"
 
 # Setup the application
-
-# 1. Create a migration: rails generate migration CreateDoiRequests
-$RUN_AS_INSTALLUSER bundle exec rails generate migration CreateDoiRequests
-DOI_MIGRATION_FILE=`find db/migrate -type f -name '*_create_doi_requests.rb'|sort|tail -1`
-# 2. Replace the contents of the new migration with this gist: https://gist.github.com/tingtingjh/ab35348f493d565cdcc8
-$RUN_AS_INSTALLUSER cat > $DOI_MIGRATION_FILE <<GIST
-class CreateDoiRequests < ActiveRecord::Migration
-  def change
-    create_table :doi_requests do |t|
-      t.string "collection_id"
-      t.string "ezid_doi", default: "doi:pending", null: false
-      t.string "asset_type", default: "Collection", null: false
-      t.boolean "completed", default: false
-      t.timestamps null: false
-    end
-    add_index :doi_requests, :ezid_doi
-    add_index :doi_requests, :collection_id
-  end
-end
-GIST
-# 3. Generate Role model: rails generate roles
-$RUN_AS_INSTALLUSER bundle exec rails generate roles
-# 4. Remove the before filter added to app/controllers/application_controller.rb
-$RUN_AS_INSTALLUSER sed -i '/^  before_filter do$/,/^  end$/d' app/controllers/application_controller.rb
-# 5. Migrate
-$RUN_AS_INSTALLUSER bundle exec rake db:migrate
-# 6. Create default roles and an admin user
+$RUN_AS_INSTALLUSER bundle install
+$RUN_AS_INSTALLUSER rake db:migrate
 $RUN_AS_INSTALLUSER bundle exec rake datarepo:setup_defaults
-# 7. Install Orcid
-$RUN_AS_INSTALLUSER bundle exec rails generate orcid:install --skip-application-yml
-# 8. Revert changes already incorporated
-$RUN_AS_INSTALLUSER git checkout ./app/models/user.rb ./config/routes.rb
 
 # Application Deployment steps.
-cd $HYDRA_HEAD_DIR
-$RUN_AS_INSTALLUSER bundle install
-$RUN_AS_INSTALLUSER rails g migration AddOmniauthToUsers provider uid
-$RUN_AS_INSTALLUSER rake db:migrate
 if [ "$APP_ENV" = "production" ]; then
     $RUN_AS_INSTALLUSER bundle install --deployment --without development test
     # Deploy production ORCID secrets from ${BOOTSTRAP_DIR}/files/orcid_secrets if they exist
