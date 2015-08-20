@@ -41,13 +41,10 @@ fi
 mkdir -p $FEDORA4_DATA
 chown ${FEDORA4_USER}:${FEDORA4_GROUP} $FEDORA4_DATA
 chmod 770 $FEDORA4_DATA
-# Build Fedora 4 from sources
-apt-get install -y git maven
-$RUN_AS_INSTALLUSER git clone --branch $FEDORA4_BRANCH --depth 1 $FEDORA4_REPO "$FEDORA4_SRC"
-cd "$FEDORA4_SRC"
-$RUN_AS_INSTALLUSER MAVEN_OPTS="-Xmx1024m" mvn install
+# Fetch Fedora 4 WAR file
+TMPFILE=$(/bin/mktemp)
+wget -O $TMPFILE "$FEDORA4_WAR_URL"
 # Copy Fedora 4 application to webapps directory
-install -o $FEDORA4_USER -g $FEDORA4_GROUP -m 444 fcrepo-webapp/target/fcrepo-webapp-${FEDORA4_VER}.war $FEDORA4_APP_DIR/fedora.war
+install -o $FEDORA4_USER -g $FEDORA4_GROUP -m 444 $TMPFILE $FEDORA4_APP_DIR/fedora.war
 # Clean up after ourselves
-cd "$INSTALL_DIR"
-rm -rf "$FEDORA4_SRC"
+rm $TMPFILE
