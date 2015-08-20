@@ -34,6 +34,35 @@ ${SCRIPTS_DIR}/install_fedora4.sh $PLATFORM $SCRIPTS_DIR
 # Install Sufia Data-Repo application
 ${SCRIPTS_DIR}/install_sufia_application.sh $PLATFORM $SCRIPTS_DIR
 
+# Install and configure Postfix to send e-mail
+echo "postfix postfix/mailname string $SERVER_HOSTNAME" | debconf-set-selections
+echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
+apt-get install -y postfix
+cat > /etc/postfix/main.cf <<POSTFIX_CONF
+myorigin = $SERVER_HOSTNAME
+smtpd_banner = \$myhostname ESMTP \$mail_name
+biff = no
+append_dot_mydomain = no
+readme_directory = no
+smtp_tls_security_level = may
+smtp_tls_ciphers = export
+smtp_tls_protocols = !SSLv2, !SSLv3
+smtp_tls_session_cache_database = btree:\${data_directory}/smtp_scache
+smtpd_tls_session_cache_database = btree:\${data_directory}/smtpd_scache
+smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+myhostname = \$myorigin
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+mydestination = $SERVER_HOSTNAME, localhost.localdomain, localhost
+relayhost =
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = localhost
+inet_protocols = ipv4
+POSTFIX_CONF
+service postfix restart
+
 # Install Solr
 ${SCRIPTS_DIR}/install_solr.sh $PLATFORM $SCRIPTS_DIR
 
