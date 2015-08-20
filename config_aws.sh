@@ -14,7 +14,6 @@ INSTALL_DIR="/home/$INSTALL_USER"
 FITS_DIR="$INSTALL_DIR/fits" # Where FITS will be installed.
 HYDRA_HEAD_DIR="$INSTALL_DIR/$HYDRA_HEAD" # Where the Hydra head will be located.
 FEDORA4_DATA="$INSTALL_DIR/fedora-data"
-FEDORA4_SRC="$INSTALL_DIR/fcrepo4"
 RUN_AS_INSTALLUSER="sudo -H -u $INSTALL_USER"
 AWS_KEY_PAIR="data_repo"
 AWS_AMI="ami-d05e75b8"
