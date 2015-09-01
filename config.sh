@@ -31,6 +31,7 @@ FEDORA4_WAR_URL="https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-4.2
 FEDORA4_APP_DIR="/var/lib/tomcat7/webapps"
 FEDORA4_USER="tomcat7"
 FEDORA4_GROUP="tomcat7"
+FEDORA4_VM_OPTS="-Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms512m -Xmx1024m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC"
 JDK_HOME="/usr/lib/jvm/java-8-oracle"
 FITS_PACKAGE="fits-0.6.2" # The version of FITS to install.
 RUBY_PACKAGE="ruby2.2" # The version of Ruby to install.
