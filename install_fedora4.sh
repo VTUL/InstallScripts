@@ -35,7 +35,7 @@ if ! grep -q "$JDK_HOME" /etc/default/tomcat7 ; then
   echo "JAVA_HOME=$JDK_HOME" >> /etc/default/tomcat7
 fi
 if ! grep -q 'fcrepo.home=' /etc/default/tomcat7 ; then
-  echo "JAVA_OPTS=\"${JAVA_OPTS} -Dfcrepo.home=$FEDORA4_DATA\"" >> /etc/default/tomcat7
+  echo "JAVA_OPTS=\"-Dfcrepo.home=$FEDORA4_DATA $FEDORA4_VM_OPTS\"" >> /etc/default/tomcat7
 fi
 # Create Fedora data directory and make sure Tomcat 7 can write to it
 mkdir -p $FEDORA4_DATA
