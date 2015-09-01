@@ -54,6 +54,7 @@ apt-get install -y nginx-extras passenger
 # Uncomment passenger_root and passenger_ruby lines from config file
 TMPFILE=`/bin/mktemp`
 cat $NGINX_CONF_FILE | \
+  sed "s/worker_processes .\+;/worker_processes auto;/" | \
   sed "s/# passenger_root/passenger_root/" | \
   sed "s/# passenger_ruby/passenger_ruby/" > $TMPFILE
 sed "1ienv PATH;" < $TMPFILE > $NGINX_CONF_FILE
@@ -67,10 +68,16 @@ service nginx stop
 # Configure Passenger to serve our site.
 # Create the virtual host for our Sufia application
 cat > $TMPFILE <<HereDoc
+passenger_max_pool_size ${PASSENGER_INSTANCES};
+passenger_pre_start http://${SERVER_HOSTNAME};
+limit_req_zone \$binary_remote_addr zone=clients:1m rate=${NGINX_CLIENT_RATE};
+
 server {
     listen 80;
     listen 443 ssl;
     client_max_body_size 200M;
+    passenger_min_instances ${PASSENGER_INSTANCES};
+    limit_req zone=clients burst=${NGINX_CLIENT_BURST} nodelay;
     root ${HYDRA_HEAD_DIR}/public;
     passenger_enabled on;
     passenger_app_env ${APP_ENV};
