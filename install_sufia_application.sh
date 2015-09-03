@@ -77,7 +77,7 @@ server {
     listen 443 ssl;
     client_max_body_size 200M;
     passenger_min_instances ${PASSENGER_INSTANCES};
-    limit_req zone=clients burst=${NGINX_CLIENT_BURST} nodelay;
+    limit_req zone=clients burst=${NGINX_CLIENT_BURST} ${NGINX_BURST_OPTION};
     root ${HYDRA_HEAD_DIR}/public;
     passenger_enabled on;
     passenger_app_env ${APP_ENV};
