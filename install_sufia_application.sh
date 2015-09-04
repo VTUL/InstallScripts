@@ -140,7 +140,13 @@ fi
 # Fix up configuration files
 # 1. FITS
 $RUN_AS_INSTALLUSER sed -i "s@config.fits_path = \".*\"@config.fits_path = \"$FITS_DIR/$FITS_PACKAGE/fits.sh\"@" config/initializers/sufia.rb
-cd $HYDRA_HEAD_DIR
+# 2. Set Google Analytics ID, if supplied and we aren't installing via Vagrant
+if [ -f ${BOOTSTRAP_DIR}/files/google_analytics_id -a $PLATFORM != "vagrant" ]; then
+  # Uncomment config.google_analytics_id setting
+  $RUN_AS_INSTALLUSER sed -i "s/# config.google_analytics_id/config.google_analytics_id/" "$HYDRA_HEAD_DIR/config/initializers/sufia.rb"
+  # Set config.google_analytics_id to the one in ${BOOTSTRAP_DIR}/files/google_analytics_id
+  $RUN_AS_INSTALLUSER sed -i "s/config.google_analytics_id = '.*'/config.google_analytics_id = '$(cat ${BOOTSTRAP_DIR}/files/google_analytics_id)'/" "$HYDRA_HEAD_DIR/config/initializers/sufia.rb"
+fi
 # 3. Make the solr.yml file point to an appropriate $APP_ENV core
 sed -i '/production:/ {N; s@^production:.*development@production:\n  url: http://localhost:8983/solr/production@}' config/solr.yml
 # 4. Make the blacklight.yml file point to an appropriate $APP_ENV core
