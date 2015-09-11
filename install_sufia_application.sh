@@ -120,12 +120,12 @@ $RUN_AS_INSTALLUSER bundle exec rake datarepo:setup_defaults
 # Application Deployment steps.
 if [ "$APP_ENV" = "production" ]; then
     $RUN_AS_INSTALLUSER bundle install --deployment --without development test
-    # Deploy production ORCID secrets from ${BOOTSTRAP_DIR}/files/orcid_secrets if they exist
-    if [ -f ${BOOTSTRAP_DIR}/files/orcid_secrets ]; then
-      NEW_ORCID_APP_ID=$(grep ORCID_APP_ID ${BOOTSTRAP_DIR}/files/orcid_secrets)
-      NEW_ORCID_APP_SECRET=$(grep ORCID_APP_SECRET ${BOOTSTRAP_DIR}/files/orcid_secrets)
-      $RUN_AS_INSTALLUSER sed -i "s/ORCID_APP_ID: 0000-0000-0000-0000/$NEW_ORCID_APP_ID/" "$HYDRA_HEAD_DIR/config/application.yml"
-      $RUN_AS_INSTALLUSER sed -i "s/ORCID_APP_SECRET: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/$NEW_ORCID_APP_SECRET/" "$HYDRA_HEAD_DIR/config/application.yml"
+    # Deploy production ORCID secrets from ${BOOTSTRAP_DIR}/files/orcid_secrets if they exist unless installing via Vagrant
+    if [ -f ${BOOTSTRAP_DIR}/files/orcid_secrets -a $PLATFORM != "vagrant" ]; then
+      # Remove any existing active ORCID settings from application.yml
+      $RUN_AS_INSTALLUSER sed -i -r '/^[[:space:]]*ORCID_.*$/d' "$HYDRA_HEAD_DIR/config/application.yml"
+      # Append contents of ${BOOTSTRAP_DIR}/files/orcid_secrets to application.yml
+      $RUN_AS_INSTALLUSER cat "${BOOTSTRAP_DIR}/files/orcid_secrets" >> "$HYDRA_HEAD_DIR/config/application.yml"
     else
       echo 'Warning: No production orcid_secrets file supplied; using defaults!'
     fi
