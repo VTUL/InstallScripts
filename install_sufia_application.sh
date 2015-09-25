@@ -112,14 +112,23 @@ $RUN_AS_INSTALLUSER git reset --hard origin/master
 $RUN_AS_INSTALLUSER git branch --set-upstream-to=remotes/origin/master master
 $RUN_AS_INSTALLUSER git checkout "$HYDRA_HEAD_GIT_BRANCH"
 
+# Install PostgreSQL
+${BOOTSTRAP_DIR}/install_postgresql.sh $PLATFORM $BOOTSTRAP_DIR
+
 # Setup the application
-$RUN_AS_INSTALLUSER bundle install
-$RUN_AS_INSTALLUSER rake db:migrate
-$RUN_AS_INSTALLUSER bundle exec rake datarepo:setup_defaults
+if [ "$APP_ENV" = "production" ]; then
+  $RUN_AS_INSTALLUSER bundle install --without development test
+  # Install Application secret key
+  APP_SECRET=$($RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake secret)
+  $RUN_AS_INSTALLUSER sed --in-place=".bak" --expression="s|<%= ENV\[\"SECRET_KEY_BASE\"\] %>|$APP_SECRET|" "$HYDRA_HEAD_DIR/config/secrets.yml"
+else
+  $RUN_AS_INSTALLUSER bundle install
+fi
+$RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake db:migrate
+$RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake datarepo:setup_defaults
 
 # Application Deployment steps.
 if [ "$APP_ENV" = "production" ]; then
-    $RUN_AS_INSTALLUSER bundle install --deployment --without development test
     # Deploy production ORCID secrets from ${BOOTSTRAP_DIR}/files/orcid_secrets if they exist unless installing via Vagrant
     if [ -f ${BOOTSTRAP_DIR}/files/orcid_secrets -a $PLATFORM != "vagrant" ]; then
       # Remove any existing active ORCID settings from application.yml
@@ -131,12 +140,9 @@ if [ "$APP_ENV" = "production" ]; then
     fi
     # Point to production CAS
     $RUN_AS_INSTALLUSER sed -i 's/config.omniauth \(.*\)cas-dev.middleware.vt.edu/config.omniauth \1auth.vt.edu/' "$HYDRA_HEAD_DIR/config/initializers/devise.rb"
-    # Install Application secret key
-    $RUN_AS_INSTALLUSER sed --in-place=".bak" --expression="s|<%= ENV\[\"SECRET_KEY_BASE\"\] %>|$(bundle exec rake secret)|" "$HYDRA_HEAD_DIR/config/secrets.yml"
-    $RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake db:setup
-    $RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake assets:precompile
-    $RUN_AS_INSTALLUSER RAILS_ENV=production bundle exec rake datarepo:setup_defaults
+    $RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake assets:precompile
 fi
+
 # Fix up configuration files
 # 1. FITS
 $RUN_AS_INSTALLUSER sed -i "s@config.fits_path = \".*\"@config.fits_path = \"$FITS_DIR/$FITS_PACKAGE/fits.sh\"@" config/initializers/sufia.rb

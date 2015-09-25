@@ -36,5 +36,6 @@ JDK_HOME="/usr/lib/jvm/java-8-oracle"
 FITS_PACKAGE="fits-0.6.2" # The version of FITS to install.
 RUBY_PACKAGE="ruby2.2" # The version of Ruby to install.
 RAILS_VERSION="~> 4.2" # The version of Rails to install.
-SUFIA_VERSION="6.2.0" # The version of Sufia to install.
 RUN_AS_SOLR_USER="sudo -H -u $SOLR_USER"
+POSTGRESQL_COMMAND="sudo -i -u postgres"
+DB_PASS="changeme"

@@ -31,9 +31,6 @@ DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -
 # Install Fedora 4
 ${SCRIPTS_DIR}/install_fedora4.sh $PLATFORM $SCRIPTS_DIR
 
-# Install Sufia Data-Repo application
-${SCRIPTS_DIR}/install_sufia_application.sh $PLATFORM $SCRIPTS_DIR
-
 # Install and configure Postfix to send e-mail
 echo "postfix postfix/mailname string $SERVER_HOSTNAME" | debconf-set-selections
 echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
@@ -62,6 +59,9 @@ inet_interfaces = localhost
 inet_protocols = ipv4
 POSTFIX_CONF
 service postfix restart
+
+# Install Sufia Data-Repo application
+${SCRIPTS_DIR}/install_sufia_application.sh $PLATFORM $SCRIPTS_DIR
 
 # Install Solr
 ${SCRIPTS_DIR}/install_solr.sh $PLATFORM $SCRIPTS_DIR
@@ -93,7 +93,7 @@ fi
 
 start() {
   cd "${HYDRA_HEAD_DIR}"
-  sudo -H -u $INSTALL_USER bundle exec resque-pool --daemon --environment $APP_ENV --pidfile \$RESQUE_POOL_PIDFILE
+  sudo -H -u $INSTALL_USER RAILS_ENV=${APP_ENV} bundle exec resque-pool --daemon --environment $APP_ENV --pidfile \$RESQUE_POOL_PIDFILE
 }
 
 stop() {
