@@ -60,6 +60,9 @@ inet_protocols = ipv4
 POSTFIX_CONF
 service postfix restart
 
+# Install ClamAV
+${SCRIPTS_DIR}/install_clamav.sh $PLATFORM $SCRIPTS_DIR
+
 # Install Sufia Data-Repo application
 ${SCRIPTS_DIR}/install_sufia_application.sh $PLATFORM $SCRIPTS_DIR
 
