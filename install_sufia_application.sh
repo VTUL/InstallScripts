@@ -125,7 +125,17 @@ else
   $RUN_AS_INSTALLUSER bundle install
 fi
 $RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake db:migrate
-$RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake datarepo:setup_defaults
+$RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake datarepo:add_roles
+if [ -f ${BOOTSTRAP_DIR}/files/user_list.txt ]; then
+  $RUN_AS_INSTALLUSER cp "${BOOTSTRAP_DIR}/files/user_list.txt" "${HYDRA_HEAD_DIR}/user_list.txt"
+  $RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake datarepo:populate_users
+  $RUN_AS_INSTALLUSER rm "${HYDRA_HEAD_DIR}/user_list.txt"
+fi
+if [ -f ${BOOTSTRAP_DIR}/files/admin_list.txt ]; then
+  $RUN_AS_INSTALLUSER cp "${BOOTSTRAP_DIR}/files/admin_list.txt" "${HYDRA_HEAD_DIR}/admin_list.txt"
+  $RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake datarepo:upgrade_users
+  $RUN_AS_INSTALLUSER rm "${HYDRA_HEAD_DIR}/admin_list.txt"
+fi
 
 # Application Deployment steps.
 if [ "$APP_ENV" = "production" ]; then
