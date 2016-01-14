@@ -96,7 +96,7 @@ fi
 
 start() {
   cd "${HYDRA_HEAD_DIR}"
-  sudo -H -u $INSTALL_USER RAILS_ENV=${APP_ENV} bundle exec resque-pool --daemon --environment $APP_ENV --pidfile \$RESQUE_POOL_PIDFILE
+  sudo -H -u $INSTALL_USER RAILS_ENV=${APP_ENV} RUN_AT_EXIT_HOOKS=true TERM_CHILD=1 bundle exec resque-pool --daemon --environment $APP_ENV --pidfile \$RESQUE_POOL_PIDFILE
 }
 
 stop() {
