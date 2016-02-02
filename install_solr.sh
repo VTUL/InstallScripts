@@ -20,7 +20,7 @@ update-java-alternatives -s java-8-oracle
 
 # Install Solr
 # Fetch the Solr distribution and unpack the install script
-wget "$SOLR_MIRROR/$SOLR_DIST.tgz"
+wget -q "$SOLR_MIRROR/$SOLR_DIST.tgz"
 tar xzf $SOLR_DIST.tgz $SOLR_DIST/bin/install_solr_service.sh --strip-components=2
 # Install and start the service using the install script
 bash ./install_solr_service.sh $SOLR_DIST.tgz -u $SOLR_USER -d $SOLR_MUTABLE -i $SOLR_INSTALL

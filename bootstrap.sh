@@ -20,10 +20,19 @@ bootstrap_vagrant()
 bootstrap_aws()
 {
   # Create packed userdata bootstrap script
-  TMPDIR=`mktemp -d -t aws_bootstrap.XXXXX`
-  tar cJf ${TMPDIR}/files.tar.xz bootstrap_server.sh config.sh config_aws.sh install*.sh files
-  base64 ${TMPDIR}/files.tar.xz > ${TMPDIR}/files.b64
-  cat aws_bootstrapper_header.sh ${TMPDIR}/files.b64 > ${TMPDIR}/aws_bootstrapper.sh
+  AWSDIR=`mktemp -d -t aws_bootstrap.XXXXX`
+  SEDDIR=`mktemp -d -t sedfiles.XXXXX`
+  # Strip comment lines from install scripts
+  for f in install*.sh config{,_aws}.sh; do
+    sed -e '/^[[:space:]]*#[^!]/d' "$f" > "${SEDDIR}/$f"
+    chmod +x "${SEDDIR}/$f"
+  done
+  cp -Rp bootstrap_server.sh ssh.sh files ${SEDDIR}
+  # Make sure these scripts are executable
+  chmod +x ${SEDDIR}/bootstrap_server.sh ${SEDDIR}/ssh.sh
+  tar -c -J --options xz:compression-level=9 -C ${SEDDIR} -f ${AWSDIR}/files.tar.xz bootstrap_server.sh config.sh config_aws.sh install*.sh ssh.sh files
+  base64 ${AWSDIR}/files.tar.xz > ${AWSDIR}/files.b64
+  cat aws_bootstrapper_header.sh ${AWSDIR}/files.b64 > ${AWSDIR}/aws_bootstrapper.sh
   # Bring up AWS instance
   ID=$(aws ec2 run-instances --image-id $AWS_AMI \
     --key-name $AWS_KEY_PAIR \
@@ -31,7 +40,7 @@ bootstrap_aws()
     --subnet-id $AWS_SUBNET_ID \
     --instance-type $AWS_INSTANCE_TYPE \
     --associate-public-ip-address \
-    --user-data file://${TMPDIR}/aws_bootstrapper.sh \
+    --user-data file://${AWSDIR}/aws_bootstrapper.sh \
     --block-device-mappings "[{\"DeviceName\":\"/dev/sda1\", \"Ebs\":{\"VolumeSize\":$AWS_EBS_SIZE}}]" \
     --output text \
     --query 'Instances[*].InstanceId')
@@ -47,7 +56,8 @@ bootstrap_aws()
   # Set descriptive name tag
   aws ec2 create-tags --resources $ID --tags Key=Name,Value=$SERVER_HOSTNAME
   # Clean up after ourselves
-  rm -rf $TMPDIR
+  rm -rf $AWSDIR
+  rm -rf $SEDDIR
 }
 
 # Process script arguments. Argument is server type: vagrant or aws; default: vagrant
@@ -70,12 +80,36 @@ fi
 [ -f "${SCRIPTS_DIR}/config.sh" ] && . "${SCRIPTS_DIR}/config.sh"
 [ -f "${SCRIPTS_DIR}/config_${SERVER_ENV}.sh" ] && . "${SCRIPTS_DIR}/config_${SERVER_ENV}.sh"
 
+# Check that the deployment key exists in files/ if specified
+if [ -n "$HYDRA_HEAD_GIT_REPO_DEPLOY_KEY" ]; then
+  if [ ! -f "files/$HYDRA_HEAD_GIT_REPO_DEPLOY_KEY" ]; then
+    echo "Deployment key files/$HYDRA_HEAD_GIT_REPO_DEPLOY_KEY not present---aborting."
+    exit 1
+  else
+    # Make sure permissions on deploy key are suitable
+    chmod 500 "files/$HYDRA_HEAD_GIT_REPO_DEPLOY_KEY"
+  fi
+fi
+
 # Create an SSL certificate if none is already present
 SUBJECT="/C=US/ST=Virginia/O=Virginia Tech/localityName=Blacksburg/commonName=$SERVER_HOSTNAME/organizationalUnitName=University Libraries"
 if [ ! -f files/key -o ! -f files/cert ]; then
   openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout files/key \
     -out files/cert -subj "$SUBJECT"
 fi
+
+# Create a vanilla config/secrets.yml file if none supplied
+if [ ! -f files/secrets.yml ]; then
+  cat > files/secrets.yml <<END_OF_SECRETS
+development:
+  secret_key_base: $(openssl rand -hex 64)
+test:
+  secret_key_base: $(openssl rand -hex 64)
+production:
+  secret_key_base: $(openssl rand -hex 64)
+END_OF_SECRETS
+fi
+
 # Bootstrap the system on the $SERVER_ENV environment
 if [ $SERVER_ENV = "vagrant" ]; then
   bootstrap_vagrant

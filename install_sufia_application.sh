@@ -42,9 +42,10 @@ apt-get update
 apt-get install -y $RUBY_PACKAGE ${RUBY_PACKAGE}-dev
 
 # Install Nginx and Passenger.
-# Install the Phusion Passenger APT repository
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
-#sudo apt-get install apt-transport-https ca-certificates # Not necessary for 14_04, but part of the Phusion Docs.
+# Install PGP key and add HTTPS support for APT
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+apt-get install -y apt-transport-https ca-certificates
+# Add APT repository
 echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main" > $PASSENGER_REPO
 chown root: $PASSENGER_REPO
 chmod 600 $PASSENGER_REPO
@@ -99,32 +100,36 @@ install -o root -m 400 ${BOOTSTRAP_DIR}/files/key $SSL_KEY
 
 # Create Hydra head
 apt-get install -y git sqlite3 libsqlite3-dev zlib1g-dev build-essential
-gem install --no-document rails -v "$RAILS_VERSION"
-$RUN_AS_INSTALLUSER rails new $HYDRA_HEAD $HYDRA_HEAD_DIR
-$RUN_AS_INSTALLUSER rm "$HYDRA_HEAD_DIR/README.rdoc"
+gem install bundler
 
-# Pull from git. This fixes application configuration
-cd $HYDRA_HEAD_DIR
-$RUN_AS_INSTALLUSER git init
-$RUN_AS_INSTALLUSER git remote add origin "https://github.com/$HYDRA_HEAD_GIT_REPO.git"
-$RUN_AS_INSTALLUSER git fetch --all
-$RUN_AS_INSTALLUSER git reset --hard origin/master
-$RUN_AS_INSTALLUSER git branch --set-upstream-to=remotes/origin/master master
-$RUN_AS_INSTALLUSER git checkout "$HYDRA_HEAD_GIT_BRANCH"
+# Pull application from git, using deployment key if specified.
+GIT_SSH="${BOOTSTRAP_DIR}/ssh.sh"
+if [ -n "$HYDRA_HEAD_GIT_REPO_DEPLOY_KEY" ]; then
+  DEPLOY_KEY="${BOOTSTRAP_DIR}/files/$HYDRA_HEAD_GIT_REPO_DEPLOY_KEY"
+  # Make sure deploy key is accessible to $INSTALL_USER
+  chown $INSTALL_USER "$DEPLOY_KEY"
+else
+  DEPLOY_KEY=""
+fi
+$RUN_AS_INSTALLUSER -E GIT_SSH="$GIT_SSH" DEPLOY_KEY="$DEPLOY_KEY" \
+  git clone --branch "$HYDRA_HEAD_GIT_BRANCH" "$HYDRA_HEAD_GIT_REPO_URL" "$HYDRA_HEAD_DIR"
+cd "$HYDRA_HEAD_DIR"
 
 # Install PostgreSQL
 ${BOOTSTRAP_DIR}/install_postgresql.sh $PLATFORM $BOOTSTRAP_DIR
 
+# Move config/secrets.yml file into place
+$RUN_AS_INSTALLUSER cp ${BOOTSTRAP_DIR}/files/secrets.yml "$HYDRA_HEAD_DIR/config/secrets.yml"
+
 # Setup the application
 if [ "$APP_ENV" = "production" ]; then
   $RUN_AS_INSTALLUSER bundle install --without development test
-  # Install Application secret key
-  APP_SECRET=$($RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake secret)
-  $RUN_AS_INSTALLUSER sed --in-place=".bak" --expression="s|<%= ENV\[\"SECRET_KEY_BASE\"\] %>|$APP_SECRET|" "$HYDRA_HEAD_DIR/config/secrets.yml"
 else
   $RUN_AS_INSTALLUSER bundle install
 fi
-$RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake db:migrate
+# Be sure to run db:schema:load on initial install only as it will delete existing data
+$RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake db:schema:load
+$RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake db:seed
 $RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake datarepo:add_roles
 if [ -f ${BOOTSTRAP_DIR}/files/user_list.txt ]; then
   $RUN_AS_INSTALLUSER cp "${BOOTSTRAP_DIR}/files/user_list.txt" "${HYDRA_HEAD_DIR}/user_list.txt"
