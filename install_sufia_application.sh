@@ -174,9 +174,3 @@ if [ -f ${BOOTSTRAP_DIR}/files/google_analytics_id -a $PLATFORM != "vagrant" ]; 
   # Set config.google_analytics_id to the one in ${BOOTSTRAP_DIR}/files/google_analytics_id
   $RUN_AS_INSTALLUSER sed -i "s/config.google_analytics_id = '.*'/config.google_analytics_id = '$(cat ${BOOTSTRAP_DIR}/files/google_analytics_id)'/" "$HYDRA_HEAD_DIR/config/initializers/sufia.rb"
 fi
-# 3. Make the solr.yml file point to an appropriate $APP_ENV core
-sed -i '/production:/ {N; s@^production:.*development@production:\n  url: http://localhost:8983/solr/production@}' config/solr.yml
-# 4. Make the blacklight.yml file point to an appropriate $APP_ENV core
-sed -i '/production:/ {N; N; s@^production:\(.*\)/development@production:\1/production@}' config/blacklight.yml
-# 5. Make the fedora.yml point to Tomcat 7 port, not to hydra-jetty port 8983
-sed -i 's/url:\(.*\):8983/url:\1:8080/' config/fedora.yml
