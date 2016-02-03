@@ -43,7 +43,7 @@ chown ${FEDORA4_USER}:${FEDORA4_GROUP} $FEDORA4_DATA
 chmod 770 $FEDORA4_DATA
 # Fetch Fedora 4 WAR file
 TMPFILE=$(/bin/mktemp)
-wget -O $TMPFILE "$FEDORA4_WAR_URL"
+wget -qO $TMPFILE "$FEDORA4_WAR_URL"
 # Copy Fedora 4 application to webapps directory
 install -o $FEDORA4_USER -g $FEDORA4_GROUP -m 444 $TMPFILE $FEDORA4_APP_DIR/fedora.war
 # Clean up after ourselves

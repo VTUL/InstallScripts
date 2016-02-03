@@ -5,7 +5,7 @@ Vagrant.configure(2) do |config|
   config.vm.provider 'virtualbox' do |vb|
     vb.name = 'data-repo-dev'
     vb.cpus = 2
-    vb.memory = 3072
+    vb.memory = 4096
   end
   # Forward Solr port in VM to local machine
   config.vm.network :forwarded_port, host: 8983, guest: 8983
