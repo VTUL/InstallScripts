@@ -23,6 +23,9 @@ fi
 [ -f "${SCRIPTS_DIR}/config.sh" ] && . "${SCRIPTS_DIR}/config.sh"
 [ -f "${SCRIPTS_DIR}/config_${PLATFORM}.sh" ] && . "${SCRIPTS_DIR}/config_${PLATFORM}.sh"
 
+# Make sure files in scripts are accessible
+chmod 511 "$SCRIPTS_DIR"
+
 # Update packages
 cd "$INSTALL_DIR"
 apt-get update
@@ -77,8 +80,8 @@ cat > /etc/init.d/resque-pool <<END_OF_INIT_SCRIPT
 
 ### BEGIN INIT INFO
 # Provides: resque-pool
-# Required-Start:    $remote_fs $syslog redis-server
-# Required-Stop:     $remote_fs $syslog redis-server
+# Required-Start:    \$remote_fs \$syslog redis-server
+# Required-Stop:     \$remote_fs \$syslog redis-server
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Description:       Controls Resque-Pool Service
