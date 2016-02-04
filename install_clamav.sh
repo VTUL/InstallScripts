@@ -9,3 +9,4 @@
 
 cd "$INSTALL_DIR"
 apt-get install -y clamav libclamav-dev
+freshclam --quiet
