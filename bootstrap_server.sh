@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
+set -o errexit -o nounset -o xtrace -o pipefail
 # Bootstrap application on server.
 #
 # This script takes two arguments: the install environment ("vagrant" or "aws")
 # and the path to where these install scripts live on the server being
 # provisioned.
-set -x -o errexit
 
 # Validate command line arguments
 if [ $# -ne 2 ]; then

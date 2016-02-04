@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
 # Bring up a server and install the Data Repository application either under
 # Vagrant or AWS.  For AWS install, the awscli software is expected to be
 # installed already on the local machine doing the bootstrapping, and the
