@@ -147,33 +147,11 @@ fi
 
 # Application Deployment steps.
 if [ "$APP_ENV" = "production" ]; then
-    # Deploy production ORCID secrets from ${BOOTSTRAP_DIR}/files/orcid_secrets if they exist unless installing via Vagrant
-    if [ -f ${BOOTSTRAP_DIR}/files/orcid_secrets -a $PLATFORM != "vagrant" ]; then
-      # Remove any existing active ORCID settings from application.yml
-      $RUN_AS_INSTALLUSER sed -i -r '/^[[:space:]]*ORCID_.*$/d' "$HYDRA_HEAD_DIR/config/application.yml"
-      # Append contents of ${BOOTSTRAP_DIR}/files/orcid_secrets to application.yml
-      $RUN_AS_INSTALLUSER cat "${BOOTSTRAP_DIR}/files/orcid_secrets" >> "$HYDRA_HEAD_DIR/config/application.yml"
-    else
-      echo 'Warning: No production orcid_secrets file supplied; using defaults!'
-    fi
-    # Deploy production EZ-ID DOI settings from ${BOOTSTRAP_DIR}/files/ezid_secrets if they exist unless installing via Vagrant
-    if [ -f ${BOOTSTRAP_DIR}/files/ezid_secrets -a $PLATFORM != "vagrant" ]; then
-      EZID_SHOULDER=$(grep config.default_shoulder ${BOOTSTRAP_DIR}/files/ezid_secrets) && \
-        $RUN_AS_INSTALLUSER sed -i "/config.default_shoulder/ c\  $EZID_SHOULDER" "$HYDRA_HEAD_DIR/config/initializers/ezid.rb"
-      EZID_USER=$(grep config.user ${BOOTSTRAP_DIR}/files/ezid_secrets) && \
-        $RUN_AS_INSTALLUSER sed -i "/config.user/ c\  $EZID_USER" "$HYDRA_HEAD_DIR/config/initializers/ezid.rb"
-      EZID_PASSWORD=$(grep config.password ${BOOTSTRAP_DIR}/files/ezid_secrets) && \
-        $RUN_AS_INSTALLUSER sed -i "/config.password/ c\  $EZID_PASSWORD" "$HYDRA_HEAD_DIR/config/initializers/ezid.rb"
-    else
-      echo 'Warning: No production ezid_secrets file supplied; using defaults!'
-    fi
-    # Point to production CAS
-    $RUN_AS_INSTALLUSER sed -i 's/config.omniauth \(.*\)cas-dev.middleware.vt.edu/config.omniauth \1auth.vt.edu/' "$HYDRA_HEAD_DIR/config/initializers/devise.rb"
     $RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake assets:precompile
 fi
 
 # Fix up configuration files
-# 2. Set Google Analytics ID, if supplied and we aren't installing via Vagrant
+# Set Google Analytics ID, if supplied and we aren't installing via Vagrant
 if [ -f ${BOOTSTRAP_DIR}/files/google_analytics_id -a $PLATFORM != "vagrant" ]; then
   # Uncomment config.google_analytics_id setting
   $RUN_AS_INSTALLUSER sed -i "s/# config.google_analytics_id/config.google_analytics_id/" "$HYDRA_HEAD_DIR/config/initializers/sufia.rb"

@@ -102,12 +102,48 @@ fi
 # Create a vanilla config/secrets.yml file if none supplied
 if [ ! -f files/secrets.yml ]; then
   cat > files/secrets.yml <<END_OF_SECRETS
+default: &default
+  database:
+    name: datarepo
+    username: $INSTALL_USER
+    password: $DB_PASS
+  ezid:
+    default_shoulder: doi:10.5072/FK2
+    user: apitest
+    password: apitest
+  fedora: &fedora
+    url: http://127.0.0.1:8080/fedora/rest
+    user: fedoraAdmin
+    password: fedoraAdmin
+  orcid:
+    app_id: 0000-0000-0000-0000
+    app_secret: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+  redis:
+    host: localhost
+    port: 6379
+  cas_endpoint_url: https://cas-dev.middleware.vt.edu
+  secret_key_base: $(openssl rand -hex 64)
 development:
-  secret_key_base: $(openssl rand -hex 64)
+  <<: *default
+  fedora:
+    <<: *fedora
+    base_path: /dev
+  blacklight_url: http://127.0.0.1:8983/solr/development
+  solr_url: http://localhost:8983/solr/development
 test:
-  secret_key_base: $(openssl rand -hex 64)
+  <<: *default
+  fedora:
+    <<: *fedora
+    base_path: /test
+  blacklight_url: http://127.0.0.1:8983/solr/test
+  solr_url: http://localhost:8983/solr/test
 production:
-  secret_key_base: $(openssl rand -hex 64)
+  <<: *default
+  fedora:
+    <<: *fedora
+    base_path: /prod
+  blacklight_url: http://127.0.0.1:8983/solr/production
+  solr_url: http://localhost:8983/solr/production
 END_OF_SECRETS
 fi
 
