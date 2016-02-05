@@ -16,13 +16,15 @@ echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /u
 apt-get install -y oracle-java8-installer
 update-java-alternatives -s java-8-oracle
 
-# Install FITS
+# Install FITS to /opt/fits
 apt-get install -y unzip
-$RUN_AS_INSTALLUSER mkdir -p $FITS_DIR
-cd "$FITS_DIR"
-$RUN_AS_INSTALLUSER wget --quiet "http://projects.iq.harvard.edu/files/fits/files/${FITS_PACKAGE}.zip"
-$RUN_AS_INSTALLUSER unzip -q ${FITS_DIR}/${FITS_PACKAGE}.zip
-chmod a+x ${FITS_DIR}/${FITS_PACKAGE}/fits.sh
+TMPFILE=$(mktemp -d)
+cd "$TMPFILE"
+wget --quiet "http://projects.iq.harvard.edu/files/fits/files/${FITS_PACKAGE}.zip"
+unzip -q "${FITS_PACKAGE}.zip" -d /opt
+ln -sf "/opt/${FITS_PACKAGE}" /opt/fits
+chmod a+x /opt/fits/fits.sh
+rm -rf "$TMPFILE"
 cd $INSTALL_DIR
 
 # Install ffmpeg
@@ -171,8 +173,6 @@ if [ "$APP_ENV" = "production" ]; then
 fi
 
 # Fix up configuration files
-# 1. FITS
-$RUN_AS_INSTALLUSER sed -i "s@config.fits_path = \".*\"@config.fits_path = \"$FITS_DIR/$FITS_PACKAGE/fits.sh\"@" config/initializers/sufia.rb
 # 2. Set Google Analytics ID, if supplied and we aren't installing via Vagrant
 if [ -f ${BOOTSTRAP_DIR}/files/google_analytics_id -a $PLATFORM != "vagrant" ]; then
   # Uncomment config.google_analytics_id setting
