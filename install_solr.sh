@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -o errexit -o nounset -o xtrace -o pipefail
 
 # Install Solr and set up Solr core
 # Note that this must be done after installing the Sufia application because it

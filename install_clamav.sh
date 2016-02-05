@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -o errexit -o nounset -o xtrace -o pipefail
 
 # Install ClamAV
 
