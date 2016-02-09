@@ -103,11 +103,11 @@ fi
 if [ ! -f files/secrets.yml ]; then
   cat > files/secrets.yml <<END_OF_SECRETS
 default: &default
-  database:
+  database: &database
     name: datarepo
     username: $INSTALL_USER
     password: $DB_PASS
-  ezid:
+  ezid: &ezid
     default_shoulder: doi:10.5072/FK2
     user: apitest
     password: apitest
@@ -115,10 +115,10 @@ default: &default
     url: http://127.0.0.1:8080/fedora/rest
     user: fedoraAdmin
     password: fedoraAdmin
-  orcid:
+  orcid: &orcid
     app_id: 0000-0000-0000-0000
     app_secret: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-  redis:
+  redis: &redis
     host: localhost
     port: 6379
   cas_endpoint_url: https://cas-dev.middleware.vt.edu
