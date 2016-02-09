@@ -149,12 +149,3 @@ fi
 if [ "$APP_ENV" = "production" ]; then
     $RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake assets:precompile
 fi
-
-# Fix up configuration files
-# Set Google Analytics ID, if supplied and we aren't installing via Vagrant
-if [ -f ${BOOTSTRAP_DIR}/files/google_analytics_id -a $PLATFORM != "vagrant" ]; then
-  # Uncomment config.google_analytics_id setting
-  $RUN_AS_INSTALLUSER sed -i "s/# config.google_analytics_id/config.google_analytics_id/" "$HYDRA_HEAD_DIR/config/initializers/sufia.rb"
-  # Set config.google_analytics_id to the one in ${BOOTSTRAP_DIR}/files/google_analytics_id
-  $RUN_AS_INSTALLUSER sed -i "s/config.google_analytics_id = '.*'/config.google_analytics_id = '$(cat ${BOOTSTRAP_DIR}/files/google_analytics_id)'/" "$HYDRA_HEAD_DIR/config/initializers/sufia.rb"
-fi
