@@ -149,3 +149,8 @@ fi
 if [ "$APP_ENV" = "production" ]; then
     $RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake assets:precompile
 fi
+
+# Add binstubs, if in development mode.
+if [ "$APP_ENV" = "development" ]; then
+    $RUN_AS_INSTALLUSER RAILS_ENV=${APP_ENV} bundle exec rake rails:update:bin
+fi
