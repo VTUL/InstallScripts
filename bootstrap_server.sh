@@ -105,7 +105,7 @@ start() {
 stop() {
   if [ -f \$RESQUE_POOL_PIDFILE ]; then
     kill -QUIT \$(cat \$RESQUE_POOL_PIDFILE)
-    while ps agx | grep resque | egrep -qv 'init.d|service|grep'; do sleep 1; done
+    while ps agx | grep resque | egrep -qv 'rc[0-9]\.d|init\.d|service|grep'; do sleep 1; done
   fi
 }
 
