@@ -79,7 +79,7 @@ limit_req_zone \$binary_remote_addr zone=clients:1m rate=${NGINX_CLIENT_RATE};
 server {
     listen 80;
     listen 443 ssl;
-    client_max_body_size 200M;
+    client_max_body_size ${NGINX_MAX_UPLOAD_SIZE};
     passenger_min_instances ${PASSENGER_INSTANCES};
     limit_req zone=clients burst=${NGINX_CLIENT_BURST} ${NGINX_BURST_OPTION};
     root ${HYDRA_HEAD_DIR}/public;
