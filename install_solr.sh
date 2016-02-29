@@ -36,6 +36,13 @@ $RUN_AS_SOLR_USER mkdir -p ${SOLR_CORE}/conf
 $RUN_AS_SOLR_USER echo "name=$SOLR_CORE" > ${SOLR_CORE}/core.properties
 install -o $SOLR_USER -m 444 $HYDRA_HEAD_DIR/solr_conf/conf/solrconfig.xml ${SOLR_CORE}/conf/solrconfig.xml
 install -o $SOLR_USER -m 444 $HYDRA_HEAD_DIR/solr_conf/conf/schema.xml ${SOLR_CORE}/conf/schema.xml
+# Add a test core for development
+if [ "$APP_ENV" = 'development' ]; then
+    $RUN_AS_SOLR_USER mkdir -p ${SOLR_TEST_CORE}/conf
+    $RUN_AS_SOLR_USER echo "name=$SOLR_TEST_CORE" > ${SOLR_TEST_CORE}/core.properties
+    install -o $SOLR_USER -m 444 $HYDRA_HEAD_DIR/solr_conf/conf/solrconfig.xml ${SOLR_TEST_CORE}/conf/solrconfig.xml
+    install -o $SOLR_USER -m 444 $HYDRA_HEAD_DIR/solr_conf/conf/schema.xml ${SOLR_TEST_CORE}/conf/schema.xml
+fi
 # Make links to keep the Hydra Solr solrconfig.xml paths happy
 $RUN_AS_SOLR_USER ln -s $SOLR_INSTALL/solr/contrib
 $RUN_AS_SOLR_USER ln -s $SOLR_INSTALL/solr/dist

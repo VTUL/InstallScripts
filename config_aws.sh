@@ -10,6 +10,7 @@ APP_ENV="production"
 #AWS_ELASTIC_IP="eipalloc-4fc4932a" # 54.209.80.216 - datadev.lib.vt.edu
 #APP_ENV="development"
 SOLR_CORE="$APP_ENV"
+SOLR_TEST_CORE="test"
 INSTALL_DIR="/home/$INSTALL_USER"
 HYDRA_HEAD_DIR="$INSTALL_DIR/$HYDRA_HEAD" # Where the Hydra head will be located.
 FEDORA4_DATA="$INSTALL_DIR/fedora-data"
