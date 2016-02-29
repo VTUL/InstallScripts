@@ -121,7 +121,7 @@ default: &default
   redis: &redis
     host: localhost
     port: 6379
-  cas_endpoint_url: https://cas-dev.middleware.vt.edu
+  cas_endpoint_url: https://login-dev.middleware.vt.edu/profile/cas
   secret_key_base: $(openssl rand -hex 64)
 development:
   <<: *default
