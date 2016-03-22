@@ -27,7 +27,7 @@ NGINX_CLIENT_RATE="75r/s"
 NGINX_CLIENT_BURST="500"
 NGINX_BURST_OPTION="nodelay"
 # Cap the size of uploads
-NGINX_MAX_UPLOAD_SIZE="200M"
+NGINX_MAX_UPLOAD_SIZE="5200M"
 # Where the TLS certificate resides
 SSL_CERT_DIR="/etc/ssl/local/certs"
 SSL_CERT="$SSL_CERT_DIR/$HYDRA_HEAD-crt.pem"
