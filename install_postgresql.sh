@@ -10,6 +10,11 @@ set -o errexit -o nounset -o xtrace -o pipefail
 
 cd "$INSTALL_DIR"
 
+# Set up the PostgreSQL Apt repository
+echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+apt-get update
+# Install PostgreSQL packages
 apt-get install -y libpq-dev
 case $DB_IS_REMOTE in
   [Yy][Ee][Ss])
