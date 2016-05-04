@@ -49,5 +49,5 @@ $RUN_AS_SOLR_USER ln -s $SOLR_INSTALL/solr/dist
 $RUN_AS_SOLR_USER mkdir lib
 $RUN_AS_SOLR_USER ln -s $SOLR_INSTALL/solr/contrib lib/contrib
 # Adjust logging settings
-$RUN_AS_SOLR_USER sed -i 's/^log4j.rootLogger=.*$/log4j.rootLogger=INFO, file/' /var/solr/log4j.properties
+$RUN_AS_SOLR_USER sed -i 's/^log4j.rootLogger=.*$/log4j.rootLogger=WARN, file/' /var/solr/log4j.properties
 $RUN_AS_SOLR_USER sed -i "s/file.MaxFileSize=.*$/file.MaxFileSize=${SOLR_LOGSIZE}/" /var/solr/log4j.properties
