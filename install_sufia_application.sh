@@ -59,8 +59,7 @@ apt-get install -y nginx-extras passenger
 TMPFILE=`/bin/mktemp`
 cat $NGINX_CONF_FILE | \
   sed "s/worker_processes .\+;/worker_processes auto;/" | \
-  sed "s/# passenger_root/passenger_root/" | \
-  sed "s/# passenger_ruby/passenger_ruby/" > $TMPFILE
+  sed "s@# include /etc/nginx/passenger.conf;@include /etc/nginx/passenger.conf;@" > $TMPFILE
 sed "1ienv PATH;" < $TMPFILE > $NGINX_CONF_FILE
 chown root: $NGINX_CONF_FILE
 chmod 644 $NGINX_CONF_FILE
