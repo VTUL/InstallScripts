@@ -34,11 +34,23 @@ apt-get update
 apt-get install -y ffmpeg
 
 # Install nodejs from Nodesource
-curl -sL https://deb.nodesource.com/setup | bash -
+NODE_DISTRO="$(lsb_release -s -c)"
+curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+echo "deb https://deb.nodesource.com/${NODE_VERSION} ${NODE_DISTRO} main" | tee /etc/apt/sources.list.d/nodesource.list
+echo "deb-src https://deb.nodesource.com/${NODE_VERSION} ${NODE_DISTRO} main" | tee -a /etc/apt/sources.list.d/nodesource.list
+apt-get update
 apt-get install -y nodejs
 
-# Install Redis, ImageMagick, PhantomJS, and Libre Office
-apt-get install -y redis-server imagemagick phantomjs libreoffice
+# Install PhantomJS, if a cached version exists in the install files.
+PHANTOMJS_FILE="phantomjs-${PHANTOMJS_VERSION}-${PHANTOMJS_DISTRO}-${PHANTOMJS_ARCH}.tar.bz2"
+if [ -f "${BOOTSTRAP_DIR}/files/$PHANTOMJS_FILE" ]; then
+    PHANTOMJS_INSTALLDIR="${INSTALL_DIR}/.phantomjs/${PHANTOMJS_VERSION}/${PHANTOMJS_ARCH}-${PHANTOMJS_DISTRO}/"
+    $RUN_AS_INSTALLUSER mkdir -p ${PHANTOMJS_INSTALLDIR}
+    $RUN_AS_INSTALLUSER tar --extract --bzip2 --file="${BOOTSTRAP_DIR}/files/${PHANTOMJS_FILE}" --directory=${PHANTOMJS_INSTALLDIR} --strip-components=1
+fi
+
+# Install Redis, ImageMagick, and Libre Office
+apt-get install -y redis-server imagemagick libreoffice
 # Install Ruby via Brightbox repository
 add-apt-repository -y ppa:brightbox/ruby-ng
 apt-get update
@@ -100,7 +112,7 @@ mkdir -p $SSL_KEY_DIR
 install -o root -m 444 ${BOOTSTRAP_DIR}/files/cert $SSL_CERT
 install -o root -m 400 ${BOOTSTRAP_DIR}/files/key $SSL_KEY
 
-# Create Hydra head
+# Install Sufia's package dependencies.
 apt-get install -y git sqlite3 libsqlite3-dev zlib1g-dev build-essential
 gem install bundler
 
