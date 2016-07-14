@@ -133,3 +133,8 @@ service resque-pool start
 service tomcat7 start
 service solr start
 service nginx start
+
+# Add developer files to the machine.
+if [ "$APP_ENV" = "development" ]; then
+    ${SCRIPTS_DIR}/developer_setup.sh $PLATFORM $SCRIPTS_DIR
+fi
