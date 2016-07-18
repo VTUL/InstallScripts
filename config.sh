@@ -50,7 +50,7 @@ SOLR_DATA="$SOLR_MUTABLE/data"
 SOLR_LOGSIZE="100MB"
 TOMCAT_CONF="/etc/tomcat7"
 # The URL of the Fedora 4 WAR we will install.
-FEDORA4_WAR_URL="https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-4.2.0/fcrepo-webapp-4.2.0.war"
+FEDORA4_WAR_URL="https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-4.5.1/fcrepo-webapp-4.5.1.war"
 # The Tomcat directory in which to deploy the Fedora 4 WAR
 FEDORA4_APP_DIR="/var/lib/tomcat7/webapps"
 FEDORA4_USER="tomcat7"
@@ -58,10 +58,16 @@ FEDORA4_GROUP="tomcat7"
 # Java VM options for Tomcat to use to run Fedora 4
 FEDORA4_VM_OPTS="-Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms512m -Xmx1024m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC"
 JDK_HOME="/usr/lib/jvm/java-8-oracle"
+# The version of Node to install.
+NODE_VERSION="node_6.x"
+# PhantomJS version and architecture, for cached copy.
+PHANTOMJS_VERSION="2.1.1"
+PHANTOMJS_DISTRO="linux"
+PHANTOMJS_ARCH="x86_64"
 # The version of FITS to install.
 FITS_PACKAGE="fits-0.6.2"
 # The version of Ruby to install.
-RUBY_PACKAGE="ruby2.2"
+RUBY_PACKAGE="ruby2.3"
 RUN_AS_SOLR_USER="sudo -H -u $SOLR_USER"
 # Is PostgreSQL running on a remote system?
 DB_IS_REMOTE="NO"
