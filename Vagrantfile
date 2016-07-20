@@ -2,10 +2,11 @@
 
 Vagrant.configure(2) do |config|
   config.vm.box = 'ubuntu/trusty64'
-  config.vm.provider 'virtualbox' do |vb|
+  config.vm.provider 'virtualbox' do |vb, override|
     vb.name = 'data-repo-dev'
     vb.cpus = 2
     vb.memory = 4096
+    override.vm.synced_folder "../data-repo", "/home/vagrant/data-repo", create: true, disabled: false
   end
   # Forward Solr port in VM to local machine
   config.vm.network :forwarded_port, host: 8983, guest: 8983

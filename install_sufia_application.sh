@@ -70,6 +70,7 @@ apt-get install -y nginx-extras passenger
 # Uncomment passenger_root and passenger_ruby lines from config file
 TMPFILE=`/bin/mktemp`
 cat $NGINX_CONF_FILE | \
+  sed "s/sendfile on;/sendfile off;/" | \
   sed "s/worker_processes .\+;/worker_processes auto;/" | \
   sed "s@# include /etc/nginx/passenger.conf;@include /etc/nginx/passenger.conf;@" > $TMPFILE
 sed "1ienv PATH;" < $TMPFILE > $NGINX_CONF_FILE

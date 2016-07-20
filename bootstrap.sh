@@ -81,6 +81,22 @@ fi
 [ -f "${SCRIPTS_DIR}/config.sh" ] && . "${SCRIPTS_DIR}/config.sh"
 [ -f "${SCRIPTS_DIR}/config_${SERVER_ENV}.sh" ] && . "${SCRIPTS_DIR}/config_${SERVER_ENV}.sh"
 
+# Check for sync folder, and make sure it's empty
+if [[ -d "../${HYDRA_HEAD}/" && $(ls -A "../${HYDRA_HEAD}/") ]]; then
+    echo "The local directory '../${HYDRA_HEAD}/' exists, and is not empty."
+    echo "If you continue, this directory will be deleted. You may lose your work."
+    # Only accept an answer for five seconds.
+    read -t 5 -p 'Do you want to continue? [y|N] ' REPLY
+    # Only proceed if something was read, and it was some form of yes.
+    if [[ $? -eq 0 && $REPLY =~ ^[Yy]([Ee][Ss])?$ ]]; then
+        echo "Deleting ../${HYDRA_HEAD}"
+        rm -rf "../${HYDRA_HEAD}"
+    else
+        echo "Please remove ../${HYDRA_HEAD} and try again."
+        exit 1
+    fi
+fi
+
 # Check that the deployment key exists in files/ if specified
 if [ -n "$HYDRA_HEAD_GIT_REPO_DEPLOY_KEY" ]; then
   if [ ! -f "files/$HYDRA_HEAD_GIT_REPO_DEPLOY_KEY" ]; then
