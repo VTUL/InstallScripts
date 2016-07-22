@@ -133,7 +133,11 @@ cd "$HYDRA_HEAD_DIR"
 ${BOOTSTRAP_DIR}/install_postgresql.sh $PLATFORM $BOOTSTRAP_DIR
 
 # Move config/secrets.yml file into place
-$RUN_AS_INSTALLUSER cp ${BOOTSTRAP_DIR}/files/secrets.yml "$HYDRA_HEAD_DIR/config/secrets.yml"
+if [ -f "${BOOTSTRAP_DIR}/files/secrets.yml" ]; then
+    $RUN_AS_INSTALLUSER cp "${BOOTSTRAP_DIR}/files/secrets.yml" "${HYDRA_HEAD_DIR}/config/secrets.yml"
+else
+    $RUN_AS_INSTALLUSER cp "${HYDRA_HEAD_DIR}/config/secrets.yml.sample" "$HYDRA_HEAD_DIR/config/secrets.yml"
+fi
 
 # Setup the application
 if [ "$APP_ENV" = "production" ]; then
