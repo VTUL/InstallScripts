@@ -15,7 +15,7 @@ if [ -f "${BOOTSTRAP_DIR}/files/.vimrc" ]; then
     apt-get install -y git vim
 
     $RUN_AS_INSTALLUSER cp "${BOOTSTRAP_DIR}/files/.vimrc" "${INSTALL_DIR}"
-    $RUN_AS_INSTALLUSER git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    $RUN_AS_INSTALLUSER git clone https://github.com/gmarik/Vundle.vim.git "${INSTALL_DIR}/.vim/bundle/Vundle.vim"
     $RUN_AS_INSTALLUSER vim +PluginInstall +qall > /dev/null
 fi
 if [ -f "${BOOTSTRAP_DIR}/files/.bashrc" ]; then
