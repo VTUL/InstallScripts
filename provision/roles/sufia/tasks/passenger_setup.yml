@@ -1,0 +1,72 @@
+---
+- name: turn off sendfile in nginx.conf for development
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    backrefs: yes
+    regexp: '^(\s*)sendfile on;$'
+    line: '\1sendfile off;'
+  notify: restart nginx
+  when: ansible_virtualization_type == 'virtualbox'
+
+- name: ensure tls cert and key directories exist
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ tls_cert_dir }}'
+    - '{{ tls_key_dir }}'
+
+- name: copy existing tls files, if present.
+  copy:
+    src: '{{ item.source }}'
+    dest: '{{ item.dest }}'
+  register: reuse_tls_files
+  ignore_errors: True
+  notify: restart nginx
+  with_items:
+    - source: '{{ tls_cert_file }}'
+      dest: '{{ tls_cert_dir }}/{{ tls_cert_file }}'
+    - source: '{{ tls_key_file }}'
+      dest: '{{ tls_key_dir }}/{{ tls_key_file }}'
+
+- name: generate self-signed tls certificate
+  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "{{ tls_key_dir }}/{{ tls_key_file }}" -out "{{ tls_cert_dir }}/{{ tls_cert_file }}" -subj "{{ tls_cert_subject }}"
+  args:
+    chdir: /tmp
+  when: reuse_tls_files|failed
+  notify: restart nginx
+
+- name: copy tls cert and key for reuse in vagrant
+  copy:
+    src: '{{ item.source }}'
+    dest: '{{ item.dest }}'
+    remote_src: True
+  with_items:
+    - source: '{{ tls_cert_dir }}/{{ tls_cert_file }}'
+      dest: /vagrant/provision/roles/sufia/files/{{ tls_cert_file }}
+    - source: '{{ tls_key_dir }}/{{ tls_key_file }}'
+      dest: /vagrant/provision/roles/sufia/files/{{ tls_key_file }}
+  when: ansible_virtualization_type == 'virtualbox'
+
+- name: set tls file permissions
+  file:
+    path: '{{ item.path }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - path: '{{ tls_cert_dir }}/{{ tls_cert_file }}'
+      mode: '0444'
+    - path: '{{ tls_key_dir }}/{{ tls_key_file }}'
+      mode: '0400'
+
+- name: copy project passenger site
+  template:
+    src: passenger.site.j2
+    dest: /etc/nginx/sites-available/{{ project_name }}.site
+  notify: restart nginx
+
+- name: enable project passenger site
+  file:
+    src: /etc/nginx/sites-available/{{ project_name }}.site
+    dest: /etc/nginx/sites-enabled/{{ project_name }}.site
+    state: link
+  notify: restart nginx

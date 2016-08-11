@@ -1,0 +1,47 @@
+---
+- block:
+  - name: add roles
+    command: bundle exec rake datarepo:add_roles
+    args:
+      chdir: '{{ project_app_root }}'
+
+  - name: copy list of users
+    copy:
+      src: user_list.txt
+      dest: '{{ project_app_root }}/user_list.txt'
+    ignore_errors: True
+    register: copy_user_list
+
+  - name: add users
+    command: bundle exec rake datarepo:populate_users
+    args:
+      chdir: '{{ project_app_root }}'
+    when: copy_user_list|succeeded
+
+  - name: remove list of users
+    file:
+      path: '{{ project_app_root }}/user_list.txt'
+      state: absent
+
+  - name: copy list of admins
+    copy:
+      src: admin_list.txt
+      dest: '{{ project_app_root }}/admin_list.txt'
+    ignore_errors: True
+    register: copy_admin_list
+
+  - name: add admins
+    command: bundle exec rake datarepo:upgrade_users
+    args:
+      chdir: '{{ project_app_root }}'
+    when: copy_admin_list|succeeded
+
+  - name: remove list of admins
+    file:
+      path: '{{ project_app_root }}/admin_list.txt'
+      state: absent
+
+  become: yes
+  become_user: '{{ project_user }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'

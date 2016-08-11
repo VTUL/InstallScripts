@@ -1,21 +1,27 @@
-# Vagrantfile to install Data Repository application under VirtualBox
+VAGRANTFILE_API_VERSION = "2"
 
-Vagrant.configure(2) do |config|
-  config.vm.box = 'ubuntu/trusty64'
-  config.vm.provider 'virtualbox' do |vb, override|
-    vb.name = 'data-repo-dev'
-    vb.cpus = 2
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.provider :virtualbox do |vb|
     vb.memory = 4096
-    override.vm.synced_folder "../data-repo", "/home/vagrant/data-repo", create: true, disabled: false
+    vb.cpus = 2
   end
-  # Forward Solr port in VM to local machine
-  config.vm.network :forwarded_port, host: 8983, guest: 8983
-  # Forward Tomcat/Fedora port in VM to port 8888 on local machine
-  config.vm.network :forwarded_port, host: 8888, guest: 8080
-  # Forward HTTP port in VM to port 8080 on local machine
-  config.vm.network :forwarded_port, host: 8080, guest: 80
-  # Forward HTTPS port in VM to port 4443 on local machine
-  config.vm.network :forwarded_port, host: 4443, guest: 443
-  config.vm.provision :shell, args: ["vagrant", "/vagrant"], privileged: true,
-    path: 'bootstrap_server.sh'
+
+  # Hydra server
+  config.vm.define "hydravm" do |hydravm|
+    hydravm.vm.box = "ubuntu/trusty64"
+
+    # Forward Solr port in VM to local machine
+    config.vm.network :forwarded_port, host: 8983, guest: 8983
+    # Forward Tomcat/Fedora port in VM to port 8888 on local machine
+    config.vm.network :forwarded_port, host: 8888, guest: 8080
+    # Forward HTTP port in VM to port 8080 on local machine
+    config.vm.network :forwarded_port, host: 8080, guest: 80
+    # Forward HTTPS port in VM to port 4443 on local machine
+    config.vm.network :forwarded_port, host: 4443, guest: 443
+  end
+
+  # Ansible provisioning
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "provision/site.yml"
+  end
 end

@@ -1,0 +1,39 @@
+---
+- name: add postgresql key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: add postgresql repository
+  apt_repository:
+    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+    state: present
+
+- name: install postgresql packages
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  with_items:
+    - postgresql-{{ postgres_version }}
+    - libpq-dev
+    - python-psycopg2
+
+- name: configure md5 security
+  copy:
+    src: pg_hba.conf
+    dest: /etc/postgresql/{{ postgres_version }}/main/pg_hba.conf
+    group: '{{ database_group }}'
+    owner: '{{ database_user }}'
+  register: configure_postgres
+
+- name: ensure postgres starts on boot
+  service:
+    name: postgresql
+    enabled: yes
+
+- name: restart postgres server
+  service:
+    name: postgresql
+    state: restarted
+  when: configure_postgres.changed

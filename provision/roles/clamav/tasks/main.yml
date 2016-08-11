@@ -1,0 +1,14 @@
+---
+- name: install clamav
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  with_items:
+    - clamav
+    - libclamav-dev
+
+- name: create/update the clamav databases
+  command: /usr/bin/freshclam --quiet
+  args:
+    creates: /var/lib/clamav/main.cvd

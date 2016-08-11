@@ -1,0 +1,12 @@
+---
+- name: create project database role
+  postgresql_user:
+    name: '{{ project_db_user }}'
+    password: '{{ project_db_password }}'
+    role_attr_flags: CREATEDB
+
+- name: create project database
+  postgresql_db:
+    name: '{{ project_db_name }}'
+    encoding: 'UTF-8'
+    owner: '{{ project_db_user }}'

@@ -1,0 +1,17 @@
+passenger_max_pool_size {{ passenger_instances }};
+passenger_pre_start http://{{ ansible_fqdn }};
+limit_req_zone $binary_remote_addr zone=clients:1m rate=75r/s;
+
+server {
+    listen 80;
+    listen 443 ssl;
+    client_max_body_size {{ nginx_max_upload_size }};
+    passenger_min_instances 2;
+    limit_req zone=clients burst=500 nodelay;
+    root {{ project_app_root }}/public;
+    passenger_enabled on;
+    passenger_app_env {{ project_app_env }};
+    server_name {{ ansible_fqdn }};
+    ssl_certificate {{ tls_cert_dir }}/{{ tls_cert_file }};
+    ssl_certificate_key {{ tls_key_dir }}/{{ tls_key_file }};
+}

@@ -1,0 +1,10 @@
+---
+- name: add repository
+  apt_repository:
+    repo: 'ppa:mc3man/trusty-media'
+
+- name: install ffmpeg
+  apt:
+    name: ffmpeg
+    update_cache: yes
+    state: present

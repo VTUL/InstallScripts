@@ -1,0 +1,46 @@
+---
+- name: add passenger apt key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 561F9B9CAC40B2F7
+    state: present
+
+- name: add phusion apt repo
+  apt_repository:
+    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
+    state: present
+
+- name: nginx and passenger installation
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  with_items:
+    - nginx-extras
+    - passenger
+
+- name: unlink default nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+
+- name: add the PATH environment variable to nginx.conf
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    insertbefore: BOF
+    line: 'env PATH;'
+  notify: restart nginx
+
+- name: set nginx worker processes and uncomment passenger in nginx.conf
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    backrefs: yes
+    regexp: '{{ item.regex }}'
+    line: '{{ item.line }}'
+  notify: restart nginx
+  with_items:
+    - regex: '^worker_processes \d+;$'
+      line: 'worker_processes auto;'
+    - regex: '^(\s*)# include /etc/nginx/passenger.conf;$'
+      line: '\1include /etc/nginx/passenger.conf;'

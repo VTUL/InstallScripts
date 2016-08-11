@@ -1,0 +1,81 @@
+---
+- block:
+  - name: create sufia solr core
+    file:
+      path: '{{ solr_data_dir }}/{{ project_solr_core }}/conf'
+      owner: '{{ solr_user }}'
+      group: '{{ solr_group }}'
+      state: directory
+  - name: ensure core name in core.properties
+    lineinfile:
+      dest: '{{ solr_data_dir }}/{{ project_solr_core }}/core.properties'
+      line: name={{ project_solr_core }}
+      owner: '{{ solr_user }}'
+      group: '{{ solr_group }}'
+      create: True
+    notify: restart solr
+  - name: copy sufia's solrconfig.xml to the core
+    copy:
+      src: '{{ item }}'
+      dest: '{{ solr_data_dir }}/{{ project_solr_core }}/conf/solrconfig.xml'
+      owner: '{{ solr_user }}'
+      group: '{{ solr_group }}'
+      mode: 0444
+      remote_src: True
+    with_first_found:
+      - '{{ project_app_root }}/solr/config/solrconfig.xml'
+      - '{{ project_app_root }}/solr_conf/conf/solrconfig.xml'
+    notify: restart solr
+  - name: copy sufia's schema.xml to the core
+    copy:
+      src: '{{ item }}'
+      dest: '{{ solr_data_dir }}/{{ project_solr_core }}/conf/schema.xml'
+      owner: '{{ solr_user }}'
+      group: '{{ solr_group }}'
+      mode: 0444
+      remote_src: True
+    with_first_found:
+      - '{{ project_app_root }}/solr/config/schema.xml'
+      - '{{ project_app_root }}/solr_conf/conf/schema.xml'
+    notify: restart solr
+
+- block:
+  - name: create sufia solr test core
+    file:
+      path: '{{ solr_data_dir }}/{{ project_solr_test_core }}/conf'
+      owner: '{{ solr_user }}'
+      group: '{{ solr_group }}'
+      state: directory
+  - name: ensure test core name in core.properties
+    lineinfile:
+      dest: '{{ solr_data_dir }}/{{ project_solr_test_core }}/core.properties'
+      line: name={{ project_solr_test_core }}
+      owner: '{{ solr_user }}'
+      group: '{{ solr_group }}'
+      create: True
+    notify: restart solr
+  - name: copy sufia's solrconfig.xml to the test core
+    copy:
+      src: '{{ item }}'
+      dest: '{{ solr_data_dir }}/{{ project_solr_test_core }}/conf/solrconfig.xml'
+      owner: '{{ solr_user }}'
+      group: '{{ solr_group }}'
+      mode: 0444
+      remote_src: True
+    with_first_found:
+      - '{{ project_app_root }}/solr/config/solrconfig.xml'
+      - '{{ project_app_root }}/solr_conf/conf/solrconfig.xml'
+    notify: restart solr
+  - name: copy sufia's schema.xml to the test core
+    copy:
+      src: '{{ item }}'
+      dest: '{{ solr_data_dir }}/{{ project_solr_test_core }}/conf/schema.xml'
+      owner: '{{ solr_user }}'
+      group: '{{ solr_group }}'
+      mode: 0444
+      remote_src: True
+    with_first_found:
+      - '{{ project_app_root }}/solr/config/schema.xml'
+      - '{{ project_app_root }}/solr_conf/conf/schema.xml'
+    notify: restart solr
+  when: project_app_env == 'development'

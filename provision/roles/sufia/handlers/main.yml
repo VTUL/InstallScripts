@@ -1,0 +1,16 @@
+---
+- name: precompile assets
+  command: bundle exec rake assets:precompile
+  args:
+    chdir: '{{ project_app_root }}'
+  when: project_app_env == 'production'
+  notify: restart nginx
+  become: yes
+  become_user: '{{ project_user }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+
+- name: restart resque
+  service:
+    name: resque-pool
+    state: restarted
