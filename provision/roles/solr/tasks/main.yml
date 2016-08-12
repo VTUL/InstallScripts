@@ -1,0 +1,40 @@
+---
+- name: download solr tarball
+  get_url:
+    url: '{{ solr_mirror }}/lucene/solr/{{ solr_version }}/{{ solr_dist }}.tgz'
+    dest: /tmp/{{ solr_dist }}.tgz
+
+- name: copy install solr service script
+  copy:
+    src: install_solr_service.sh
+    dest: /tmp/install_solr_service.sh
+    mode: 'a+x'
+
+- name: install solr service
+  command: /tmp/install_solr_service.sh /tmp/{{ solr_dist }}.tgz -u {{ solr_user }} -d {{ solr_mutable_dir }} -i {{ solr_install_dir }}
+  args:
+    creates: /etc/init.d/solr
+
+- name: create directory for solr links
+  file:
+    path: '{{ solr_data_dir }}/lib'
+    state: directory
+
+- name: add links for lib/contrib, contrib, and dist
+  file:
+    path: '{{ item.path }}'
+    src: '{{ item.source }}'
+    state: link
+  notify: restart solr
+  with_items:
+    - path: '{{ solr_data_dir }}/lib/contrib'
+      source: '{{ solr_install_dir }}/solr/contrib'
+    - path: '{{ solr_data_dir }}/contrib'
+      source: '{{ solr_install_dir }}/solr/contrib'
+    - path: '{{ solr_data_dir }}/dist'
+      source: '{{ solr_install_dir }}/solr/dist'
+
+- name: ensure solr starts on boot
+  service:
+    name: solr
+    enabled: yes

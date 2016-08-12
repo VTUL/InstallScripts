@@ -1,0 +1,10 @@
+---
+dependencies:
+  - { role: common }
+  - { role: passenger }
+  - { role: clamav }
+  - { role: ffmpeg }
+  - { role: postfix }
+  - { role: nodejs, nodejs_version: '6.x' }
+  - { role: phantomjs, phantomjs_version: '2.1.1' }
+  - { role: ruby, ruby_version: '2.3' }

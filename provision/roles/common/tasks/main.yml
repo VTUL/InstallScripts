@@ -1,0 +1,10 @@
+---
+- name: install building software and build essentials
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  with_items:
+    - build-essential
+    - apt-transport-https
+    - software-properties-common

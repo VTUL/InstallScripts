@@ -1,0 +1,38 @@
+---
+- name: stop tomcat
+  service:
+    name: tomcat7
+    state: stopped
+  notify: restart tomcat
+
+- name: add the fedora group
+  group:
+    name: '{{ fedora_group }}'
+
+- name: create the fedora user
+  user:
+    name: '{{ fedora_user }}'
+    group: '{{ fedora_group }}'
+    home: '{{ fedora_user_home }}'
+
+- name: create fedora data dir
+  file:
+    path: '{{ fedora_data_dir }}'
+    owner: '{{ fedora_user }}'
+    group: '{{ fedora_group }}'
+    state: directory
+
+- name: download fedora war
+  get_url:
+    url: http://repo1.maven.org/maven2/org/fcrepo/fcrepo-webapp/{{ fedora_version }}/fcrepo-webapp-{{ fedora_version }}.war
+    dest: '{{ fedora_app_dir }}/fedora.war'
+    owner: '{{ fedora_user }}'
+    group: '{{ fedora_group }}'
+    mode: 0444
+    timeout: 100
+
+- name: add fedora and java config options to tomcat
+  lineinfile:
+    dest: /etc/default/tomcat7
+    line: JAVA_OPTS='-Dfcrepo.home={{ fedora_data_dir }} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms512m -Xmx1024m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC'
+  notify: restart tomcat

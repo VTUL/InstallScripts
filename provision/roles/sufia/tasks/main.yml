@@ -1,0 +1,140 @@
+---
+- name: install apt dependencies
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  with_items:
+    - git
+    - imagemagick
+    - libreoffice
+    - sqlite3
+    - libsqlite3-dev
+    - zlib1g-dev
+
+- name: add the project group for the application with group id
+  group:
+    name: '{{ project_group }}'
+    system: '{{ project_group_system }}'
+    gid: '{{ project_group_id }}'
+  when: project_group_system == 'yes'
+
+- name: add the project group for the application without group id
+  group:
+    name: '{{ project_group }}'
+  when: project_group_system != 'yes'
+
+- name: create the project user with no login password
+  user:
+    name: '{{ project_user }}'
+    group: '{{ project_group }}'
+    home: '{{ project_user_home }}'
+
+- name: clone the repo
+  git:
+    repo: '{{ project_git_url }}'
+    dest: '{{ project_app_root }}'
+    version: '{{ project_git_branch }}'
+    force: yes
+  register: clone_app
+  ignore_errors: True
+  notify:
+    - precompile assets
+    - restart nginx
+
+- name: copy the deploy key
+  copy:
+    src: '{{ project_deploy_key }}'
+    dest: '{{ project_user_home }}/.ssh/deploy_key'
+    owner: '{{ project_user }}'
+    group: '{{ project_group }}'
+    mode: 0600
+  when: clone_app|failed
+
+- name: clone the repo with a deploy key.
+  git:
+    repo: '{{ project_git_url }}'
+    dest: '{{ project_app_root }}'
+    version: '{{ project_git_branch }}'
+    key_file: '{{ project_user_home }}/.ssh/deploy_key'
+    force: yes
+  when: clone_app|failed
+  register: deploy_app
+  notify:
+    - precompile assets
+    - restart nginx
+
+- name: configure nginx/passenger for the project
+  include: passenger_setup.yml
+
+- name: configure postgres for the project
+  include: postgres_setup.yml
+
+- name: create the project's solr cores
+  include: solr_core_setup.yml
+
+- name: copy the secrets file
+  template:
+    src: secrets.yml.j2
+    dest: '{{ project_app_root }}/config/secrets.yml'
+    owner: '{{ project_user }}'
+    group: '{{ project_group }}'
+
+- name: make sure project user owns application
+  file:
+    path: '{{ project_app_root }}'
+    owner: '{{ project_user }}'
+    group: '{{ project_group }}'
+    state: directory
+    recurse: yes
+
+- name: install the project's gems for development
+  bundler:
+    chdir: '{{ project_app_root }}'
+  when: project_app_env != 'production'
+
+- name: install the project's gems for production
+  bundler:
+    chdir: '{{ project_app_root }}'
+    exclude_groups: 'development test'
+  when: project_app_env == 'production'
+
+- name: check if resque-pool is installed
+  stat:
+    path: /usr/local/bin/resque-pool
+  register: resque_installed
+
+- name: install resque-pool service
+  include: tasks/resque.yml
+  when: resque_installed.stat.exists
+
+- block:
+  - name: load db schema
+    command: bundle exec rake db:schema:load
+    args:
+      chdir: '{{ project_app_root }}'
+    when: clone_app.changed or deploy_app.changed
+
+  - name: include project specific tasks
+    include: tasks/{{ project_name }}.yml
+
+  - name: add rails bin shims for development
+    command: bundle exec rake rails:update:bin
+    args:
+      chdir: '{{ project_app_root }}'
+      creates: '{{ project_app_root }}/bin'
+    when: project_app_env == 'development'
+
+  - name: setup test database for development
+    command: bundle exec rake db:setup
+    args:
+      chdir: '{{ project_app_root }}'
+      creates: '{{ project_app_root }}/db/test.db'
+    when: project_app_env == 'development'
+    environment:
+      RAILS_ENV: 'test'
+
+  become: yes
+  become_user: '{{ project_user }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'

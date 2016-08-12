@@ -1,0 +1,6 @@
+---
+fedora_user: 'tomcat7'
+fedora_group: '{{ fedora_user }}'
+fedora_user_home: '/var/local/{{ fedora_user }}'
+fedora_data_dir: '{{ fedora_user_home }}/fedora-data'
+fedora_app_dir: '/var/lib/tomcat7/webapps'

@@ -1,0 +1,32 @@
+---
+- block:
+  - name: create phantomjs dir
+    file:
+      path: '{{ phantomjs_dir }}'
+      state: directory
+
+  - name: copy cached phantomjs
+    copy:
+      src: '{{ phantomjs_src }}'
+      dest: /tmp/{{ phantomjs_src }}
+    register: cached_pjs
+    ignore_errors: True
+
+  - name: download phantomjs
+    get_url:
+      url: https://bitbucket.org/ariya/phantomjs/downloads/{{ phantomjs_src }}
+      dest: /tmp/{{ phantomjs_src }}
+    when: cached_pjs|failed
+
+  - name: unzip phantomjs
+    command: '/bin/tar --extract --bzip2 --file="/tmp/{{ phantomjs_src }}" --directory="{{ phantomjs_dir }}" --strip-components=1'
+    args:
+      creates: '{{ phantomjs_dir }}/bin/phantomjs'
+  become: yes
+  become_user: '{{ project_user }}'
+
+- name: cache phantomjs for the future
+  copy:
+    src: /tmp/{{ phantomjs_src }}
+    dest: /vagrant/provision/roles/phantomjs/files/{{ phantomjs_src }}
+  when: ansible_virtualization_type == 'virtualbox'
