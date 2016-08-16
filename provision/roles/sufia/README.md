@@ -1,29 +1,24 @@
-Role Name
+Sufia
 =========
 
-This role installs sufia which is mostly checking for the rest of the roles
+Installs the Hydra application.
+
+This involves cloning the project's repo, configuring passenger and postgres, creating solr cores, installing gems, configuring resque if the project needs it, and finally, project-specific setup.
 
 Requirements
 ------------
 
+Requires apt (and our Common role), Passenger and Nginx, ClamAV, FFmpeg, Postfix, NodeJS, PhantomJS, Ruby. Additionally, PostgreSQL, Solr, Redis, and Fedora must be available for the project.
 
 Role Variables
 --------------
 
+Role variables are listed below, along with their defaults:
 
-Dependencies
-------------
-
-
-Example Playbook
-----------------
-
-License
--------
-
-ISC
-
-
-Author Information
-------------------
-
+    passenger_instances: 2
+    nginx_max_upload_size: 5200
+    tls_cert_subject: "/C=US/ST=Virginia/O=Virginia Tech/localityName=Blacksburg/commonName={{ ansible_fqdn }}/organizationalUnitName=University Libraries"
+    tls_cert_dir: /etc/ssl/local/certs
+    tls_cert_file: cert.pem
+    tls_key_dir: /etc/ssl/local/private
+    tls_key_file: key.pem

@@ -1,7 +1,7 @@
-Java8
+FFmpeg
 =========
 
-Installs Oracle's Java 8.
+Installs FFmpeg from the mc3man/trusty-media PPA.
 
 Requirements
 ------------
