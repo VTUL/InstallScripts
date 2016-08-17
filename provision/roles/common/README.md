@@ -1,30 +1,14 @@
-Role Name
+Common
 =========
 
-This role installs commonly needed tools for a Fedora installation. This will include setting up a user etc.,
+Installs build-essentials, and ensures secure apt connections
 
 Requirements
 ------------
 
-The are no prerequired tools needed for this installation
+Apt must be installed
 
 Role Variables
 --------------
 
-
-Dependencies
-------------
-
-
-Example Playbook
-----------------
-
-
-License
--------
-
-ISC
-
-Author Information
-------------------
-
+None

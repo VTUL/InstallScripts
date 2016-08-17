@@ -1,28 +1,18 @@
 Postfix
 =======
 
-This role install postfix on Trusty as an Internet Site
+Installs and configures Postfix.
 
 Requirements
 ------------
 
+This role uses debconf, and so expects to be installed on a Debian system.
+
+Apt must be installed, along with the Common role.
+
 Role Variables
 --------------
 
-Dependencies
-------------
+Role variables are listed below, along with their defaults:
 
-
-Example Playbook
-----------------
-
-
-License
--------
-
-ISC
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+    postfix_inet_interfaces: loopback-only
