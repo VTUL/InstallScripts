@@ -11,3 +11,5 @@
     - { role: postgresql, become: yes, postgres_version: '9.4' }
     - { role: redis, become: yes }
     - { role: sufia, become: yes }
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
