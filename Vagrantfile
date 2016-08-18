@@ -22,6 +22,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Ansible provisioning
   config.vm.provision "ansible_local" do |ansible|
-    ansible.playbook = "provision/site.yml"
+    ansible.playbook = "ansible/site.yml"
   end
 end
