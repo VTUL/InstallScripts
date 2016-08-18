@@ -41,6 +41,19 @@
       path: '{{ project_app_root }}/admin_list.txt'
       state: absent
 
+  - name: copy zipped images
+    copy:
+      src: images.zip
+      dest: '{{ project_app_root }}/images.zip'
+    ignore_errors: True
+    register: copy_zipped_images
+
+  - name: add carousel images
+    command: bundle exec rake datarepo:update_images {{ project_app_root }}/images.zip
+    args:
+      chdir: '{{ project_app_root }}'
+    when: copy_zipped_images|succeeded
+
   become: yes
   become_user: '{{ project_user }}'
   environment:
