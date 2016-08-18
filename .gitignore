@@ -1,5 +1,3 @@
-/provision/roles/phantomjs/files/*.tar.bz2
-/provision/roles/sufia/files/*.pem
 site_secrets.yml
 site.retry
 .vagrant/

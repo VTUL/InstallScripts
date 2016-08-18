@@ -43,9 +43,9 @@
     remote_src: True
   with_items:
     - source: '{{ tls_cert_dir }}/{{ tls_cert_file }}'
-      dest: /vagrant/provision/roles/sufia/files/{{ tls_cert_file }}
+      dest: /vagrant/ansible/roles/sufia/files/{{ tls_cert_file }}
     - source: '{{ tls_key_dir }}/{{ tls_key_file }}'
-      dest: /vagrant/provision/roles/sufia/files/{{ tls_key_file }}
+      dest: /vagrant/ansible/roles/sufia/files/{{ tls_key_file }}
   when: ansible_virtualization_type == 'virtualbox'
 
 - name: set tls file permissions

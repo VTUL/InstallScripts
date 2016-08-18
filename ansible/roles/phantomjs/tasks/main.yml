@@ -28,5 +28,5 @@
 - name: cache phantomjs for the future
   copy:
     src: /tmp/{{ phantomjs_src }}
-    dest: /vagrant/provision/roles/phantomjs/files/{{ phantomjs_src }}
+    dest: /vagrant/ansible/roles/phantomjs/files/{{ phantomjs_src }}
   when: ansible_virtualization_type == 'virtualbox'

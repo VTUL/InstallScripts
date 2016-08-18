@@ -23,7 +23,7 @@ Finally, these install scripts must be installed on the local machine. Cloning t
 ## Configuration
 
 
-A deployment settings file needs to be created in the `provision/` directory. This file is called `site_secrets.yml` and is easily created by copying the example file `example_site_secrets.yml`:
+A deployment settings file needs to be created in the `ansible/` directory. This file is called `site_secrets.yml` and is easily created by copying the example file `example_site_secrets.yml`:
 
 ```
 cp example_site_secrets.yml site_secrets.yml
@@ -33,7 +33,7 @@ The Ansible playbook will be expecting a repository-ignored `site_secrets.yml` Y
 
 #### TLS certificate and key
 
-A TLS certificate and key file may be placed in the `provision/roles/sufia/files/` directory for use in the system being set up. The certificate should be named `cert.pem` and the key named `key.pem`
+A TLS certificate and key file may be placed in the `ansible/roles/sufia/files/` directory for use in the system being set up. The certificate should be named `cert.pem` and the key named `key.pem`
 
 If either of the aforementioned files is not present then a self-signed TLS certificate and key pair will be generated and used instead.
 
@@ -49,7 +49,7 @@ vagrant up
 If using Ansible directly, you will need the IP address of the server you plan to provision. Execute the following command:
 
 ```
-cd /path/to/install/scripts/provision
+cd /path/to/install/scripts/ansible
 ansible-playbook --limit [ip address] site.yml -b
 ```
 
