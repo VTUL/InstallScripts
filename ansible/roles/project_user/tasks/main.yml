@@ -1,15 +1,9 @@
 ---
-- name: add the project group for the application with group id
+- name: add the project group for the application
   group:
     name: '{{ project_group }}'
     system: '{{ project_group_system }}'
-    gid: '{{ project_group_id }}'
-  when: project_group_system == 'yes'
-
-- name: add the project group for the application without group id
-  group:
-    name: '{{ project_group }}'
-  when: project_group_system != 'yes'
+    gid: '{{ project_group_id | default(omit) }}'
 
 - name: create the project user with no login password
   user:
