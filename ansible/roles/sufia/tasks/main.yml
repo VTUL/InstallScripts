@@ -16,7 +16,7 @@
   git:
     repo: '{{ project_git_url }}'
     dest: '{{ project_app_root }}'
-    version: '{{ project_git_branch }}'
+    version: '{{ project_git_identifier }}'
     force: yes
   register: clone_app
   ignore_errors: True
@@ -37,7 +37,7 @@
   git:
     repo: '{{ project_git_url }}'
     dest: '{{ project_app_root }}'
-    version: '{{ project_git_branch }}'
+    version: '{{ project_git_identifier }}'
     key_file: '{{ project_user_home }}/.ssh/deploy_key'
     force: yes
   when: clone_app|failed
