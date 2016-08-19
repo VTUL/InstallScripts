@@ -22,3 +22,7 @@ Role variables are listed below, along with their defaults:
     tls_cert_file: cert.pem
     tls_key_dir: /etc/ssl/local/private
     tls_key_file: key.pem
+    project_git_url: https://github.com/VTUL/{{ project_name }}.git
+    project_deploy_key: ''
+    project_app_root: '{{ project_user_home }}/{{ project_name }}'
+    project_solr_test_core: test
