@@ -26,7 +26,8 @@
   become_user: '{{ project_user }}'
 
 - name: cache phantomjs for the future
-  copy:
+  fetch:
     src: /tmp/{{ phantomjs_src }}
-    dest: /vagrant/ansible/roles/phantomjs/files/{{ phantomjs_src }}
+    dest: '{{ role_path }}/files/'
+    flat: True
   when: ansible_virtualization_type == 'virtualbox'

@@ -37,15 +37,13 @@
   notify: restart nginx
 
 - name: copy tls cert and key for reuse in vagrant
-  copy:
-    src: '{{ item.source }}'
-    dest: '{{ item.dest }}'
-    remote_src: True
+  fetch:
+    src: '{{ item }}'
+    dest: '{{ role_path }}/files/'
+    flat: True
   with_items:
-    - source: '{{ tls_cert_dir }}/{{ tls_cert_file }}'
-      dest: /vagrant/ansible/roles/sufia/files/{{ tls_cert_file }}
-    - source: '{{ tls_key_dir }}/{{ tls_key_file }}'
-      dest: /vagrant/ansible/roles/sufia/files/{{ tls_key_file }}
+    - '{{ tls_cert_dir }}/{{ tls_cert_file }}'
+    - '{{ tls_key_dir }}/{{ tls_key_file }}'
   when: ansible_virtualization_type == 'virtualbox'
 
 - name: set tls file permissions
