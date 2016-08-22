@@ -1,0 +1,54 @@
+---
+- name: ensure sftp user home directory exists
+  file:
+    path: "{{ sftp_home_dir }}"
+    owner: root
+    mode: "0711"
+    state: directory
+
+- name: ensure sftp chroot owner exists
+  user:
+    name: "{{ sftp_chroot_owner }}"
+    state: present
+
+- name: ensure sftp chroot group exists
+  group:
+    name: "{{ sftp_chroot_group }}"
+    state: present
+
+- name: ensure sftp user exists and is a member of sftp chroot group
+  user:
+    comment: "SFTP Chroot Upload User"
+    createhome: false
+    home: "{{ sftp_home_dir }}"
+    name: "{{ sftp_user }}"
+    group: "{{ sftp_chroot_group }}"
+    shell: /usr/lib/openssh/sftp-server
+    state: present
+
+- name: ensure sftp upload user .ssh directory exists
+  file:
+    path: "{{ sftp_home_dir}}/.ssh"
+    owner: "{{ sftp_user }}"
+    mode: "0500"
+    state: directory
+
+- name: try to load authorised keys from local_files_dir
+  authorized_key:
+    user: "{{ sftp_user }}"
+    key: "{{ lookup('file', item) }}"
+  with_fileglob:
+    - "{{ local_files_dir }}/authorized_keys/*"
+  register: key_copy
+  ignore_errors: True
+
+- name: fail if loading authorised keys failed
+  fail: msg="Loading authorized_keys failed."
+  when: key_copy|failed
+
+- name: issue a warning if no authorised keys found locally
+  debug:
+    msg: |
+      WARNING: No keys found in {{ local_files_dir }}/authorized_keys directory!
+      Upload user will not be able to sftp to system until you provide one.
+  when: key_copy|skipped

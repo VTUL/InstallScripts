@@ -6,7 +6,7 @@ Installs Solr.
 Requirements
 ------------
 
-None
+Solr is a Java application and so requires our Java8 role
 
 Role Variables
 --------------
@@ -25,4 +25,3 @@ Role variables are listed below, along with their defaults:
     solr_xms: '256M'
     solr_xmx: '512M'
     solr_dist: 'solr-{{ solr_version }}'
-

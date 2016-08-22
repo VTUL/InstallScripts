@@ -1,0 +1,67 @@
+---
+- name: make sure project user owns application
+  file:
+    path: "{{ project_app_root }}"
+    mode: "0755"
+    owner: "{{ project_user }}"
+    group: "{{ project_group }}"
+    state: directory
+    recurse: yes
+
+- name: clone the geoblacklight repo
+  git:
+    repo: "{{ project_git_url }}"
+    dest: "{{ project_app_root }}"
+    version: "{{ project_git_identifier }}"
+    force: yes
+  become_user: "{{ project_user }}"
+
+- name: check for secrets file
+  stat:
+    path: "{{ project_app_root }}/config/secrets.yml"
+  register: secret
+
+- name: openssl key
+  command: /usr/bin/openssl rand -hex 64
+  register: ssl_result
+
+- name: copy the secrets file
+  template:
+    src: secrets.yml.j2
+    dest: "{{ project_app_root }}/config/secrets.yml"
+
+- name: install production gems
+  bundler:
+    state: present
+    chdir: "{{ project_app_root }}"
+    exclude_groups: 'development test'
+    user_install: no
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+  when: project_app_env == "production"
+
+- name: install development gems
+  bundler:
+    state: present
+    chdir: "{{ project_app_root }}"
+    user_install: no
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+  when: project_app_env != "production"
+
+- name: load db schema
+  command: bundle exec rake db:setup
+  args:
+    chdir: "{{ project_app_root }}"
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+  become_user: '{{ project_user }}'
+
+- name: precompile
+  command: bundle exec rake assets:precompile
+  args:
+    chdir: "{{ project_app_root }}"
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+  become_user: '{{ project_user }}'
+  when: project_app_env == "production"

@@ -1,5 +1,5 @@
 ---
-- name: import nodesourse GPG key
+- name: import nodesource GPG key
   apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
     state: present

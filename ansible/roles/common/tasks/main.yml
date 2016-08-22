@@ -5,6 +5,7 @@
     state: present
     update_cache: yes
   with_items:
+    - acl
     - build-essential
     - apt-transport-https
     - software-properties-common

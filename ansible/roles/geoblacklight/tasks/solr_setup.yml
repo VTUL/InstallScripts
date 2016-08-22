@@ -1,0 +1,37 @@
+---
+- name: stop solr
+  service:
+    name: solr
+    state: stopped
+
+- name: create blacklight solr core
+  file:
+    path: '{{ solr_data_dir }}/{{ project_solr_core }}/conf'
+    owner: "{{ solr_user }}"
+    group: "{{ solr_group }}"
+    state: directory
+
+- name: ensure core name in core.properties
+  lineinfile:
+    dest: '{{ solr_data_dir }}/{{ project_solr_core }}/core.properties'
+    line: name={{ project_solr_core }}
+    owner: '{{ solr_user }}'
+    group: '{{ solr_group }}'
+    create: True
+  notify: restart solr
+
+- name: copy solr config files
+  shell: cp -R {{ project_app_root }}/solr/conf/* {{ solr_data_dir }}/{{ project_solr_core }}/conf
+  args:
+    creates: "{{ solr_data_dir }}/{{ project_solr_core }}/conf/schema.xml"
+
+- name: ensure solr owns the conf files
+  file:
+    path: "{{ solr_data_dir }}/{{ project_solr_core }}/conf"
+    mode: u=rwX,g=rX,o=rX
+    owner: "{{ solr_user }}"
+    group: "{{ solr_group }}"
+    recurse: true
+
+- name: start solr
+  service: name=solr state=started

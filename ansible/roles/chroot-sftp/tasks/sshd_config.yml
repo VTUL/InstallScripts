@@ -1,0 +1,15 @@
+---
+- name: manage sftp chroot configuration in /etc/ssh/sshd_config
+  blockinfile:
+    dest: /etc/ssh/sshd_config
+    backup: yes
+    marker: "# {mark} ANSIBLE MANAGED SFTP-CHROOT BLOCK"
+    insertafter: EOF
+    block: |
+      Match User {{ sftp_user }}
+        ChrootDirectory "{{ sftp_upload_root }}"
+        AuthenticationMethods publickey
+        X11Forwarding no
+        AllowTcpForwarding no
+        ForceCommand internal-sftp
+  notify: reload ssh configuration
