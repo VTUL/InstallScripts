@@ -1,0 +1,4 @@
+---
+passenger_instances: '2'
+nginx_max_upload_size: '10m'
+project_solr_core: blacklight-core

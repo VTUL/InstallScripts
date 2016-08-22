@@ -1,0 +1,4 @@
+---
+- include: sftp_user.yml
+- include: sftp_chroot.yml
+- include: sshd_config.yml

@@ -1,3 +1,5 @@
 ---
+# Whether {{ project_group }} is a system (lower-numbered gid) group
 project_group_system: 'no'
+# The numeric gid of {{ project_group }}
 #project_group_id: ''

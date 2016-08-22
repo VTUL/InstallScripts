@@ -1,0 +1,13 @@
+---
+- name: copy data repo site configuration file
+  template:
+    src: passenger.site.j2
+    dest: /etc/nginx/sites-available/{{ project_name }}.site
+  notify: restart nginx
+
+- name: enable passenger site
+  file:
+    src: /etc/nginx/sites-available/{{ project_name }}.site
+    dest: /etc/nginx/sites-enabled/{{ project_name }}.site
+    state: link
+  notify: restart nginx

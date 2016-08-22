@@ -1,0 +1,14 @@
+---
+- name: provision a geoblacklight instance
+  hosts: all
+  user: "{{ ansible_user }}"
+  vars_files:
+    - site_vars.yml
+    - site_secrets.yml
+  gather_facts: true
+  roles:
+    - { role: solr, become: yes, solr_version: "5.5.2" }
+    - { role: geoblacklight, become: yes }
+    - { role: chroot-sftp, become: yes, sftp_upload_root: "/opt/sftp/geodata"}
+  environment:
+    RAILS_ENV: "{{ project_app_env }}"

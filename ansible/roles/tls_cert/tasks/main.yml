@@ -1,0 +1,44 @@
+---
+- name: ensure tls cert and key directories exist
+  file:
+    path: '{{ item }}'
+    owner: root
+    group: root
+    state: directory
+  with_items:
+    - '{{ tls_cert_dir }}'
+    - '{{ tls_key_dir }}'
+
+- name: copy local tls certificate if present
+  copy:
+    src: "{{ tls_local_files_dir }}/cert.pem"
+    dest: "{{ tls_cert_dir }}/{{ tls_cert_file }}"
+  register: local_cert
+  ignore_errors: True
+
+- name: copy local tls key if present
+  copy:
+    src: "{{ tls_local_files_dir }}/key.pem"
+    dest: "{{ tls_key_dir }}/{{ tls_key_file }}"
+  register: local_key
+  ignore_errors: True
+
+- name: generate self-signed tls certificate if necessary
+  command: |
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048
+      -keyout "{{ tls_key_dir }}/{{ tls_key_file }}"
+      -out "{{ tls_cert_dir }}/{{ tls_cert_file }}"
+      -subj "{{ tls_cert_subject }}"
+  args:
+    chdir: /tmp
+  when: local_cert|failed or local_key|failed
+
+- name: set tls file permissions
+  file:
+    path: '{{ item.path }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - path: '{{ tls_cert_dir }}/{{ tls_cert_file }}'
+      mode: '0444'
+    - path: '{{ tls_key_dir }}/{{ tls_key_file }}'
+      mode: '0400'

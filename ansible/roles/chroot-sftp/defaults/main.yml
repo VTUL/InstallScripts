@@ -1,0 +1,6 @@
+---
+sftp_user: "upload"
+sftp_chroot_owner: "{{ sftp_user }}"
+sftp_chroot_group: "{{ sftp_user }}"
+sftp_home_dir: "/home/{{ sftp_user }}"
+sftp_upload_root: "/opt/sftp/chroot"

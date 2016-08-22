@@ -1,0 +1,19 @@
+---
+- name: install common rails dependencies
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  with_items:
+    - git
+    - sqlite3
+    - libsqlite3-dev
+    - zlib1g-dev
+
+- name: geoblacklight requires a newer version of RubyGems
+  command: gem update --system
+
+- include: nginx_setup.yml
+- include: geoblacklight_setup.yml
+- include: solr_setup.yml
+- include: cron.yml

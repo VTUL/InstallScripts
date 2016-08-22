@@ -1,0 +1,7 @@
+---
+tls_local_files_dir: "{{ local_files_dir }}"
+tls_cert_subject: "/C=US/ST=Virginia/O=Virginia Tech/localityName=Blacksburg/commonName={{ ansible_fqdn }}/organizationalUnitName=University Libraries"
+tls_cert_dir: '/etc/ssl/local/certs'
+tls_cert_file: 'cert.pem'
+tls_key_dir: '/etc/ssl/local/private'
+tls_key_file: 'key.pem'

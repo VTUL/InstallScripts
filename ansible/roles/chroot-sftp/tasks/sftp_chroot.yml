@@ -1,0 +1,32 @@
+---
+# Create SFTP chroot area with GeoBlacklight user owning most directories (for
+# the ingest script to be able to write to them) and the upload user's
+# group being the group owner of them.  Root must own the root directory
+# of the chroot area and all preceding directories in the path for
+# StrictModes to be satisfied.
+
+- name: ensure sftp chroot directory exists
+  file:
+    path: "{{ sftp_upload_root }}"
+    owner: root
+    mode: "0755"
+    state: directory
+
+- name: set up sftp chroot directory hierarchy
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ sftp_chroot_owner }}"
+    group: "{{ sftp_chroot_group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  with_items:
+    - path: "{{sftp_upload_root}}/Upload"
+      mode: "0770"
+    - path: "{{sftp_upload_root}}/Archive"
+      mode: "0750"
+    - path: "{{sftp_upload_root}}/Report"
+      mode: "0750"
+    - path: "{{sftp_upload_root}}/Report/Logs"
+      mode: "0750"
+    - path: "{{sftp_upload_root}}/Report/Errors"
+      mode: "0750"

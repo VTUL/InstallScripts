@@ -1,0 +1,8 @@
+dependencies:
+  - { role: common }
+  - { role: project_user }
+  - { role: passenger }
+  - { role: tls_cert }
+  - { role: postfix }
+  - { role: nodejs, nodejs_version: '6.x' }
+  - { role: ruby, ruby_version: '2.3' }

@@ -1,0 +1,9 @@
+---
+- name: configure cron to ingest content periodically via rake task
+  cron:
+    user: "{{ project_user }}"
+    hour: 0
+    cron_file: geoblacklight_ingest
+    job: cd "{{ project_app_root }}" && RAILS_ENV={{ project_app_env }} bundle exec rake vtul:geoblacklight:data_ingest
+    name: GeoBlacklight Ingest
+    state: present
