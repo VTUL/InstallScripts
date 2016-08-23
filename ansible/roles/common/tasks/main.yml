@@ -8,4 +8,4 @@
     - acl
     - build-essential
     - apt-transport-https
-    - software-properties-common
+    - python-apt
