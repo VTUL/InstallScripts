@@ -16,19 +16,13 @@
     force: yes
   become_user: "{{ project_user }}"
 
-- name: check for secrets file
-  stat:
-    path: "{{ project_app_root }}/config/secrets.yml"
-  register: secret
-
-- name: openssl key
-  command: /usr/bin/openssl rand -hex 64
-  register: ssl_result
-
 - name: copy the secrets file
   template:
     src: secrets.yml.j2
     dest: "{{ project_app_root }}/config/secrets.yml"
+    owner: "{{ project_user }}"
+    group: "{{ project_group }}"
+    mode: "0440"
 
 - name: install production gems
   bundler:
