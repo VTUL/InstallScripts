@@ -1,6 +1,5 @@
-#-*- mode: ruby -*-
-# vi: set ft=ruby :
-
+# Vagrantfile for installing VTUL Hydra/Rails applications
+#
 # To install under OpenStack the Vagrant openstack provider needs to be installed.
 # You can install this plugin by running the following command:
 #
@@ -16,6 +15,16 @@
 
 VAGRANTFILE_API_VERSION = "2"
 
+$secrets_items = {}
+begin
+  require 'yaml'
+  $secrets_items = YAML::load(File.open('ansible/site_secrets.yml'))
+rescue Errno::ENOENT
+  $stderr.puts "Don't forget to create 'ansible/site_secrets.yml'..."
+rescue => e
+  abort "An error occurred processing 'ansible/site_secrets.yml'?: #{e}"
+end
+
 def site_file
   # If the APP_TYPE environment variable is defined and contains an acceptable
   # known value then we use that setting for the site file type.  Otherwise,
@@ -26,9 +35,7 @@ def site_file
     return app
   else
     # Try to guess the application type from the site_secrets.yml project_name
-    require 'yaml'
-    items = YAML::load(File.open('ansible/site_secrets.yml'))
-    app = items["project_name"]
+    app = $secrets_items["project_name"]
     case app
       when "data-repo", "iawa" then "sufia"
       when "geoblacklight"     then "geoblacklight"
