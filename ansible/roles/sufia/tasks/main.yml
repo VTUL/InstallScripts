@@ -6,6 +6,7 @@
     update_cache: yes
   with_items:
     - git
+    - unzip
     - imagemagick
     - libreoffice
     - sqlite3
