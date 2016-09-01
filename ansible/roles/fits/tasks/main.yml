@@ -1,0 +1,40 @@
+---
+- name: install fits installation dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - unzip
+
+- name: download fits distribution to /tmp
+  get_url:
+    url: "{{ fits_download_url }}/fits-{{ fits_version }}.zip"
+    dest: /tmp/fits-{{ fits_version }}.zip
+    owner: root
+    group: root
+    mode: 0444
+    timeout: 100
+
+- name: unarchive fits distribution
+  unarchive:
+    src: /tmp/fits-{{ fits_version }}.zip
+    dest: /opt
+    remote_src: yes
+    creates: /opt/fits-{{ fits_version }}/fits.sh
+
+- name: ensure fits directory is accessible
+  file:
+    path: /opt/fits-{{ fits_version }}
+    mode: a+x
+
+- name: link desired version of fits to {{fits_root}}/fits
+  file:
+    src: /opt/fits-{{ fits_version }}
+    dest: /opt/fits
+    state: link
+
+- name: ensure fits.sh is executable
+  file:
+    path: /opt/fits-{{ fits_version }}/fits.sh
+    mode: a+x
