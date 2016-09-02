@@ -2,6 +2,7 @@
 dependencies:
   - { role: project_user }
   - { role: common }
+  - { role: fits }
   - { role: passenger }
   - { role: clamav }
   - { role: ffmpeg }
