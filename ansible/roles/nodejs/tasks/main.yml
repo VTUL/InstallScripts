@@ -1,8 +1,8 @@
 ---
+
 - name: import nodesource GPG key
-  apt_key:
-    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    state: present
+  become: yes
+  shell: /usr/bin/curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | /usr/bin/apt-key add -
 
 - name: add nodesource deb repo
   apt_repository:
