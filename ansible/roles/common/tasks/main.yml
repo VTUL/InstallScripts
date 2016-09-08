@@ -9,3 +9,13 @@
     - build-essential
     - apt-transport-https
     - python-apt
+    - python-pip
+
+- name: update python's crypto libs
+  pip:
+    name: '{{ item }}'
+  with_items:
+    - urllib3
+    - pyopenssl
+    - ndg-httpsclient
+    - pyasn1
