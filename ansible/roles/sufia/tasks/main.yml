@@ -62,6 +62,8 @@
     dest: '{{ project_app_root }}/config/secrets.yml'
     owner: '{{ project_user }}'
     group: '{{ project_group }}'
+  notify:
+    - precompile assets
 
 - name: make sure project user owns application
   file:
