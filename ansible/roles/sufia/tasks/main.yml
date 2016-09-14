@@ -22,7 +22,6 @@
   register: clone_app
   ignore_errors: True
   notify:
-    - precompile assets
     - restart nginx
 
 - name: copy the deploy key
@@ -44,7 +43,6 @@
   when: clone_app|failed
   register: deploy_app
   notify:
-    - precompile assets
     - restart nginx
 
 - name: configure nginx/passenger for the project
@@ -116,6 +114,14 @@
     when: project_app_env == 'development'
     environment:
       RAILS_ENV: 'test'
+
+  - name: remove old precompiled assets
+    command: bundle exec rake assets:clobber
+    args:
+      chdir: '{{ project_app_root }}'
+    when: project_app_env == 'production'
+    notify:
+      - precompile assets
 
   become: yes
   become_user: '{{ project_user }}'
