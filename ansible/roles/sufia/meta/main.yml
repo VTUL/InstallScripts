@@ -8,5 +8,5 @@ dependencies:
   - { role: ffmpeg }
   - { role: postfix }
   - { role: nodejs, nodejs_version: '6.x' }
-  - { role: phantomjs, phantomjs_version: '2.1.1' }
+  - { role: phantomjs, phantomjs_version: '2.1.1', when: project_app_env != 'production' }
   - { role: ruby, ruby_version: '2.3' }
