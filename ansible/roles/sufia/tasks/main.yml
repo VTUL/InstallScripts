@@ -53,6 +53,7 @@
 
 - name: create the project's solr cores
   include: solr_core_setup.yml
+  when: project_solr_url | search( 'localhost|127\.0\.0\.1' )
 
 - name: copy the secrets file
   template:
