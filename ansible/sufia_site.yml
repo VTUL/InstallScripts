@@ -6,10 +6,31 @@
     - site_secrets.yml
   gather_facts: true
   roles:
-    - { role: fedora4, become: yes, fedora_version: '4.5.1' }
-    - { role: solr, become: yes, solr_version: '5.5.1' }
-    - { role: postgresql, become: yes, postgres_version: '9.4' }
-    - { role: redis, become: yes }
-    - { role: sufia, become: yes }
+    - {
+        role: fedora4,
+        become: yes,
+        fedora_version: '4.5.1',
+        when: project_fedora_url | search( 'localhost|127\.0\.0\.1' )
+    }
+    - {
+        role: solr,
+        become: yes,
+        solr_version: '5.5.1',
+        when: project_solr_url | search( 'localhost|127\.0\.0\.1' )
+    }
+    - {
+        role: postgresql,
+        become: yes,
+        postgres_version: '9.4'
+    }
+    - {
+        role: redis,
+        become: yes,
+        when: project_redis_host | search( 'localhost|127\.0\.0\.1' )
+    }
+    - {
+        role: sufia,
+        become: yes
+    }
   environment:
     RAILS_ENV: '{{ project_app_env }}'
