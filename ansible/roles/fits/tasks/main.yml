@@ -20,7 +20,7 @@
   unarchive:
     src: /tmp/fits-{{ fits_version }}.zip
     dest: /opt
-    remote_src: yes
+    copy: no
     creates: /opt/fits-{{ fits_version }}/fits.sh
 
 - name: ensure fits directory is accessible
