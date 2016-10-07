@@ -1,0 +1,3 @@
+---
+clamav_private_mirror_enabled: true
+clamav_private_mirror_host: clamav.mirror.cc.vt.edu
