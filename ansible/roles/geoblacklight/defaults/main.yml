@@ -2,3 +2,10 @@
 passenger_instances: '2'
 nginx_max_upload_size: '10m'
 project_solr_core: blacklight-core
+graylog_enable: "{{ 'true' if project_app_env == 'production' else 'false' }}"
+graylog_host: 127.0.0.1
+graylog_port: 12201
+graylog_protocol: udp
+graylog_network_locality: WAN
+graylog_facility: "{{ project_name }}"
+graylog_verbosity: "info"
