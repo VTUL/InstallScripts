@@ -8,6 +8,21 @@
     - clamav
     - libclamav-dev
 
+- name: use local private mirror if enabled
+  lineinfile:
+    dest: /etc/clamav/freshclam.conf
+    insertafter: EOF
+    line: PrivateMirror {{ clamav_private_mirror_host }}
+    state: present
+  when: clamav_private_mirror_enabled
+
+- name: disable local private mirror if not enabled
+  lineinfile:
+    dest: /etc/clamav/freshclam.conf
+    regexp: "PrivateMirror .*"
+    state: absent
+  when: not clamav_private_mirror_enabled
+
 - name: create/update the clamav databases
   command: /usr/bin/freshclam --quiet
   args:
