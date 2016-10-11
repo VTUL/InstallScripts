@@ -34,5 +34,7 @@
 - name: add fedora and java config options to tomcat
   lineinfile:
     dest: /etc/default/tomcat7
-    line: JAVA_OPTS='-Dfcrepo.home={{ fedora_data_dir }} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms512m -Xmx1024m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC'
+    line: JAVA_OPTS='-Dfcrepo.home={{ fedora_data_dir }} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server {{ fedora_java_vm_opts }}'
+    regexp: "^JAVA_OPTS=.*"
+    state: present
   notify: restart tomcat
