@@ -11,3 +11,8 @@ project_deploy_key: ''
 project_app_root: '{{ project_user_home }}/{{ project_name }}'
 # Name of Solr test core used by application
 project_solr_test_core: 'test'
+# ORCID API endpoints
+project_orcid_site_url: "{{ 'http://api.orcid.org' if project_orcid_service == 'production' else 'http://api.sandbox.orcid.org' }}"
+project_orcid_token_url: "{{ 'https://api.orcid.org/oauth/token' if project_orcid_service == 'production' else 'https://api.sandbox.orcid.org/oauth/token' }}"
+project_orcid_remote_signin_url: "{{ 'https://orcid.org/signin/auth.json' if project_orcid_service == 'production' else 'https://sandbox.orcid.org/signin/auth.json' }}"
+project_orcid_authorize_url: "{{ 'https://orcid.org/oauth/authorize' if project_orcid_service == 'production' else 'https://sandbox.orcid.org/oauth/authorize' }}"
