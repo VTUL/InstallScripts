@@ -1,6 +1,6 @@
 ---
 passenger_instances: 2
-nginx_max_upload_size: "200m"
+nginx_max_upload_size: "{{ project_max_upload_size|default('200m') }}"
 tls_cert_subject: "/C=US/ST=Virginia/O=Virginia Tech/localityName=Blacksburg/commonName={{ ansible_fqdn }}/organizationalUnitName=University Libraries"
 tls_cert_dir: /etc/ssl/local/certs
 tls_cert_file: cert.pem
