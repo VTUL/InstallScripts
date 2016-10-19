@@ -1,6 +1,6 @@
 ---
 passenger_instances: '2'
-nginx_max_upload_size: '10m'
+nginx_max_upload_size: "{{ project_max_upload_size|default('10m') }}"
 project_solr_core: blacklight-core
 graylog_enable: "{{ 'true' if project_app_env == 'production' else 'false' }}"
 graylog_host: 127.0.0.1
