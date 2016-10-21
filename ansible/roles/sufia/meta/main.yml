@@ -4,6 +4,7 @@ dependencies:
   - { role: common }
   - { role: fits }
   - { role: passenger }
+  - { role: tls_cert }
   - { role: clamav }
   - { role: ffmpeg }
   - { role: postfix }

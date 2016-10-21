@@ -26,3 +26,5 @@ Role variables are listed below:
 - `tls_key_file`: The filename of the TLS certificate private key.
 
 See `defaults/main.yml` for current default settings.
+
+This role makes use of the `local_files_dir` variable defined in the top-level `site_vars.yml` file. The `local_files_dir` setting points to a local directory on the provisioning host where locally-provided files may be supplied to the deployment and provisioning process. In the case of the `tls_cert` role, this directory may be used to supply a local TLS public and private key.

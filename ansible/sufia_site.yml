@@ -3,6 +3,7 @@
   hosts: all
   user: "{{ ansible_user }}"
   vars_files:
+    - site_vars.yml
     - site_secrets.yml
   gather_facts: true
   roles:

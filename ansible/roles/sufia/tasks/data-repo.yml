@@ -7,7 +7,7 @@
 
   - name: copy list of users
     copy:
-      src: user_list.txt
+      src: "{{ local_files_dir }}/user_list.txt"
       dest: '{{ project_app_root }}/user_list.txt'
     ignore_errors: True
     register: copy_user_list
@@ -25,7 +25,7 @@
 
   - name: copy list of admins
     copy:
-      src: admin_list.txt
+      src: "{{ local_files_dir }}/admin_list.txt"
       dest: '{{ project_app_root }}/admin_list.txt'
     ignore_errors: True
     register: copy_admin_list
@@ -43,7 +43,7 @@
 
   - name: copy zipped images
     copy:
-      src: images.zip
+      src: "{{ local_files_dir }}/images.zip"
       dest: '{{ project_app_root }}/images.zip'
     ignore_errors: True
     register: copy_zipped_images

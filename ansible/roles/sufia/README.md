@@ -26,3 +26,5 @@ Role variables are listed below, along with their defaults:
     project_deploy_key: ''
     project_app_root: '{{ project_user_home }}/{{ project_name }}'
     project_solr_test_core: test
+
+This role makes use of the `local_files_dir` variable defined in the top-level `site_vars.yml` file. The `local_files_dir` setting points to a local directory on the provisioning host where locally-provided files may be supplied to the deployment and provisioning process. In the case of the `sufia` role, this directory is used to supply the `user_list.txt`, `admin_list.txt`, and `images.zip` carousel images for the `data-repo` application.

@@ -33,13 +33,17 @@ For all environments, a deployment settings file needs to be created in the `ans
 cp example_site_secrets.yml site_secrets.yml
 ```
 
-The Ansible playbook will be expecting a repository-ignored `site_secrets.yml` YAML file. Read the variable contents of the file and adjust accordingly to match your local environment.
+The Ansible playbook will be expecting a repository-ignored `site_secrets.yml` YAML file. Read the variable contents of the file and adjust accordingly to match your local environment. All configurable aspects of the application to be deployed may be altered by changing settings in this file.
 
 #### TLS certificate and key
 
 A TLS certificate and key file may be placed in the `local_files/` directory for use in the system being set up. The certificate should be named `local_files/cert.pem` and the key named `local_files/key.pem`.
 
 If either of the aforementioned files is not present then a self-signed TLS certificate and key pair will be generated and used instead.
+
+#### Local files
+
+Sometimes, local files may be supplied during the deployment or provisioning of a target application, e.g., carousel images for the `data-repo` application, TLS key files, etc. Such local (and potentially sensitive) files should be placed in the `local_files` directory. The contents of the `local_files` directory hierarchy are subject to `.gitignore` and so won't be checked in via Git accidentally.
 
 #### Authorized keys for SFTP
 
@@ -73,7 +77,7 @@ When using the `aws` provider to `vagrant up` it is necessary to define several 
 - `AWS_SECRET_KEY`: the AWS IAM secret key to the account under which the EC2 instance will be created.
 - `AWS_SECURITY_GROUPS`: a space-separated list of existing AWS security groups to apply to this instance. (If `AWS_SECURITY_GROUPS` is not set then a default security group is used.)
 
-WARNING: Many of the other AWS EC2 instance settings (e.g., instance type) are set directly in the `Vagrantfile` and make sense only for VTUL users. Please check these are appropriate before bringing up the instance with Vagrant and edit where necessary beforehand.
+WARNING: Many of the other AWS EC2 instance settings (e.g., instance type) are set directly in the `Vagrantfile` and make sense only for VTUL users. Please check these are appropriate before bringing up the instance with Vagrant and edit where necessary beforehand. Note that for the `aws` provider to work the AWS account should have a default VPC defined in it.
 
 ### OpenStack
 

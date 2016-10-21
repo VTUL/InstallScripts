@@ -11,16 +11,18 @@
 
 - name: copy local tls certificate if present
   copy:
-    src: "{{ tls_local_files_dir }}/cert.pem"
+    src: "{{ tls_local_files_dir }}/{{ tls_cert_file }}"
     dest: "{{ tls_cert_dir }}/{{ tls_cert_file }}"
   register: local_cert
+  notify: restart nginx
   ignore_errors: True
 
 - name: copy local tls key if present
   copy:
-    src: "{{ tls_local_files_dir }}/key.pem"
+    src: "{{ tls_local_files_dir }}/{{ tls_key_file }}"
     dest: "{{ tls_key_dir }}/{{ tls_key_file }}"
   register: local_key
+  notify: restart nginx
   ignore_errors: True
 
 - name: generate self-signed tls certificate if necessary
@@ -31,7 +33,18 @@
       -subj "{{ tls_cert_subject }}"
   args:
     chdir: /tmp
+  notify: restart nginx
   when: local_cert|failed or local_key|failed
+
+- name: copy tls cert and key for reuse in vagrant
+  fetch:
+    src: '{{ item }}'
+    dest: '{{ tls_local_files_dir }}/'
+    flat: True
+  with_items:
+    - '{{ tls_cert_dir }}/{{ tls_cert_file }}'
+    - '{{ tls_key_dir }}/{{ tls_key_file }}'
+  when: ansible_virtualization_type == 'virtualbox'
 
 - name: set tls file permissions
   file:
