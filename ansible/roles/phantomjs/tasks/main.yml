@@ -7,7 +7,7 @@
 
   - name: copy cached phantomjs
     copy:
-      src: '{{ phantomjs_src }}'
+      src: '{{ local_files_dir }}/{{ phantomjs_src }}'
       dest: /tmp/{{ phantomjs_src }}
     register: cached_pjs
     ignore_errors: True
@@ -28,6 +28,6 @@
 - name: cache phantomjs for the future
   fetch:
     src: /tmp/{{ phantomjs_src }}
-    dest: '{{ role_path }}/files/'
+    dest: '{{ local_files_dir }}/'
     flat: True
   when: ansible_virtualization_type == 'virtualbox'

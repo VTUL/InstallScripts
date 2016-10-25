@@ -8,54 +8,6 @@
   notify: restart nginx
   when: ansible_virtualization_type == 'virtualbox'
 
-- name: ensure tls cert and key directories exist
-  file:
-    path: '{{ item }}'
-    state: directory
-  with_items:
-    - '{{ tls_cert_dir }}'
-    - '{{ tls_key_dir }}'
-
-- name: copy existing tls files, if present.
-  copy:
-    src: '{{ item.source }}'
-    dest: '{{ item.dest }}'
-  register: reuse_tls_files
-  ignore_errors: True
-  notify: restart nginx
-  with_items:
-    - source: '{{ tls_cert_file }}'
-      dest: '{{ tls_cert_dir }}/{{ tls_cert_file }}'
-    - source: '{{ tls_key_file }}'
-      dest: '{{ tls_key_dir }}/{{ tls_key_file }}'
-
-- name: generate self-signed tls certificate
-  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "{{ tls_key_dir }}/{{ tls_key_file }}" -out "{{ tls_cert_dir }}/{{ tls_cert_file }}" -subj "{{ tls_cert_subject }}"
-  args:
-    chdir: /tmp
-  when: reuse_tls_files|failed
-  notify: restart nginx
-
-- name: copy tls cert and key for reuse in vagrant
-  fetch:
-    src: '{{ item }}'
-    dest: '{{ role_path }}/files/'
-    flat: True
-  with_items:
-    - '{{ tls_cert_dir }}/{{ tls_cert_file }}'
-    - '{{ tls_key_dir }}/{{ tls_key_file }}'
-  when: ansible_virtualization_type == 'virtualbox'
-
-- name: set tls file permissions
-  file:
-    path: '{{ item.path }}'
-    mode: '{{ item.mode }}'
-  with_items:
-    - path: '{{ tls_cert_dir }}/{{ tls_cert_file }}'
-      mode: '0444'
-    - path: '{{ tls_key_dir }}/{{ tls_key_file }}'
-      mode: '0400'
-
 - name: copy project passenger site
   template:
     src: passenger.site.j2
