@@ -11,3 +11,11 @@ project_orcid_site_url: "{{ 'http://api.orcid.org' if project_orcid_service == '
 project_orcid_token_url: "{{ 'https://api.orcid.org/oauth/token' if project_orcid_service == 'production' else 'https://api.sandbox.orcid.org/oauth/token' }}"
 project_orcid_remote_signin_url: "{{ 'https://orcid.org/signin/auth.json' if project_orcid_service == 'production' else 'https://sandbox.orcid.org/signin/auth.json' }}"
 project_orcid_authorize_url: "{{ 'https://orcid.org/oauth/authorize' if project_orcid_service == 'production' else 'https://sandbox.orcid.org/oauth/authorize' }}"
+# Graylog production logging defaults
+graylog_enable: "{{ 'true' if project_app_env == 'production' else 'false' }}"
+graylog_host: 127.0.0.1
+graylog_port: 12201
+graylog_protocol: udp
+graylog_network_locality: WAN
+graylog_facility: "{{ project_name }}"
+graylog_verbosity: "info"
