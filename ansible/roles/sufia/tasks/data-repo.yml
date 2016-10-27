@@ -41,18 +41,27 @@
       path: '{{ project_app_root }}/admin_list.txt'
       state: absent
 
-  - name: copy zipped images
-    copy:
-      src: "{{ local_files_dir }}/images.zip"
-      dest: '{{ project_app_root }}/images.zip'
-    ignore_errors: True
-    register: copy_zipped_images
+  - name: ensure carousel image directory exists
+    file:
+      path: '{{ project_app_root }}/app/assets/images/carousel'
+      state: directory
 
-  - name: add carousel images
-    command: bundle exec rake datarepo:update_images {{ project_app_root }}/images.zip
-    args:
-      chdir: '{{ project_app_root }}'
-    when: copy_zipped_images|succeeded
+  - name: find old carousel images
+    find:
+      path: '{{ project_app_root }}/app/assets/images/carousel/'
+    register: images
+
+  - name: delete old carousel images
+    file:
+      path: '{{ item.path }}'
+      state: absent
+    with_items: '{{ images.files }}'
+
+  - name: add new carousel images
+    unarchive:
+      src: '{{ local_files_dir }}/images.zip'
+      dest: '{{ project_app_root }}/app/assets/images/carousel/'
+    ignore_errors: True
 
   become: yes
   become_user: '{{ project_user }}'
