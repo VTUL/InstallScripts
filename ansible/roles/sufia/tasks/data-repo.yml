@@ -63,6 +63,18 @@
       dest: '{{ project_app_root }}/app/assets/images/carousel/'
     ignore_errors: True
 
+  - name: find NOID minter statefile
+    stat:
+      path: /tmp/minter-state
+    register: noid_state
+
+  - name: cache NOID minter statefile
+    fetch:
+      src: /tmp/minter-state
+      dest: '{{ local_files_dir }}/'
+      flat: True
+    when: noid_state.stat.exists
+
   become: yes
   become_user: '{{ project_user }}'
   environment:
