@@ -93,6 +93,14 @@
   include: tasks/resque.yml
   when: resque_installed.stat.exists
 
+- name: ensure the Noid minter statefile dir exists
+  file:
+    path: '{{ project_noid_statefile | dirname }}'
+    state: directory
+    owner: '{{ project_user }}'
+    group: '{{ project_group }}'
+    mode: 'u=rwx'
+
 - block:
   - name: load db schema
     command: bundle exec rake db:schema:load

@@ -4,6 +4,7 @@ nginx_max_upload_size: "{{ project_max_upload_size|default('200m') }}"
 project_git_url: https://github.com/VTUL/{{ project_name }}.git
 project_deploy_key: ''
 project_app_root: '{{ project_user_home }}/{{ project_name }}'
+project_noid_statefile: '/var/sufia/minter-state'
 # Name of Solr test core used by application
 project_solr_test_core: 'test'
 # ORCID API endpoints
