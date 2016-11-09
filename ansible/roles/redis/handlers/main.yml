@@ -3,3 +3,4 @@
   service:
     name: redis-server
     state: restarted
+  become: yes
