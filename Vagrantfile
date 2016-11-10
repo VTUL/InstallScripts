@@ -49,7 +49,7 @@ def vagrant_ansible_provisioner
   if prov == "ansible" or prov == "ansible_local"
     return prov
   else
-    if system( 'which ansible' )
+    if system( 'which ansible > /dev/null' )
       return :ansible
     end
 
