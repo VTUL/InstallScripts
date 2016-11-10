@@ -14,3 +14,4 @@
   service:
     name: resque-pool
     state: restarted
+  become: yes
