@@ -13,10 +13,10 @@
     dest: /etc/tomcat7/server.xml
     mode: 0644
 
-- name: add line to use oracle-java-8
+- name: add line to use openjdk-8
   lineinfile:
     dest: /etc/default/tomcat7
-    line: "JAVA_HOME=/usr/lib/jvm/java-8-oracle"
+    line: "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64"
 
 - name: ensure tomcat7 starts on boot
   service:

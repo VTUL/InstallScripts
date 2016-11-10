@@ -6,7 +6,7 @@ Installs Solr.
 Requirements
 ------------
 
-Solr is a Java application and so requires our Java8 role
+Solr is a Java application and so requires our OpenJDK8 role
 
 Role Variables
 --------------
