@@ -2,6 +2,7 @@
 - name: add postgresql key
   apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    id: B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
     state: present
 
 - name: add postgresql repository
