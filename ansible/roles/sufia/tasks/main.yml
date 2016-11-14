@@ -101,6 +101,13 @@
     group: '{{ project_group }}'
     mode: 'u=rwx'
 
+- name: find project specific tasks
+  stat:
+    path: '{{ role_path }}/tasks/{{ project_name }}.yml'
+  delegate_to: 127.0.0.1
+  register: project_tasks
+  become: no
+
 - block:
   - name: load db schema
     command: bundle exec rake db:schema:load
@@ -110,6 +117,7 @@
 
   - name: include project specific tasks
     include: tasks/{{ project_name }}.yml
+    when: project_tasks.stat.exists
 
   - name: add rails bin shims for development
     command: bundle exec rake rails:update:bin
