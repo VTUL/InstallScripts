@@ -9,11 +9,13 @@
   apt_repository:
     repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
     state: present
+    update_cache: yes
 
 - name: nginx and passenger installation
   apt:
     name: '{{ item }}'
     state: present
+    cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
   with_items:
     - nginx-extras

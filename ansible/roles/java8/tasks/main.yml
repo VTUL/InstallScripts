@@ -2,6 +2,8 @@
 - name: Add Oracle Java Repository
   apt_repository:
     repo: 'ppa:webupd8team/java'
+    state: present
+    update_cache: yes
 
 - name: Accept Java 8 License
   debconf:
@@ -13,6 +15,7 @@
 - name: Install Oracle Java 8 and set as default
   apt:
     name: '{{ item }}'
+    cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
     state: latest
   with_items:
