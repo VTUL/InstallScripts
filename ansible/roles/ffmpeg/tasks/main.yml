@@ -2,9 +2,12 @@
 - name: add repository
   apt_repository:
     repo: 'ppa:mc3man/trusty-media'
+    state: present
+    update_cache: yes
 
 - name: install ffmpeg
   apt:
     name: ffmpeg
+    cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
     state: present
