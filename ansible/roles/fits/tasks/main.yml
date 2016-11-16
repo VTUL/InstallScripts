@@ -44,7 +44,7 @@
     path: /opt/fits-{{ fits_version }}
     mode: a+x
 
-- name: link desired version of fits to {{fits_root}}/fits
+- name: link desired version of fits to /opt/fits
   file:
     src: /opt/fits-{{ fits_version }}
     dest: /opt/fits
