@@ -57,11 +57,11 @@ If no public keys are supplied then the upload user's `~/.ssh/authorized_keys` f
 
 Vagrant supports two Ansible provisioners: `ansible` and `ansible_local`. These basically achieve the same end result but differ in how that is achieved.
 
-With the `ansible` provisioner, a version of Ansible that is installed on the local system is used to provision the system that Vagrant creates. This Ansible software must be installed prior to invoking `vagrant up`.
+With the `ansible` provisioner, a version of Ansible that is installed on the local system is used to provision the system that Vagrant creates. This Ansible software must be installed prior to invoking `vagrant up`. The `ansible` provisioner is used by default if `which ansible` does not return an error.
 
-The Vagrant `ansible_local` provisioner, on the other hand, installs Ansible on the system that Vagrant creates and then uses this to provision the machine. No Ansible software need be installed locally when using the `ansible_local` Vagrant provisioner.
+The Vagrant `ansible_local` provisioner, on the other hand, installs Ansible on the system that Vagrant creates and then uses this to provision the machine. No Ansible software need be installed locally when using the `ansible_local` Vagrant provisioner. The `ansible_local` provisioner is used by default if `which ansible` returns an error.
 
-The choice of provisioner may be made by setting the environment variable `ANSIBLE_PROVISIONER` prior to running `vagrant up`. This should be set to either `ansible` or `ansible_local`. If that environment is unset, or is set to something other than those two choices, then it is set to `ansible_local`.
+The choice of provisioner may be overridden by setting the environment variable `ANSIBLE_PROVISIONER` prior to running `vagrant up`. This should be set to either `ansible` or `ansible_local`.
 
 #### Choosing a target application to install
 
