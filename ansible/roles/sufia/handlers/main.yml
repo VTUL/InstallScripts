@@ -6,7 +6,7 @@
   when: project_app_env == 'production'
   notify: restart nginx
   become: yes
-  become_user: '{{ project_user }}'
+  become_user: '{{ project_owner }}'
   environment:
     RAILS_ENV: '{{ project_app_env }}'
 

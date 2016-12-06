@@ -23,7 +23,7 @@
     args:
       creates: '{{ phantomjs_dir }}/bin/phantomjs'
   become: yes
-  become_user: '{{ project_user }}'
+  become_user: '{{ project_owner }}'
 
 - name: cache phantomjs for the future
   fetch:

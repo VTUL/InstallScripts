@@ -14,6 +14,14 @@
     - libsqlite3-dev
     - zlib1g-dev
 
+- name: make sure project user owns the application
+  file:
+    path: '{{ project_app_root }}'
+    owner: '{{ project_owner }}'
+    group: '{{ project_owner_group }}'
+    mode: '0755'
+    state: directory
+
 - name: clone the repo
   git:
     repo: '{{ project_git_url }}'
@@ -22,15 +30,16 @@
     force: yes
   register: clone_app
   ignore_errors: True
+  become_user: "{{ project_owner }}"
   notify:
     - restart nginx
 
 - name: copy the deploy key
   copy:
     src: '{{ project_deploy_key }}'
-    dest: '{{ project_user_home }}/.ssh/deploy_key'
-    owner: '{{ project_user }}'
-    group: '{{ project_group }}'
+    dest: '{{ project_owner_home }}/.ssh/deploy_key'
+    owner: '{{ project_owner }}'
+    group: '{{ project_owner_group }}'
     mode: 0600
   when: clone_app|failed
 
@@ -39,8 +48,9 @@
     repo: '{{ project_git_url }}'
     dest: '{{ project_app_root }}'
     version: '{{ project_git_identifier }}'
-    key_file: '{{ project_user_home }}/.ssh/deploy_key'
+    key_file: '{{ project_owner_home }}/.ssh/deploy_key'
     force: yes
+  become_user: "{{ project_owner }}"
   when: clone_app|failed
   register: deploy_app
   notify:
@@ -56,38 +66,90 @@
   include: solr_core_setup.yml
   when: project_solr_url | search( 'localhost|127\.0\.0\.1' )
 
+- name: make sure application runs as project_runner
+  file:
+    path: "{{ project_app_root }}/config.ru"
+    owner: "{{ project_runner }}"
+    group: "{{ project_runner_group }}"
+    mode: "0444"
+    state: file
+
+- name: ensure project_runner can write to necessary directories
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ project_owner }}"
+    group: "{{ project_runner_group }}"
+    mode: "{{ item.mode }}"
+    recurse: yes
+    state: directory
+  with_items:
+    - path: "{{ project_app_root }}/tmp"
+      mode: "0777"
+    - path: "{{ project_app_root }}/log"
+      mode: "0770"
+    - path: "{{ project_app_root }}/db"
+      mode: "0770"
+
+- name: ensure log files have the correct ownerships and permissions
+  file:
+    path: "{{ project_app_root }}/log/{{ item.file }}"
+    owner: "{{ project_owner }}"
+    group: "{{ project_runner_group }}"
+    mode: "{{ item.mode }}"
+    state: touch
+  with_items:
+    - file: "production.log"
+      mode: "0660"
+    - file: "development.log"
+      mode: "0660"
+    - file: "test.log"
+      mode: "0660"
+    - file: "resque-pool.stdout.log"
+      mode: "0660"
+    - file: "resque-pool.stderr.log"
+      mode: "0660"
+
 - name: copy the secrets file
   template:
     src: secrets.yml.j2
     dest: '{{ project_app_root }}/config/secrets.yml'
-    owner: '{{ project_user }}'
-    group: '{{ project_group }}'
+    owner: '{{ project_owner }}'
+    group: '{{ project_runner_group }}'
+    mode: '0440'
   notify:
     - restart nginx
 
-- name: make sure project user owns application
-  file:
-    path: '{{ project_app_root }}'
-    owner: '{{ project_user }}'
-    group: '{{ project_group }}'
-    state: directory
-    recurse: yes
-
 - name: install the project's gems for development
   bundler:
+    state: present
     chdir: '{{ project_app_root }}'
+    binstub_directory: bin
+    deployment_mode: no
+    gem_path: vendor/bundle
+    user_install: yes
+    clean: yes
     exclude_groups: ''
   when: project_app_env != 'production'
+  become: yes
+  become_user: '{{ project_owner }}'
 
 - name: install the project's gems for production
   bundler:
+    state: present
     chdir: '{{ project_app_root }}'
+    binstub_directory: bin
+    deployment_mode: no
+    gem_path: vendor/bundle
+    user_install: yes
+    clean: yes
     exclude_groups: 'development test'
   when: project_app_env == 'production'
+  become: yes
+  become_user: '{{ project_owner }}'
 
 - name: check if resque-pool is installed
   stat:
-    path: /usr/local/bin/resque-pool
+    path: '{{ project_app_root}}/bin/resque-pool'
   register: resque_installed
 
 - name: install resque-pool service
@@ -98,9 +160,9 @@
   file:
     path: '{{ project_noid_statefile | dirname }}'
     state: directory
-    owner: '{{ project_user }}'
-    group: '{{ project_group }}'
-    mode: 'u=rwx'
+    owner: '{{ project_owner }}'
+    group: '{{ project_runner_group }}'
+    mode: 'ug=rwx'
 
 - name: find project specific tasks
   stat:
@@ -136,15 +198,19 @@
     environment:
       RAILS_ENV: 'test'
 
-  - name: remove old precompiled assets
-    command: bundle exec rake assets:clobber
-    args:
-      chdir: '{{ project_app_root }}'
-    when: project_app_env == 'production'
-    notify:
-      - precompile assets
-
   become: yes
-  become_user: '{{ project_user }}'
+  become_user: '{{ project_runner }}'
   environment:
     RAILS_ENV: '{{ project_app_env }}'
+
+- name: remove old precompiled assets
+  command: bundle exec rake assets:clobber
+  args:
+    chdir: '{{ project_app_root }}'
+  become: yes
+  become_user: '{{ project_owner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+  when: project_app_env == 'production'
+  notify:
+    - precompile assets

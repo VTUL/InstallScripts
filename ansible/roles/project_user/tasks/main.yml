@@ -1,12 +1,32 @@
 ---
+- name: create the group under which the application will run
+  group:
+    name: '{{ project_runner_group }}'
+    system: '{{ project_runner_group_system }}'
+    gid: '{{ project_runner_group_id | default(omit) }}'
+    state: present
+
+- name: create the user under which the application will run
+  user:
+    name: '{{ project_runner }}'
+    group: '{{ project_runner_group }}'
+    comment: '{{ project_name }} runtime user'
+    home: '{{ project_owner_home }}'
+    createhome: no
+    state: present
+
 - name: add the project group for the application
   group:
-    name: '{{ project_group }}'
-    system: '{{ project_group_system }}'
-    gid: '{{ project_group_id | default(omit) }}'
+    name: '{{ project_owner_group }}'
+    system: '{{ project_owner_group_system }}'
+    gid: '{{ project_owner_group_id | default(omit) }}'
+    state: present
 
 - name: create the project user with no login password
   user:
-    name: '{{ project_user }}'
-    group: '{{ project_group }}'
-    home: '{{ project_user_home }}'
+    name: '{{ project_owner }}'
+    group: '{{ project_owner_group }}'
+    groups: '{{ project_runner_group }}'
+    home: '{{ project_owner_home }}'
+    comment: '{{ project_name }} application owner'
+    state: present

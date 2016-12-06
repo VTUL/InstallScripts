@@ -3,10 +3,9 @@
   file:
     path: "{{ project_app_root }}"
     mode: "0755"
-    owner: "{{ project_user }}"
-    group: "{{ project_group }}"
+    owner: "{{ project_owner }}"
+    group: "{{ project_owner_group }}"
     state: directory
-    recurse: yes
 
 - name: clone the geoblacklight repo
   git:
@@ -14,42 +13,116 @@
     dest: "{{ project_app_root }}"
     version: "{{ project_git_identifier }}"
     force: yes
-  become_user: "{{ project_user }}"
+  become_user: "{{ project_owner }}"
+  notify:
+    - restart nginx
+
+- name: make sure application runs as project_runner
+  file:
+    path: "{{ project_app_root }}/config.ru"
+    owner: "{{ project_runner }}"
+    group: "{{ project_runner_group }}"
+    mode: "0444"
+    state: file
+  notify:
+    - restart nginx
+
+- name: ensure project_runner can write to necessary directories
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ project_owner }}"
+    group: "{{ project_runner_group }}"
+    mode: "{{ item.mode }}"
+    recurse: yes
+    state: directory
+  with_items:
+    - path: "{{ project_app_root }}/tmp"
+      mode: "0777"
+    - path: "{{ project_app_root }}/log"
+      mode: "0770"
+    - path: "{{ project_app_root }}/db"
+      mode: "0770"
+
+- name: ensure log files have the correct ownerships and permissions
+  file:
+    path: "{{ project_app_root }}/log/{{ item.file }}"
+    owner: "{{ project_owner }}"
+    group: "{{ project_runner_group }}"
+    mode: "{{ item.mode }}"
+    state: touch
+  with_items:
+    - file: "production.log"
+      mode: "0660"
+    - file: "development.log"
+      mode: "0660"
+    - file: "test.log"
+      mode: "0660"
+    - file: "resque-pool.stdout.log"
+      mode: "0660"
+    - file: "resque-pool.stderr.log"
+      mode: "0660"
 
 - name: copy the secrets file
   template:
     src: secrets.yml.j2
     dest: "{{ project_app_root }}/config/secrets.yml"
-    owner: "{{ project_user }}"
-    group: "{{ project_group }}"
+    owner: "{{ project_owner }}"
+    group: "{{ project_runner_group }}"
     mode: "0440"
+  notify:
+    - restart nginx
 
-- name: install production gems
+- name: install the project's gems for development
   bundler:
     state: present
-    chdir: "{{ project_app_root }}"
+    chdir: '{{ project_app_root }}'
+    binstub_directory: bin
+    deployment_mode: no
+    gem_path: vendor/bundle
+    user_install: yes
+    clean: yes
+    exclude_groups: ''
+  when: project_app_env != 'production'
+  become: yes
+  become_user: '{{ project_owner }}'
+
+- name: install the project's gems for production
+  bundler:
+    state: present
+    chdir: '{{ project_app_root }}'
+    binstub_directory: bin
+    deployment_mode: no
+    gem_path: vendor/bundle
+    user_install: yes
+    clean: yes
     exclude_groups: 'development test'
-    user_install: no
-  environment:
-    RAILS_ENV: '{{ project_app_env }}'
-  when: project_app_env == "production"
-
-- name: install development gems
-  bundler:
-    state: present
-    chdir: "{{ project_app_root }}"
-    user_install: no
-  environment:
-    RAILS_ENV: '{{ project_app_env }}'
-  when: project_app_env != "production"
+  when: project_app_env == 'production'
+  become: yes
+  become_user: '{{ project_owner }}'
 
 - name: load db schema
   command: bundle exec rake db:setup
   args:
     chdir: "{{ project_app_root }}"
+    creates: "{{ project_app_root }}/db/{{ project_app_env }}.sqlite3"
   environment:
     RAILS_ENV: '{{ project_app_env }}'
-  become_user: '{{ project_user }}'
+  become_user: '{{ project_owner }}'
+
+- name: ensure project_runner can write to db file
+  file:
+    path: "{{ project_app_root }}/db/{{ project_app_env }}.sqlite3"
+    owner: "{{ project_owner }}"
+    group: "{{ project_runner_group }}"
+    mode: "0660"
+    state: file
+
+- name: add rails bin shims for development
+  command: bundle exec rake rails:update:bin
+  args:
+    chdir: '{{ project_app_root }}'
+    creates: '{{ project_app_root }}/bin'
+  when: project_app_env == 'development'
 
 - name: precompile
   command: bundle exec rake assets:precompile
@@ -57,5 +130,5 @@
     chdir: "{{ project_app_root }}"
   environment:
     RAILS_ENV: '{{ project_app_env }}'
-  become_user: '{{ project_user }}'
+  become_user: '{{ project_owner }}'
   when: project_app_env == "production"

@@ -1,5 +1,9 @@
 ---
-# Whether {{ project_group }} is a system (lower-numbered gid) group
-project_group_system: 'no'
-# The numeric gid of {{ project_group }}
-#project_group_id: ''
+# Whether {{ project_owner_group }} is a system (lower-numbered gid) group
+project_owner_group_system: 'false'
+# Whether {{ project_runner_group }} is a system (lower-numbered gid) group
+project_runner_group_system: 'false'
+# The numeric gid of {{ project_owner_group }}
+#project_owner_group_id: ''
+# The numeric gid of {{ project_runner_group }}
+#project_runner_group_id: ''
