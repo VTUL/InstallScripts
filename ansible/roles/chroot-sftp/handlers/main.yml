@@ -1,3 +1,4 @@
 ---
 - name: reload ssh configuration
   service: name=ssh state=reloaded
+  become: yes
