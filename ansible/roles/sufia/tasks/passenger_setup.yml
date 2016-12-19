@@ -17,6 +17,6 @@
 - name: enable project passenger site
   file:
     src: /etc/nginx/sites-available/{{ project_name }}.site
-    dest: /etc/nginx/sites-enabled/{{ project_name }}.site
+    dest: /etc/nginx/sites-enabled/passenger.site
     state: link
   notify: restart nginx
