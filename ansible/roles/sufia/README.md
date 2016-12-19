@@ -28,3 +28,12 @@ Role variables are listed below, along with their defaults:
     project_solr_test_core: test
 
 This role makes use of the `local_files_dir` variable defined in the top-level `site_vars.yml` file. The `local_files_dir` setting points to a local directory on the provisioning host where locally-provided files may be supplied to the deployment and provisioning process. In the case of the `sufia` role, this directory is used to supply the `user_list.txt`, `admin_list.txt`, and `images.zip` carousel images for the `data-repo` application.
+
+The Sufia role also uses several variables that are normally defined in `site_secrets.yml`:
+
+- `project_db_name`: application database name for Rails config/database.yml `database:` setting
+- `project_db_user`: application database user for Rails config/database.yml `username:` setting
+- `project_db_password`: application database name for Rails config/database.yml `password:` setting
+- `project_db_host`: host of PostgreSQL server, used as application host name for Rails config/database.yml `host:` setting. This should be set to `/var/run/postgresql` to use a Unix socket to communicate with a locally-running PostgreSQL server, otherwise it should be set to the hosname or IP address of the PostgreSQL server to be used
+- `project_db_admin_user`: PostgreSQL user with Superuser privileges that may be used to create the application roles on a remote PostgreSQL server
+- `project_db_admin_password`: PostgreSQL password of above-mentioned `project_db_admin_user`
