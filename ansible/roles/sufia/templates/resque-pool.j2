@@ -31,7 +31,7 @@ OUTLOG=$APP_ROOT/log/$NAME.stdout.log
 ERRLOG=$APP_ROOT/log/$NAME.stderr.log
 ENV={{ project_app_env }}
 PATH=$PATH:/usr/local/bin
-USER={{ project_user }}
+USER={{ project_runner }}
 
 # wait for the process to actually be dead
 function anywait {

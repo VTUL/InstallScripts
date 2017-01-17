@@ -1,7 +1,7 @@
 ---
 - name: configure cron to ingest content periodically via rake task
   cron:
-    user: "{{ project_user }}"
+    user: "{{ project_runner }}"
     hour: 0
     cron_file: geoblacklight_ingest
     job: >

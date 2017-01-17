@@ -64,6 +64,6 @@
     ignore_errors: True
 
   become: yes
-  become_user: '{{ project_user }}'
+  become_user: '{{ project_owner }}'
   environment:
     RAILS_ENV: '{{ project_app_env }}'
