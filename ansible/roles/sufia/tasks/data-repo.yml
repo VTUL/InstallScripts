@@ -1,9 +1,9 @@
 ---
 - block:
-  - name: add roles
-    command: bundle exec rake datarepo:add_roles
-    args:
-      chdir: '{{ project_app_root }}'
+  #  - name: add roles
+  #  command: ./bin/rails vtechdata:add_roles
+  #  args:
+  #    chdir: '{{ project_app_root }}'
 
   - name: copy list of users
     copy:
@@ -13,7 +13,7 @@
     register: copy_user_list
 
   - name: add users
-    command: bundle exec rake datarepo:populate_users
+    command: ./bin/rails vtechdata:populate_users
     args:
       chdir: '{{ project_app_root }}'
     when: copy_user_list|succeeded
@@ -30,11 +30,11 @@
     ignore_errors: True
     register: copy_admin_list
 
-  - name: add admins
-    command: bundle exec rake datarepo:upgrade_users
-    args:
-      chdir: '{{ project_app_root }}'
-    when: copy_admin_list|succeeded
+  #  - name: add admins
+  #  command: ./bin/rails vtechdata:upgrade_users
+  #  args:
+  #    chdir: '{{ project_app_root }}'
+  #  when: copy_admin_list|succeeded
 
   - name: remove list of admins
     file:

@@ -10,8 +10,6 @@
     - unzip
     - imagemagick
     - libreoffice
-    - sqlite3
-    - libsqlite3-dev
     - zlib1g-dev
 
 - name: make sure project user owns the application
@@ -123,7 +121,6 @@
   bundler:
     state: present
     chdir: '{{ project_app_root }}'
-    binstub_directory: bin
     deployment_mode: no
     gem_path: vendor/bundle
     user_install: yes
@@ -137,7 +134,6 @@
   bundler:
     state: present
     chdir: '{{ project_app_root }}'
-    binstub_directory: bin
     deployment_mode: no
     gem_path: vendor/bundle
     user_install: yes
@@ -172,8 +168,14 @@
   become: no
 
 - block:
-  - name: load db schema
-    command: bundle exec rake db:schema:load
+  - name: create db if necessary
+    command: ./bin/rails db:create
+    args:
+      chdir: '{{ project_app_root }}'
+    when: clone_app.changed or deploy_app.changed
+
+  - name: migrate the database
+    command: ./bin/rails db:migrate
     args:
       chdir: '{{ project_app_root }}'
     when: clone_app.changed or deploy_app.changed
@@ -182,29 +184,13 @@
     include: tasks/{{ project_name }}.yml
     when: project_tasks.stat.exists
 
-  - name: add rails bin shims for development
-    command: bundle exec rake rails:update:bin
-    args:
-      chdir: '{{ project_app_root }}'
-      creates: '{{ project_app_root }}/bin'
-    when: project_app_env == 'development'
-
-  - name: setup test database for development
-    command: bundle exec rake db:setup
-    args:
-      chdir: '{{ project_app_root }}'
-      creates: '{{ project_app_root }}/db/test.db'
-    when: project_app_env == 'development'
-    environment:
-      RAILS_ENV: 'test'
-
   become: yes
   become_user: '{{ project_runner }}'
   environment:
     RAILS_ENV: '{{ project_app_env }}'
 
 - name: remove old precompiled assets
-  command: bundle exec rake assets:clobber
+  command: ./bin/rails assets:clobber
   args:
     chdir: '{{ project_app_root }}'
   become: yes

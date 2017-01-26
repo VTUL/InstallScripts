@@ -1,7 +1,7 @@
 ---
 - block:
   - name: add carousel images
-    command: bundle exec rake iawa:update_images['{{ project_app_root }}/vendor/assets/images/iawa.zip']
+    command: ./bin/rails iawa:update_images['{{ project_app_root }}/vendor/assets/images/iawa.zip']
     args:
       chdir: '{{ project_app_root }}'
   become: yes

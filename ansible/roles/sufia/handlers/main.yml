@@ -1,6 +1,6 @@
 ---
 - name: precompile assets
-  command: bundle exec rake assets:precompile
+  command: ./bin/rails assets:precompile
   args:
     chdir: '{{ project_app_root }}'
   when: project_app_env == 'production'
