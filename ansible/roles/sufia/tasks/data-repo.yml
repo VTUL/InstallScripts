@@ -63,6 +63,12 @@
       dest: '{{ project_app_root }}/app/assets/images/carousel/'
     ignore_errors: True
 
+  - name: add workflows
+    command: ./bin/rails curation_concerns:workflow:load
+    args:
+      chdir: '{{ project_app_root }}'
+    ignore_errors: True
+
   become: yes
   become_user: '{{ project_owner }}'
   environment:
