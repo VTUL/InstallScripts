@@ -3,10 +3,11 @@
   cron:
     user: "{{ project_runner }}"
     hour: 0
+    minute: 0
     cron_file: geoblacklight_ingest
     job: >
       cd "{{ project_app_root }}" &&
       RAILS_ENV={{ project_app_env }}
-      /usr/local/bin/bundle exec rake vtul:geoblacklight:data_ingest
+      /usr/local/bin/bundle exec rake vtul:geoblacklight:data_ingest > /dev/null 2>&1
     name: GeoBlacklight Ingest
     state: present
