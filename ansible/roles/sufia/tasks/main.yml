@@ -89,6 +89,8 @@
       mode: "0770"
     - path: "{{ project_app_root }}/db"
       mode: "0770"
+    - path: "{{ project_app_root }}/public/uploads"
+      mode: "0770"
 
 - name: ensure log files have the correct ownerships and permissions
   file:
