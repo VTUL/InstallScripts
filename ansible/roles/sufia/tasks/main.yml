@@ -11,6 +11,7 @@
     - imagemagick
     - libreoffice
     - zlib1g-dev
+    - libsqlite3-dev
 
 - name: make sure project user owns the application
   file:
@@ -169,13 +170,13 @@
 
 - block:
   - name: create db if necessary
-    command: ./bin/rails db:create
+    command: ./bin/rake db:create
     args:
       chdir: '{{ project_app_root }}'
     when: clone_app.changed or deploy_app.changed
 
   - name: migrate the database
-    command: ./bin/rails db:migrate
+    command: ./bin/rake db:migrate
     args:
       chdir: '{{ project_app_root }}'
     when: clone_app.changed or deploy_app.changed
