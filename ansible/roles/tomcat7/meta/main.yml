@@ -1,4 +1,4 @@
 ---
 dependencies:
   - { role: common }
-  - { role: openjdk8 }
+  - { role: java8 }

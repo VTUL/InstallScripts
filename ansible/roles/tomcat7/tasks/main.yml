@@ -18,7 +18,7 @@
 - name: add line to use openjdk-8
   lineinfile:
     dest: /etc/default/tomcat7
-    line: "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64"
+    line: "JAVA_HOME=/usr/lib/jvm/java-8-oracle"
 
 - name: ensure tomcat7 starts on boot
   service:

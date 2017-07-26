@@ -92,7 +92,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # Forward Tomcat/Fedora port in VM to port 8888 on local machine
       override.vm.network :forwarded_port, host: 8888, guest: 8080
       # Forward HTTP port in VM to port 8080 on local machine
-      override.vm.network :forwarded_port, host: 8080, guest: 80
+      override.vm.network :forwarded_port, host: 8081, guest: 80
       # Forward HTTPS port in VM to port 4443 on local machine
       override.vm.network :forwarded_port, host: 4443, guest: 443
     end
