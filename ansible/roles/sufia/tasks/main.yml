@@ -84,6 +84,8 @@
   with_items:
     - path: "{{ project_app_root }}/tmp"
       mode: "0777"
+    - path: "{{ project_app_root }}/tmp/cache/assets/sprockets/v3.0"
+      mode: "0777"
     - path: "{{ project_app_root }}/log"
       mode: "0770"
     - path: "{{ project_app_root }}/db"
