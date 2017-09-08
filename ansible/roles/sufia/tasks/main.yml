@@ -172,8 +172,8 @@
   become: no
 
 - block:
-  - name: load db schema
-    command: bundle exec rake db:schema:load
+  - name: migrate db
+    command: bundle exec rake db:migrate
     args:
       chdir: '{{ project_app_root }}'
     when: clone_app.changed or deploy_app.changed
