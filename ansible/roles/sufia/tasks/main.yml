@@ -13,6 +13,7 @@
     - sqlite3
     - libsqlite3-dev
     - zlib1g-dev
+    - libarchive-dev
 
 - name: make sure project user owns the application
   file:
