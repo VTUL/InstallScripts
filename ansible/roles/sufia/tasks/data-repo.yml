@@ -63,6 +63,31 @@
       dest: '{{ project_app_root }}/app/assets/images/carousel/'
     ignore_errors: True
 
+
+  - name: ensure font directory exists
+    file:
+      path: '{{ project_app_root }}/app/assets/fonts'
+      state: directory
+
+  - name: find old font files
+    find:
+      path: '{{ project_app_root }}/app/assets/fonts/'
+    register: fonts
+
+  - name: delete old font files
+    file:
+      path: '{{ item.path }}'
+      state: absent
+    with_items: '{{ fonts.files }}'
+
+  - name: add new font files
+    unarchive:
+      src: '{{ local_files_dir }}/fonts.zip'
+      dest: '{{ project_app_root }}/app/assets/fonts/'
+    ignore_errors: True
+
+
+
   become: yes
   become_user: '{{ project_owner }}'
   environment:
