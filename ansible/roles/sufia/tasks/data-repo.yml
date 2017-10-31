@@ -56,13 +56,14 @@
       path: '{{ item.path }}'
       state: absent
     with_items: '{{ images.files }}'
+    notify: clear rails cache
 
   - name: add new carousel images
     unarchive:
       src: '{{ local_files_dir }}/images.zip'
       dest: '{{ project_app_root }}/app/assets/images/carousel/'
     ignore_errors: True
-
+    notify: clear rails cache
 
   - name: ensure font directory exists
     file:
@@ -79,13 +80,14 @@
       path: '{{ item.path }}'
       state: absent
     with_items: '{{ fonts.files }}'
+    notify: clear rails cache
 
   - name: add new font files
     unarchive:
       src: '{{ local_files_dir }}/fonts.zip'
       dest: '{{ project_app_root }}/app/assets/fonts/'
     ignore_errors: True
-
+    notify: clear rails cache
 
 
   become: yes
