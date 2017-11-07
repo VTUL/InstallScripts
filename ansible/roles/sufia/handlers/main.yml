@@ -10,6 +10,16 @@
   environment:
     RAILS_ENV: '{{ project_app_env }}'
 
+- name: clear rails cache
+  command: bundle exec rake tmp:cache:clear
+  args:
+    chdir: '{{ project_app_root }}'
+  notify: restart nginx
+  become: yes
+  become_user: '{{ project_owner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+
 - name: restart resque
   service:
     name: resque-pool
