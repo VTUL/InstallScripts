@@ -13,6 +13,24 @@
     args:
       chdir: '{{ project_app_root }}'
 
+  - name: copy list of users
+    copy:
+      src: "{{ local_files_dir }}/user_list.txt"
+      dest: '{{ project_app_root }}/user_list.txt'
+    ignore_errors: True
+    register: copy_user_list
+
+  - name: add users
+    command: bundle exec rake iawa:populate_users
+    args:
+      chdir: '{{ project_app_root }}'
+    when: copy_user_list|succeeded
+
+  - name: remove list of users
+    file:
+      path: '{{ project_app_root }}/user_list.txt'
+      state: absent
+
   - name: copy list of admins
     copy:
       src: "{{ local_files_dir }}/admin_list.txt"
@@ -25,6 +43,11 @@
     args:
       chdir: '{{ project_app_root }}'
     when: copy_admin_list|succeeded
+
+  - name: remove list of admins
+    file:
+      path: '{{ project_app_root }}/admin_list.txt'
+      state: absent
 
   - name: add initial controlled vocabularies
     command: bundle exec rake iawa:add_controlled_vocabs
