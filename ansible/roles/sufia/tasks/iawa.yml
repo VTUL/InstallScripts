@@ -1,15 +1,15 @@
 ---
 - block:
-  - name: load workflow
-    command: ./bin/rails hyrax:workflow:load
-    args:
-      chdir: '{{ project_app_root }}'
+  # - name: load workflow
+  #   command: bundle exec rails hyrax:workflow:load
+  #   args:
+  #     chdir: '{{ project_app_root }}'
   # - name: create default admin set
-  #   command: ./bin/rails hyrax:default_admin_set:create
+  #   command: bundle exec rails hyrax:default_admin_set:create
   #   args:
   #     chdir: '{{ project_app_root }}'
   - name: create roles
-    command: ./bin/rails iawa:add_roles
+    command: bundle exec rails iawa:add_roles
     args:
       chdir: '{{ project_app_root }}'
 
@@ -17,40 +17,30 @@
     copy:
       src: "{{ local_files_dir }}/user_list.txt"
       dest: '{{ project_app_root }}/user_list.txt'
-    ignore_errors: True
+    ignore_errors: False
     register: copy_user_list
 
   - name: add users
-    command: bundle exec rake iawa:populate_users
+    command: bundle exec rails iawa:populate_users
     args:
       chdir: '{{ project_app_root }}'
     when: copy_user_list|succeeded
-
-  - name: remove list of users
-    file:
-      path: '{{ project_app_root }}/user_list.txt'
-      state: absent
 
   - name: copy list of admins
     copy:
       src: "{{ local_files_dir }}/admin_list.txt"
       dest: '{{ project_app_root }}/admin_list.txt'
-    ignore_errors: True
+    ignore_errors: False
     register: copy_admin_list
 
   - name: upgrade users
-    command: ./bin/rails iawa:upgrade_users
+    command: bundle exec rails iawa:upgrade_users
     args:
       chdir: '{{ project_app_root }}'
     when: copy_admin_list|succeeded
 
-  - name: remove list of admins
-    file:
-      path: '{{ project_app_root }}/admin_list.txt'
-      state: absent
-
   - name: add initial controlled vocabularies
-    command: bundle exec rake iawa:add_controlled_vocabs
+    command: bundle exec rails iawa:add_controlled_vocabs
     args:
       chdir: '{{ project_app_root }}'
 
