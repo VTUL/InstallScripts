@@ -1,4 +1,11 @@
 ---
+- name: make sure active_job_backend setting is valid
+  fail:
+    msg: 'active_job_backend ({{ active_job_backend }}) needs to be either sidekiq or resque.'
+  when:
+    - active_job_backend != 'sidekiq'
+    - active_job_backend != 'resque'
+
 - name: install apt dependencies
   apt:
     name: '{{ item }}'
@@ -152,14 +159,27 @@
   become: yes
   become_user: '{{ project_owner }}'
 
-- name: check if resque-pool is installed
-  stat:
-    path: '{{ project_app_root}}/bin/resque-pool'
-  register: resque_installed
+- block:
+  - name: check if resque-pool is installed
+    stat:
+      path: '{{ project_app_root}}/bin/resque-pool'
+    register: resque_installed
 
-- name: install resque-pool service
-  include: tasks/resque.yml
-  when: resque_installed.stat.exists
+  - name: install resque-pool service
+    include: tasks/resque.yml
+    when: resque_installed.stat.exists
+  when: active_job_backend == 'resque'
+
+- block:
+  - name: check if sidekiq is installed
+    stat:
+      path: '{{ project_app_root}}/bin/sidekiq'
+    register: sidekiq_installed
+
+  - name: install sidekiq services
+    include: tasks/sidekiq.yml
+    when: sidekiq_installed.stat.exists
+  when: active_job_backend == 'sidekiq'
 
 - name: ensure the Noid minter statefile dir exists
   file:
