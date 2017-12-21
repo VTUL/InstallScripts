@@ -20,3 +20,6 @@ graylog_protocol: udp
 graylog_network_locality: WAN
 graylog_facility: "{{ project_name }}"
 graylog_verbosity: "info"
+# Active Job backend choice
+active_job_backend: "{{ 'sidekiq' if project_name == 'iawa' else 'resque' }}"
+sidekiq_workers: 1

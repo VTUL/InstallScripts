@@ -15,3 +15,9 @@
     name: resque-pool
     state: restarted
   become: yes
+
+- name: restart sidekiq workers
+  service:
+    name: workers
+    state: restarted
+  become: yes
