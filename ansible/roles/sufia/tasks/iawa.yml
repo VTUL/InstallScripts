@@ -1,18 +1,25 @@
 ---
 - block:
-  # - name: load workflow
-  #   command: bundle exec rails hyrax:workflow:load
-  #   args:
-  #     chdir: '{{ project_app_root }}'
-  # - name: create default admin set
-  #   command: bundle exec rails hyrax:default_admin_set:create
-  #   args:
-  #     chdir: '{{ project_app_root }}'
+  - name: load workflow
+    command: bundle exec rails hyrax:workflow:load
+    args:
+      chdir: '{{ project_app_root }}'
+
+  - name: create default admin set
+    command: bundle exec rails hyrax:default_admin_set:create
+    args:
+      chdir: '{{ project_app_root }}'
+
   - name: create roles
     command: bundle exec rails iawa:add_roles
     args:
       chdir: '{{ project_app_root }}'
+  become: yes
+  become_user: '{{ project_runner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
 
+- block:
   - name: copy list of users
     copy:
       src: "{{ local_files_dir }}/user_list.txt"
@@ -32,7 +39,12 @@
       dest: '{{ project_app_root }}/admin_list.txt'
     ignore_errors: False
     register: copy_admin_list
+  become: yes
+  become_user: '{{ project_owner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
 
+- block:
   - name: upgrade users
     command: bundle exec rails iawa:upgrade_users
     args:
@@ -43,8 +55,7 @@
     command: bundle exec rails iawa:add_controlled_vocabs
     args:
       chdir: '{{ project_app_root }}'
-
   become: yes
-  become_user: '{{ project_owner }}'
+  become_user: '{{ project_runner }}'
   environment:
     RAILS_ENV: '{{ project_app_env }}'
