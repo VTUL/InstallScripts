@@ -3,7 +3,6 @@
   service:
     name: tomcat7
     state: stopped
-  notify: restart tomcat
 
 - name: add the fedora group
   group:
@@ -37,4 +36,8 @@
     line: JAVA_OPTS='-Dfcrepo.home={{ fedora_data_dir }} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server {{ fedora_java_vm_opts }}'
     regexp: "^JAVA_OPTS=.*"
     state: present
-  notify: restart tomcat
+
+- name: start tomcat
+  service:
+    name: tomcat7
+    state: started
