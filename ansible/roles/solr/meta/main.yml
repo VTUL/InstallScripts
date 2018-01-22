@@ -1,3 +1,5 @@
 ---
 dependencies:
-  - { role: java8 }
+  - { role: common }
+  - { role: java8, when: java_vendor == 'oracle' }
+  - { role: openjdk8, when: java_vendor == 'openjdk' }
