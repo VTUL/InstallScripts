@@ -1,0 +1,22 @@
+---
+- name: turn off sendfile in nginx.conf for development
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    backrefs: yes
+    regexp: '^(\s*)sendfile on;$'
+    line: '\1sendfile off;'
+  notify: restart nginx
+  when: ansible_virtualization_type == 'virtualbox'
+
+- name: copy project passenger site
+  template:
+    src: passenger.site.j2
+    dest: /etc/nginx/sites-available/{{ project_name }}.site
+  notify: restart nginx
+
+- name: enable project passenger site
+  file:
+    src: /etc/nginx/sites-available/{{ project_name }}.site
+    dest: /etc/nginx/sites-enabled/passenger.site
+    state: link
+  notify: restart nginx

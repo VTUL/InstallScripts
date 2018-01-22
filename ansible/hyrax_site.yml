@@ -1,5 +1,5 @@
 ---
-- name: provision a samvera sufia instance
+- name: provision a samvera hyrax instance
   hosts: all
   user: "{{ ansible_user }}"
   vars_files:
@@ -30,7 +30,7 @@
         when: project_redis_host | search( 'localhost|127\.0\.0\.1' )
     }
     - {
-        role: sufia,
+        role: hyrax,
         become: yes
     }
   environment:

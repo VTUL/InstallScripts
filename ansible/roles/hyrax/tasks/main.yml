@@ -1,4 +1,11 @@
 ---
+- name: make sure active_job_backend setting is valid
+  fail:
+    msg: 'active_job_backend ({{ active_job_backend }}) needs to be either sidekiq or resque.'
+  when:
+    - active_job_backend != 'sidekiq'
+    - active_job_backend != 'resque'
+
 - name: install apt dependencies
   apt:
     name: '{{ item }}'
@@ -10,10 +17,8 @@
     - unzip
     - imagemagick
     - libreoffice
-    - sqlite3
-    - libsqlite3-dev
     - zlib1g-dev
-    - libarchive-dev
+    - libsqlite3-dev
 
 - name: make sure project user owns the application
   file:
@@ -85,11 +90,19 @@
     state: directory
   with_items:
     - path: "{{ project_app_root }}/tmp"
-      mode: "0777"
+      mode: "u=rwX,g=rwXs,o="
+    - path: "{{ project_app_root }}/tmp/pids"
+      mode: "u=rwX,g=rwXs,o="
+    - path: "{{ project_app_root }}/tmp/derivatives"
+      mode: "u=rwX,g=rwXs,o="
+    - path: "{{ project_app_root }}/tmp/uploads"
+      mode: "u=rwX,g=rwXs,o="
+    - path: "{{ project_app_root }}/tmp/cache/assets/sprockets/v3.0"
+      mode: "u=rwX,g=rwXs,o="
     - path: "{{ project_app_root }}/log"
-      mode: "0770"
+      mode: "u=rwX,g=rwXs,o="
     - path: "{{ project_app_root }}/db"
-      mode: "0770"
+      mode: "u=rwX,g=rwXs,o="
 
 - name: ensure log files have the correct ownerships and permissions
   file:
@@ -124,7 +137,6 @@
   bundler:
     state: present
     chdir: '{{ project_app_root }}'
-    binstub_directory: bin
     deployment_mode: no
     gem_path: vendor/bundle
     user_install: yes
@@ -138,7 +150,6 @@
   bundler:
     state: present
     chdir: '{{ project_app_root }}'
-    binstub_directory: bin
     deployment_mode: no
     gem_path: vendor/bundle
     user_install: yes
@@ -148,14 +159,27 @@
   become: yes
   become_user: '{{ project_owner }}'
 
-- name: check if resque-pool is installed
-  stat:
-    path: '{{ project_app_root}}/bin/resque-pool'
-  register: resque_installed
+- block:
+  - name: check if resque-pool is installed
+    stat:
+      path: '{{ project_app_root}}/bin/resque-pool'
+    register: resque_installed
 
-- name: install resque-pool service
-  include: tasks/resque.yml
-  when: resque_installed.stat.exists
+  - name: install resque-pool service
+    include: tasks/resque.yml
+    when: resque_installed.stat.exists
+  when: active_job_backend == 'resque'
+
+- block:
+  - name: check if sidekiq is installed
+    stat:
+      path: '{{ project_app_root}}/bin/sidekiq'
+    register: sidekiq_installed
+
+  - name: install sidekiq services
+    include: tasks/sidekiq.yml
+    when: sidekiq_installed.stat.exists
+  when: active_job_backend == 'sidekiq'
 
 - name: ensure the Noid minter statefile dir exists
   file:
@@ -177,8 +201,14 @@
   when: project_tasks.stat.exists
 
 - block:
-  - name: migrate db
-    command: bundle exec rake db:migrate
+  - name: create db if necessary
+    command: ./bin/rake db:create
+    args:
+      chdir: '{{ project_app_root }}'
+    when: clone_app.changed or deploy_app.changed
+
+  - name: migrate the database
+    command: ./bin/rake db:migrate
     args:
       chdir: '{{ project_app_root }}'
     when: clone_app.changed or deploy_app.changed
@@ -187,29 +217,13 @@
     include: tasks/{{ project_name }}.yml
     when: project_tasks.stat.exists
 
-  - name: add rails bin shims for development
-    command: bundle exec rake rails:update:bin
-    args:
-      chdir: '{{ project_app_root }}'
-      creates: '{{ project_app_root }}/bin'
-    when: project_app_env == 'development'
-
-  - name: setup test database for development
-    command: bundle exec rake db:setup
-    args:
-      chdir: '{{ project_app_root }}'
-      creates: '{{ project_app_root }}/db/test.db'
-    when: project_app_env == 'development'
-    environment:
-      RAILS_ENV: 'test'
-
   become: yes
   become_user: '{{ project_runner }}'
   environment:
     RAILS_ENV: '{{ project_app_env }}'
 
 - name: remove old precompiled assets
-  command: bundle exec rake assets:clobber
+  command: ./bin/rails assets:clobber
   args:
     chdir: '{{ project_app_root }}'
   become: yes

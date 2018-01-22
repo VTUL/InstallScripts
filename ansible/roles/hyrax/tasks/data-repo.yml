@@ -1,9 +1,9 @@
 ---
 - block:
-  - name: add roles
-    command: bundle exec rake datarepo:add_roles
-    args:
-      chdir: '{{ project_app_root }}'
+  #  - name: add roles
+  #  command: ./bin/rails vtechdata:add_roles
+  #  args:
+  #    chdir: '{{ project_app_root }}'
 
   - name: copy list of users
     copy:
@@ -13,7 +13,7 @@
     register: copy_user_list
 
   - name: add users
-    command: bundle exec rake datarepo:populate_users
+    command: ./bin/rails vtechdata:populate_users
     args:
       chdir: '{{ project_app_root }}'
     when: copy_user_list|succeeded
@@ -30,11 +30,11 @@
     ignore_errors: True
     register: copy_admin_list
 
-  - name: add admins
-    command: bundle exec rake datarepo:upgrade_users
-    args:
-      chdir: '{{ project_app_root }}'
-    when: copy_admin_list|succeeded
+  #  - name: add admins
+  #  command: ./bin/rails vtechdata:upgrade_users
+  #  args:
+  #    chdir: '{{ project_app_root }}'
+  #  when: copy_admin_list|succeeded
 
   - name: remove list of admins
     file:
@@ -56,38 +56,13 @@
       path: '{{ item.path }}'
       state: absent
     with_items: '{{ images.files }}'
-    notify: clear rails cache
 
   - name: add new carousel images
     unarchive:
       src: '{{ local_files_dir }}/images.zip'
       dest: '{{ project_app_root }}/app/assets/images/carousel/'
     ignore_errors: True
-    notify: clear rails cache
 
-  - name: ensure font directory exists
-    file:
-      path: '{{ project_app_root }}/app/assets/fonts'
-      state: directory
-
-  - name: find old font files
-    find:
-      path: '{{ project_app_root }}/app/assets/fonts/'
-    register: fonts
-
-  - name: delete old font files
-    file:
-      path: '{{ item.path }}'
-      state: absent
-    with_items: '{{ fonts.files }}'
-    notify: clear rails cache
-
-  - name: add new font files
-    unarchive:
-      src: '{{ local_files_dir }}/fonts.zip'
-      dest: '{{ project_app_root }}/app/assets/fonts/'
-    ignore_errors: True
-    notify: clear rails cache
   become: yes
   become_user: '{{ project_owner }}'
   environment:

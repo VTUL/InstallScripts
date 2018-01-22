@@ -14,17 +14,6 @@
       group: '{{ solr_group }}'
       create: True
     notify: restart solr
-  - name: copy hyrax's solrconfig.xml to the core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/solrconfig.xml'
-      dest: '{{ solr_data_dir }}/{{ project_solr_core }}/conf/solrconfig.xml'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_solrconfig
-    ignore_errors: True
   - name: copy sufia's solrconfig.xml to the core
     copy:
       src: '{{ project_app_root }}/solr/config/solrconfig.xml'
@@ -34,7 +23,6 @@
       mode: 0444
       remote_src: True
     notify: restart solr
-    when: hyrax_solrconfig|failed
     register: solrconfig
     ignore_errors: True
   - name: copy sufia's solrconfig.xml to the core from a legacy location
@@ -47,17 +35,6 @@
       remote_src: True
     notify: restart solr
     when: solrconfig|failed
-  - name: copy hyrax's schema.xml to the core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/schema.xml'
-      dest: '{{ solr_data_dir }}/{{ project_solr_core }}/conf/schema.xml'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_schema
-    ignore_errors: True
   - name: copy sufia's schema.xml to the core
     copy:
       src: '{{ project_app_root }}/solr/config/schema.xml'
@@ -67,7 +44,6 @@
       mode: 0444
       remote_src: True
     notify: restart solr
-    when: hyrax_schema|failed
     register: schema
     ignore_errors: True
   - name: copy sufia's schema.xml to the core from a legacy location
@@ -80,54 +56,6 @@
       remote_src: True
     notify: restart solr
     when: schema|failed
-
-  - name: copy hyrax's synonyms.txt to the core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/synonyms.txt'
-      dest: '{{ solr_data_dir }}/{{ project_solr_core }}/conf/synonyms.txt'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_solr_synonyms
-    ignore_errors: True
-
-  - name: copy hyrax's protwords.txt to the core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/protwords.txt'
-      dest: '{{ solr_data_dir }}/{{ project_solr_core }}/conf/protwords.txt'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_solr_protwords
-    ignore_errors: True
-
-  - name: copy hyrax's stopwords_en.txt to the core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/stopwords_en.txt'
-      dest: '{{ solr_data_dir }}/{{ project_solr_core }}/conf/stopwords_en.txt'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_solr_stopwords_en
-    ignore_errors: True
-
-  - name: copy hyrax's stopwords.txt to the core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/stopwords.txt'
-      dest: '{{ solr_data_dir }}/{{ project_solr_core }}/conf/stopwords.txt'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_solr_stopwords
-    ignore_errors: True
 
 - block:
   - name: create sufia solr test core
@@ -144,17 +72,6 @@
       group: '{{ solr_group }}'
       create: True
     notify: restart solr
-  - name: copy hyrax's solrconfig.xml to the test core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/solrconfig.xml'
-      dest: '{{ solr_data_dir }}/{{ project_solr_test_core }}/conf/solrconfig.xml'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_test_solrconfig
-    ignore_errors: True
   - name: copy sufia's solrconfig.xml to the test core
     copy:
       src: '{{ project_app_root }}/solr/config/solrconfig.xml'
@@ -164,7 +81,6 @@
       mode: 0444
       remote_src: True
     notify: restart solr
-    when: hyrax_test_solrconfig|failed
     register: test_solrconfig
     ignore_errors: True
   - name: copy sufia's solrconfig.xml to the test core from a legacy location
@@ -177,17 +93,6 @@
       remote_src: True
     notify: restart solr
     when: test_solrconfig|failed
-  - name: copy hyrax's schema.xml to the test core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/schema.xml'
-      dest: '{{ solr_data_dir }}/{{ project_solr_test_core }}/conf/schema.xml'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_test_schema
-    ignore_errors: True
   - name: copy sufia's schema.xml to the test core
     copy:
       src: '{{ project_app_root }}/solr/config/schema.xml'
@@ -197,7 +102,6 @@
       mode: 0444
       remote_src: True
     notify: restart solr
-    when: hyrax_test_schema|failed
     register: test_schema
     ignore_errors: True
   - name: copy sufia's schema.xml to the test core from a legacy location
@@ -210,52 +114,4 @@
       remote_src: True
     notify: restart solr
     when: test_schema|failed
-  - name: copy hyrax's synonyms.txt to the test core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/synonyms.txt'
-      dest: '{{ solr_data_dir }}/{{ project_solr_test_core }}/conf/synonyms.txt'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_test_solr_synonyms
-    ignore_errors: True
-  - name: copy hyrax's protwords.txt to the test core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/protwords.txt'
-      dest: '{{ solr_data_dir }}/{{ project_solr_test_core }}/conf/protwords.txt'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_test_solr_protwords
-    ignore_errors: True
-
-  - name: copy hyrax's stopwords_en.txt to the test core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/stopwords_en.txt'
-      dest: '{{ solr_data_dir }}/{{ project_solr_test_core }}/conf/stopwords_en.txt'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_test_solr_stopwords_en
-    ignore_errors: True
-
-  - name: copy hyrax's stopwords.txt to the test core
-    copy:
-      src: '{{ project_app_root }}/solr/conf/stopwords.txt'
-      dest: '{{ solr_data_dir }}/{{ project_solr_test_core }}/conf/stopwords.txt'
-      owner: '{{ solr_user }}'
-      group: '{{ solr_group }}'
-      mode: 0444
-      remote_src: True
-    notify: restart solr
-    register: hyrax_test_solr_stopwords
-    ignore_errors: True
-
-
   when: project_app_env == 'development'
