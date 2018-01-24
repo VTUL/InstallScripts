@@ -196,10 +196,6 @@
   register: project_tasks
   become: no
 
-- name: execute pending handlers for rake tasks to work
-  meta: flush_handlers
-  when: project_tasks.stat.exists
-
 - block:
   - name: create db if necessary
     command: ./bin/rake db:create
@@ -212,11 +208,6 @@
     args:
       chdir: '{{ project_app_root }}'
     when: clone_app.changed or deploy_app.changed
-
-  - name: include project specific tasks
-    include: tasks/{{ project_name }}.yml
-    when: project_tasks.stat.exists
-
   become: yes
   become_user: '{{ project_runner }}'
   environment:
@@ -233,3 +224,16 @@
   when: project_app_env == 'production'
   notify:
     - precompile assets
+
+- name: execute pending handlers for rake tasks to work
+  meta: flush_handlers
+  when: project_tasks.stat.exists
+
+- block:
+  - name: include project specific tasks
+    include: tasks/{{ project_name }}.yml
+    when: project_tasks.stat.exists
+  become: yes
+  become_user: '{{ project_runner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'

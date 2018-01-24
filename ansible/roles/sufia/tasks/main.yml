@@ -172,20 +172,12 @@
   register: project_tasks
   become: no
 
-- name: execute pending handlers for rake tasks to work
-  meta: flush_handlers
-  when: project_tasks.stat.exists
-
 - block:
   - name: migrate db
     command: bundle exec rake db:migrate
     args:
       chdir: '{{ project_app_root }}'
     when: clone_app.changed or deploy_app.changed
-
-  - name: include project specific tasks
-    include: tasks/{{ project_name }}.yml
-    when: project_tasks.stat.exists
 
   - name: add rails bin shims for development
     command: bundle exec rake rails:update:bin
@@ -202,7 +194,6 @@
     when: project_app_env == 'development'
     environment:
       RAILS_ENV: 'test'
-
   become: yes
   become_user: '{{ project_runner }}'
   environment:
@@ -219,3 +210,16 @@
   when: project_app_env == 'production'
   notify:
     - precompile assets
+
+- name: execute pending handlers for rake tasks to work
+  meta: flush_handlers
+  when: project_tasks.stat.exists
+
+- block:
+  - name: include project specific tasks
+    include: tasks/{{ project_name }}.yml
+    when: project_tasks.stat.exists
+  become: yes
+  become_user: '{{ project_runner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
