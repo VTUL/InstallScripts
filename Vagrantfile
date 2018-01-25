@@ -31,15 +31,16 @@ def site_file
   # we try to guess it from the "project_name" setting in the ansible/site_secrets.yml
   # file (defaulting to "sufia").
   app = "#{ENV['APP_TYPE']}"
-  if app == "sufia" or app == "geoblacklight"
+  if app == "sufia" or app == "hyrax" or app == "geoblacklight"
     return app
   else
     # Try to guess the application type from the site_secrets.yml project_name
     app = $secrets_items["project_name"]
     case app
-      when "data-repo", "iawa" then "sufia"
+      when "iawa"              then "hyrax"
+      when "data-repo"         then "sufia"
       when "geoblacklight"     then "geoblacklight"
-      else                          "sufia"
+      else                          "hyrax"
     end
   end
 end

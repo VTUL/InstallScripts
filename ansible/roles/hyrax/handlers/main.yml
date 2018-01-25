@@ -1,0 +1,23 @@
+---
+- name: precompile assets
+  command: ./bin/rails assets:precompile
+  args:
+    chdir: '{{ project_app_root }}'
+  when: project_app_env == 'production'
+  notify: restart nginx
+  become: yes
+  become_user: '{{ project_owner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+
+- name: restart resque
+  service:
+    name: resque-pool
+    state: restarted
+  become: yes
+
+- name: restart sidekiq workers
+  service:
+    name: workers
+    state: restarted
+  become: yes

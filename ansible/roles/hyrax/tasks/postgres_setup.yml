@@ -1,0 +1,34 @@
+---
+- name: create project database role on local postgresql server
+  postgresql_user:
+    name: '{{ project_db_user }}'
+    password: '{{ project_db_password }}'
+    role_attr_flags: CREATEDB
+  when: postgresql_is_local
+
+- name: create project database role on remote postgresql server
+  postgresql_user:
+    name: '{{ project_db_user }}'
+    password: '{{ project_db_password }}'
+    role_attr_flags: CREATEDB
+    login_user: '{{ project_db_admin_user }}'
+    login_password: '{{ project_db_admin_password }}'
+    login_host: '{{ project_db_host }}'
+  when: postgresql_is_local | bool == False
+
+- name: create project database on local postgresql server
+  postgresql_db:
+    name: '{{ project_db_name }}'
+    encoding: 'UTF-8'
+    owner: '{{ project_db_user }}'
+  when: postgresql_is_local
+
+- name: create project database on remote postgresql server
+  postgresql_db:
+    name: '{{ project_db_name }}'
+    encoding: 'UTF-8'
+    owner: '{{ project_db_user }}'
+    login_user: '{{ project_db_admin_user }}'
+    login_password: '{{ project_db_admin_password }}'
+    login_host: '{{ project_db_host }}'
+  when: postgresql_is_local | bool == False
