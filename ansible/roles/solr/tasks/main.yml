@@ -34,7 +34,8 @@
     - path: '{{ solr_data_dir }}/dist'
       source: '{{ solr_install_dir }}/solr/dist'
 
-- name: ensure solr starts on boot
+- name: ensure solr starts on boot and is started
   service:
     name: solr
     enabled: yes
+    state: started

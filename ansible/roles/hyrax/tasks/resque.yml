@@ -1,0 +1,13 @@
+- name: copy resque init script
+  template:
+    src: resque-pool.j2
+    dest: /etc/init.d/resque-pool
+    mode: 0755
+  notify:
+    - restart redis
+    - restart resque
+
+- name: ensure resque runs at startup
+  service:
+    name: resque-pool
+    enabled: yes
