@@ -23,3 +23,5 @@ graylog_verbosity: "info"
 # Active Job backend choice
 active_job_backend: "{{ 'sidekiq' if project_name == 'iawa' else 'resque' }}"
 sidekiq_workers: 1
+# Google Analytics
+hyrax_google_analytics_comment_marker: "{{ '' if project_google_analytics_id is defined else '#' }}"
