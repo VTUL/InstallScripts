@@ -1,9 +1,4 @@
 ---
-- name: extract remote zip to local_files directory
-  unarchive: copy=no src="{{ local_files_url }}" dest="local_files/"
-  when: remote_local_files == 'true'
-  delegate_to: localhost
-
 - name: make sure active_job_backend setting is valid
   fail:
     msg: 'active_job_backend ({{ active_job_backend }}) needs to be either sidekiq or resque.'
