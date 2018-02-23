@@ -1,0 +1,5 @@
+---
+- name: extract remote archive to local_files directory
+  unarchive: copy=no src="{{ local_files_archive }}" dest="local_files/"
+  when: local_files_archive is defined
+  delegate_to: localhost
