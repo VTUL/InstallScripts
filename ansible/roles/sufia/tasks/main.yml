@@ -1,4 +1,9 @@
 ---
+- name: extract remote zip to local_files directory
+  unarchive: copy=no src="{{ local_files_url }}" dest="local_files/"
+  when: remote_local_files == 'true'
+  delegate_to: localhost
+
 - name: install apt dependencies
   apt:
     name: '{{ item }}'
