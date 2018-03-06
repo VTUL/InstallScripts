@@ -198,13 +198,13 @@
 
 - block:
   - name: create db if necessary
-    command: ./bin/rake db:create
+    command: bundle exec rails db:create
     args:
       chdir: '{{ project_app_root }}'
     when: clone_app.changed or deploy_app.changed
 
   - name: migrate the database
-    command: ./bin/rake db:migrate
+    command: bundle exec rails db:migrate
     args:
       chdir: '{{ project_app_root }}'
     when: clone_app.changed or deploy_app.changed
