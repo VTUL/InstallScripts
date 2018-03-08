@@ -216,6 +216,14 @@
   when: project_tasks.stat.exists
 
 - block:
+  - name: copy gitconfig
+    copy:
+      src: "{{ local_files_dir }}/.gitconfig"
+      dest: '{{ project_owner_home }}/.gitconfig'
+    become: yes
+    become_user: '{{ project_owner }}'
+    ignore_errors: True
+
   - name: include project specific tasks
     include: tasks/{{ project_name }}.yml
     when: project_tasks.stat.exists
