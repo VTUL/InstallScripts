@@ -1,15 +1,5 @@
 ---
 - block:
-  - name: load workflow
-    command: bundle exec rails hyrax:workflow:load
-    args:
-      chdir: '{{ project_app_root }}'
-
-  - name: create default admin set
-    command: bundle exec rails hyrax:default_admin_set:create
-    args:
-      chdir: '{{ project_app_root }}'
-
   - name: create roles
     command: bundle exec rails iawa:add_roles
     args:
