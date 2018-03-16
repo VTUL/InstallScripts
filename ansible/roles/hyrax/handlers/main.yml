@@ -10,9 +10,9 @@
   become_user: '{{ project_owner }}'
   environment:
     RAILS_ENV: '{{ project_app_env }}'
-    
+
 - name: precompile assets
-  command: ./bin/rails assets:precompile
+  command: bundle exec rails assets:precompile
   args:
     chdir: '{{ project_app_root }}'
   when: project_app_env == 'production'

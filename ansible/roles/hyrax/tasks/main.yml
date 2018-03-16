@@ -214,7 +214,7 @@
     RAILS_ENV: '{{ project_app_env }}'
 
 - name: remove old precompiled assets
-  command: ./bin/rails assets:clobber
+  command: bundle exec rails assets:clobber
   args:
     chdir: '{{ project_app_root }}'
   become: yes
@@ -227,9 +227,18 @@
 
 - name: execute pending handlers for rake tasks to work
   meta: flush_handlers
-  when: project_tasks.stat.exists
 
 - block:
+  - name: load workflow
+    command: bundle exec rails hyrax:workflow:load
+    args:
+      chdir: '{{ project_app_root }}'
+
+  - name: create default admin set
+    command: bundle exec rails hyrax:default_admin_set:create
+    args:
+      chdir: '{{ project_app_root }}'
+
   - name: include project specific tasks
     include: tasks/{{ project_name }}.yml
     when: project_tasks.stat.exists
