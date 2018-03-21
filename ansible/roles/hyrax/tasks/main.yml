@@ -103,6 +103,10 @@
       mode: "u=rwX,g=rwXs,o="
     - path: "{{ project_app_root }}/db"
       mode: "u=rwX,g=rwXs,o="
+    - path: "{{ project_app_root }}/public/uploads"
+      mode: "u=rwX,g=rwXs,o="
+    - path: "{{ project_app_root }}/public/system"
+      mode: "u=rwX,g=rwXs,o="
 
 - name: ensure log files have the correct ownerships and permissions
   file:
