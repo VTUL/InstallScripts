@@ -27,6 +27,7 @@ Role variables are listed below, along with their defaults:
     project_app_root: '{{ project_owner_home }}/{{ project_name }}'
     project_solr_test_core: test
     project_google_analytics_id: UA-99999999-1 (commented out)
+    iiif_cache_duration: 30 days (in seconds) for project_app_env "production" mode, else 5 days (in seconds)
 
 This role makes use of the `local_files_dir` variable defined in the top-level `site_vars.yml` file. The `local_files_dir` setting points to a local directory on the provisioning host where locally-provided files may be supplied to the deployment and provisioning process. In the case of the `hyrax` role, this directory is used to supply the `user_list.txt`, `admin_list.txt`, and `images.zip` carousel images for the `data-repo` application.
 
@@ -39,3 +40,4 @@ The Hyrax role also uses several variables that are normally defined in `site_se
 - `project_db_admin_user`: PostgreSQL user with Superuser privileges that may be used to create the application roles on a remote PostgreSQL server
 - `project_db_admin_password`: PostgreSQL password of above-mentioned `project_db_admin_user`
 - `project_google_analytics_id`: the Google Analytics ID associated with this project
+- `iiif_cache_duration`: the amount of time in seconds an object will be cached by the IIIF server

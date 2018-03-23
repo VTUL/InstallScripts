@@ -25,3 +25,5 @@ active_job_backend: "{{ 'sidekiq' if project_name == 'iawa' else 'resque' }}"
 sidekiq_workers: 1
 # Google Analytics
 hyrax_google_analytics_comment_marker: "{{ '' if project_google_analytics_id is defined else '#' }}"
+# Riiif cache cache_duration in seconds
+iiif_cache_duration: "{{ '2592000' if project_app_env == 'production' else '432000' }}"
