@@ -1,3 +1,4 @@
 ---
 dependencies:
   - { role: project_user }
+  - { role: local_files }

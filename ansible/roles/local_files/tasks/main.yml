@@ -1,0 +1,18 @@
+---
+- name: delete the local_files directory (Only way is a delete and re-create until state=empty is implemented)
+  file: path="{{local_files_dir}}/" state=absent
+  when: local_files_archive is defined
+  delegate_to: localhost
+  become: no
+  
+- name: recreate the local_files directory
+  file: path="{{local_files_dir}}/" state=directory
+  when: local_files_archive is defined
+  delegate_to: localhost
+  become: no
+  
+- name: extract remote archive to local_files directory
+  unarchive: copy=no src="{{ local_files_archive }}" dest="{{local_files_dir}}/"
+  when: local_files_archive is defined
+  delegate_to: localhost
+  become: no
