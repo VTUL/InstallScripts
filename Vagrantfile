@@ -77,6 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Ansible provisioner default settings
   config.vm.provision vagrant_ansible_provisioner() do |ansible|
     ansible.playbook = "ansible/#{site_file()}_site.yml"
+    ansible.extra_vars = 'ansible/site_secrets.yml'
     ansible.verbose = ""
   end
 
