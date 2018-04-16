@@ -21,8 +21,8 @@ graylog_network_locality: WAN
 graylog_facility: "{{ project_name }}"
 graylog_verbosity: "info"
 # OSF API settings
-osf_client_id: ""
-osf_client_secret: ""
+project_osf_client_id: ""
+project_osf_client_secret: ""
 # Google Analytics
 sufia_google_analytics_comment_marker: "{{ '' if project_google_analytics_id is defined else '#' }}"
 
