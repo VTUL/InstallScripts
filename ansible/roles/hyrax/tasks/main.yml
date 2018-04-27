@@ -19,6 +19,7 @@
     - libreoffice
     - zlib1g-dev
     - libsqlite3-dev
+    - libarchive-dev
 
 - name: make sure project user owns the application
   file:
