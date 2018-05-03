@@ -24,7 +24,17 @@
     state: absent
   when: not clamav_private_mirror_enabled
 
+- name: stop clamav so that database update can happen
+  service:
+    name: clamav-freshclam
+    state: stopped
+
 - name: create/update the clamav databases
   command: /usr/bin/freshclam --quiet
   args:
     creates: /var/lib/clamav/main.cvd
+
+- name: start clamav if stopped
+  service:
+    name: clamav-freshclam
+    state: started

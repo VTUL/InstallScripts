@@ -30,6 +30,6 @@
 
 - name: restart sidekiq workers
   service:
-    name: workers
+    name: sidekiq
     state: restarted
   become: yes

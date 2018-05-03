@@ -9,13 +9,15 @@
     - acl
     - build-essential
     - apt-transport-https
-    - python-apt
-    - python-pip
+    - python3-apt
+    - python3-pip
 
 - name: update python's crypto libs
   pip:
     name: '{{ item }}'
+    state: latest
   with_items:
+    - pip
     - urllib3
     - pyopenssl
     - ndg-httpsclient

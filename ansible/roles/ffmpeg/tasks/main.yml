@@ -1,7 +1,7 @@
 ---
 - name: add repository
   apt_repository:
-    repo: 'ppa:mc3man/trusty-media'
+    repo: 'ppa:mc3man/xerus-media'
     state: present
     update_cache: yes
 
