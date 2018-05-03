@@ -73,6 +73,18 @@ def security_groups( env_var )
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # /etc/hosts management
+  unless Vagrant.has_plugin?('vagrant-hostmanager')
+    puts "### IMPORTANT NOTE ###"
+    puts "This Vagrantfile works best when the 'vagrant-hostmanager' plugin is installed."
+    puts "You can install it by running this command on your system:"
+    puts "  vagrant plugin install vagrant-hostmanager"
+  else
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline = true
+  end
 
   # Ansible provisioner default settings
   config.vm.provision vagrant_ansible_provisioner() do |ansible|
@@ -83,7 +95,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Application server
   config.vm.define :hydravm do |hydravm|
-    hydravm.vm.hostname = "hydravm"
+    hydravm.vm.hostname = "#{$secrets_items['project_name']}.dld.lib.vt.edu"
 
     hydravm.vm.provider :virtualbox do |vb, override|
       vb.name = $secrets_items["vm_name"] if !$secrets_items["vm_name"].nil? && !$secrets_items["vm_name"].empty?
