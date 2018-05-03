@@ -132,19 +132,18 @@ In the case of the plain `vagrant up` option, a VM will be brought up and config
 
 You can use `vagrant ssh` to log in to this VM when it is up. When logged out of the VM, `vagrant halt` can be used to shut down the VM. The command `vagrant destroy` will destroy it entirely, requiring another `vagrant up` to recreate it.
 
-Several ports in the running VM are made accessible on the local machine.
-Accessing the local port in a Web browser will actually result in the forwarded
-port being accessed on the VM. These ports are as follows:
+The local VM listens on a Vagrant private network that is accessible from only the local host machine. The default IP address of the VM is 10.31.63.127 but may be overridden by setting the `SAMVERA_APP_ID` environment variable on the host system to a different [RFC1918](https://en.wikipedia.org/wiki/Private_network) private IP address. (Note: be consistent in setting this environment variable if you wish to override the default VM IP address, otherwise it may revert back to the default.)
 
-Local | VM   | Description
------ | ---- | -----------
-8983  | 8983 | Solr services
-8888  | 8080 | Tomcat (if applicable)
-8080  | 80   | Application (HTTP)
-4443  | 443  | Application (HTTPS)
+Several notable ports in the running VM are accessible on the local machine. Accessing the port of the VM IP address mentioned above in a Web browser will result in the corresponding service being accessed on the VM. These ports and services are as follows:
 
-To access the Solr admin page in the VM from the local machine you would access
-this URL: `http://localhost:8983/solr`.  (Note that only the "Local" ports in the above table are directly accessible from the local machine.)
+Port | Service
+---- | -------
+8983 | Solr services
+8080 | Tomcat (if applicable)
+80   | Application (HTTP)
+443  | Application (HTTPS)
+
+For example, to access the Solr admin page in the VM from the local machine you would access this URL: `http://10.31.63.127:8983/solr`.  (Replace '10.31.63.127' with the appropriate IP if overridden via `SAMVERA_APP_ID`.)
 
 ### AWS
 
