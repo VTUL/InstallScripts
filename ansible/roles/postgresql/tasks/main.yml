@@ -29,7 +29,7 @@
     update_cache: yes
   with_items:
     - libpq-dev
-    - python-psycopg2
+    - python3-psycopg2
 
 - name: install access rules
   copy:

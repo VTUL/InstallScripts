@@ -78,6 +78,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision vagrant_ansible_provisioner() do |ansible|
     ansible.playbook = "ansible/#{site_file()}_site.yml"
     ansible.extra_vars = 'ansible/site_secrets.yml'
+    ansible.raw_arguments = "-e ansible_python_interpreter=/usr/bin/python3"
     ansible.verbose = ""
   end
 
@@ -88,7 +89,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     hydravm.vm.provider :virtualbox do |vb, override|
       vb.name = $secrets_items["vm_name"] if !$secrets_items["vm_name"].nil? && !$secrets_items["vm_name"].empty?
       vb.customize ["modifyvm", :id, "--description", "Created from Vagrantfile in #{Dir.pwd}"]
-      override.vm.box = "ubuntu/trusty64"
+      override.vm.box = "ubuntu/xenial64"
       vb.memory = 4096
       vb.cpus = 2
       # Forward Solr port in VM to local machine
