@@ -100,7 +100,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     hydravm.vm.provider :virtualbox do |vb, override|
       vb.name = $secrets_items["vm_name"] if !$secrets_items["vm_name"].nil? && !$secrets_items["vm_name"].empty?
       vb.customize ["modifyvm", :id, "--description", "Created from Vagrantfile in #{Dir.pwd}"]
-      override.vm.box = "ubuntu/trusty64"
+      override.vm.box = "bento/ubuntu-14.04"
       vb.memory = 4096
       vb.cpus = 2
       # Forward Solr port in VM to local machine
