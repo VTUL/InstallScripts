@@ -103,14 +103,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       override.vm.box = "ubuntu/trusty64"
       vb.memory = 4096
       vb.cpus = 2
-      # Forward Solr port in VM to local machine
-      override.vm.network :forwarded_port, host: 8983, guest: 8983
-      # Forward Tomcat/Fedora port in VM to port 8888 on local machine
-      override.vm.network :forwarded_port, host: 8888, guest: 8080
-      # Forward HTTP port in VM to port 8080 on local machine
-      override.vm.network :forwarded_port, host: 8081, guest: 80
-      # Forward HTTPS port in VM to port 4443 on local machine
-      override.vm.network :forwarded_port, host: 4443, guest: 443
+      vm_ip = ENV['SAMVERA_APP_IP'] || '10.31.63.127'
+      override.vm.network :private_network, ip: vm_ip
     end
 
     hydravm.vm.provider :openstack do |os, override|
