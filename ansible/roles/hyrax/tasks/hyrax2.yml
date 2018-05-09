@@ -1,0 +1,46 @@
+---
+- block:
+  - name: create roles
+    command: bundle exec rails vt_hyrax2:add_roles
+    args:
+      chdir: '{{ project_app_root }}'
+  become: yes
+  become_user: '{{ project_runner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+
+- block:
+  - name: copy list of users
+    copy:
+      src: "{{ local_files_dir }}/user_list.txt"
+      dest: '{{ project_app_root }}/user_list.txt'
+    ignore_errors: False
+    register: copy_user_list
+
+  - name: add users
+    command: bundle exec rails vt_hyrax2:populate_users
+    args:
+      chdir: '{{ project_app_root }}'
+    when: copy_user_list|succeeded
+
+  - name: copy list of admins
+    copy:
+      src: "{{ local_files_dir }}/admin_list.txt"
+      dest: '{{ project_app_root }}/admin_list.txt'
+    ignore_errors: False
+    register: copy_admin_list
+  become: yes
+  become_user: '{{ project_owner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
+
+- block:
+  - name: upgrade users
+    command: bundle exec rails vt_hyrax2:upgrade_users
+    args:
+      chdir: '{{ project_app_root }}'
+    when: copy_admin_list|succeeded
+  become: yes
+  become_user: '{{ project_runner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
