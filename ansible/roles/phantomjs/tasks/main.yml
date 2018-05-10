@@ -16,7 +16,7 @@
     get_url:
       url: https://bitbucket.org/ariya/phantomjs/downloads/{{ phantomjs_src }}
       dest: /tmp/{{ phantomjs_src }}
-    when: cached_pjs|failed
+    when: cached_pjs is failed
 
   - name: unzip phantomjs
     command: '/bin/tar --extract --bzip2 --file="/tmp/{{ phantomjs_src }}" --directory="{{ phantomjs_dir }}" --strip-components=1'

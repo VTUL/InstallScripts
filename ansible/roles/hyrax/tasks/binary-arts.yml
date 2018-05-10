@@ -24,7 +24,7 @@
     command: ./bin/rails binaryarts:upgrade_users
     args:
       chdir: '{{ project_app_root }}'
-    when: copy_admin_list|succeeded
+    when: copy_admin_list is successful
 
   - name: ensure font directory exists
     file:

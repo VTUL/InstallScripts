@@ -34,7 +34,7 @@
       mode: 0444
       remote_src: True
     notify: restart solr
-    when: solrconfig|failed
+    when: solrconfig is failed
   - name: copy sufia's schema.xml to the core
     copy:
       src: '{{ project_app_root }}/solr/config/schema.xml'
@@ -55,7 +55,7 @@
       mode: 0444
       remote_src: True
     notify: restart solr
-    when: schema|failed
+    when: schema is failed
 
 - block:
   - name: create sufia solr test core
@@ -92,7 +92,7 @@
       mode: 0444
       remote_src: True
     notify: restart solr
-    when: test_solrconfig|failed
+    when: test_solrconfig is failed
   - name: copy sufia's schema.xml to the test core
     copy:
       src: '{{ project_app_root }}/solr/config/schema.xml'
@@ -113,5 +113,5 @@
       mode: 0444
       remote_src: True
     notify: restart solr
-    when: test_schema|failed
+    when: test_schema is failed
   when: project_app_env == 'development'
