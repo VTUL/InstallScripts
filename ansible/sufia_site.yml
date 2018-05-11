@@ -10,13 +10,13 @@
         role: fedora4,
         become: yes,
         fedora_version: '4.5.1',
-        when: project_fedora_url | search( 'localhost|127\.0\.0\.1' )
+        when: project_fedora_url is search( 'localhost|127\.0\.0\.1' )
     }
     - {
         role: solr,
         become: yes,
         solr_version: '5.5.1',
-        when: project_solr_url | search( 'localhost|127\.0\.0\.1' )
+        when: project_solr_url is search( 'localhost|127\.0\.0\.1' )
     }
     - {
         role: postgresql,
@@ -26,7 +26,7 @@
     - {
         role: redis,
         become: yes,
-        when: project_redis_host | search( 'localhost|127\.0\.0\.1' )
+        when: project_redis_host is search( 'localhost|127\.0\.0\.1' )
     }
     - {
         role: sufia,

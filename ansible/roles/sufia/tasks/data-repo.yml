@@ -16,7 +16,7 @@
     command: bundle exec rake datarepo:populate_users
     args:
       chdir: '{{ project_app_root }}'
-    when: copy_user_list|succeeded
+    when: copy_user_list is successful
 
   - name: remove list of users
     file:
@@ -34,7 +34,7 @@
     command: bundle exec rake datarepo:upgrade_users
     args:
       chdir: '{{ project_app_root }}'
-    when: copy_admin_list|succeeded
+    when: copy_admin_list is successful
 
   - name: remove list of admins
     file:

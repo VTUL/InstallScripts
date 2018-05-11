@@ -48,7 +48,7 @@
     owner: '{{ project_owner }}'
     group: '{{ project_owner_group }}'
     mode: 0600
-  when: clone_app|failed
+  when: clone_app is failed
 
 - name: clone the repo with a deploy key.
   git:
@@ -58,7 +58,7 @@
     key_file: '{{ project_owner_home }}/.ssh/deploy_key'
     force: yes
   become_user: "{{ project_owner }}"
-  when: clone_app|failed
+  when: clone_app is failed
   register: deploy_app
   notify:
     - restart nginx
@@ -71,7 +71,7 @@
 
 - name: create the project's solr cores
   include: solr_core_setup.yml
-  when: project_solr_url | search( 'localhost|127\.0\.0\.1' )
+  when: project_solr_url is search( 'localhost|127\.0\.0\.1' )
 
 - name: make sure application runs as project_runner
   file:

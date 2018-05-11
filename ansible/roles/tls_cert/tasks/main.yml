@@ -34,7 +34,7 @@
   args:
     chdir: /tmp
   notify: restart nginx
-  when: local_cert|failed or local_key|failed
+  when: local_cert is failed or local_key is failed
 
 - name: copy tls cert and key for reuse in vagrant
   fetch:

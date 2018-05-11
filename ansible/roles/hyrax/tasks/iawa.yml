@@ -21,7 +21,7 @@
     command: bundle exec rails iawa:populate_users
     args:
       chdir: '{{ project_app_root }}'
-    when: copy_user_list|succeeded
+    when: copy_user_list is successful
 
   - name: copy list of admins
     copy:
@@ -39,7 +39,7 @@
     command: bundle exec rails iawa:upgrade_users
     args:
       chdir: '{{ project_app_root }}'
-    when: copy_admin_list|succeeded
+    when: copy_admin_list is successful
 
   - name: add initial controlled vocabularies
     command: bundle exec rails iawa:add_controlled_vocabs

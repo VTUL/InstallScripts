@@ -44,11 +44,11 @@
 
 - name: fail if loading authorised keys failed
   fail: msg="Loading authorized_keys failed."
-  when: key_copy|failed
+  when: key_copy is failed
 
 - name: issue a warning if no authorised keys found locally
   debug:
     msg: |
       WARNING: No keys found in {{ local_files_dir }}/authorized_keys directory!
       Upload user will not be able to sftp to system until you provide one.
-  when: key_copy|skipped
+  when: key_copy is skipped

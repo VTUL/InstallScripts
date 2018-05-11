@@ -23,7 +23,7 @@
     group: root
     mode: 0444
     timeout: 100
-  when: cached_fits|failed
+  when: cached_fits is failed
 
 - name: cache fits for the future
   fetch:

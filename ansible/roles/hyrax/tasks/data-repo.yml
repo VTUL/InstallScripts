@@ -16,7 +16,7 @@
     command: ./bin/rails vtechdata:populate_users
     args:
       chdir: '{{ project_app_root }}'
-    when: copy_user_list|succeeded
+    when: copy_user_list is successful
 
   - name: remove list of users
     file:
