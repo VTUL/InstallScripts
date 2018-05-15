@@ -1,16 +1,32 @@
 ---
+- name: get os-specific settings
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution|lower }}.yml"
+        - "{{ ansible_os_family|lower }}.yml"
+        - defaults.yml
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: update all packages to the latest version
+  apt:
+    upgrade: dist
+    autoremove: yes
+    autoclean: yes
+    update_cache: yes
+    cache_valid_time: '{{ apt_cache_timeout }}'
+  when: perform_dist_upgrade
+
 - name: install building software and build essentials
   apt:
     name: '{{ item }}'
     state: present
     cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
-  with_items:
-    - acl
-    - build-essential
-    - apt-transport-https
-    - python-apt
-    - python-pip
+  with_items: "{{ common_essential_packages }}"
 
 - name: update python's crypto libs
   pip:
@@ -20,3 +36,4 @@
     - pyopenssl
     - ndg-httpsclient
     - pyasn1
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == '14'

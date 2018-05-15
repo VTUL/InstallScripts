@@ -67,6 +67,14 @@ The choice of provisioner may be overridden by setting the environment variable 
 
 Normally, `vagrant up` will be able to determine the type of application you want to provision based upon settings in the `site_secrets.yml` file. You can override this choice by setting the `APP_TYPE` environment variable to the chosen application prior to `vagrant up`.  Valid settings for `APP_TYPE` are either `sufia` or `geoblacklight`.
 
+#### Choosing a target OS for deployment
+
+Vagrant uses a base "box" to designate the VM image upon which Vagrant will operate (or, in this case, on which to deploy the application). Currently, the default box used here is `bento/ubuntu-14.04`, which is a VM based upon a 64-bit installation of Ubuntu Trusty 14.04.
+
+A different base box may be chosen prior to invoking Vagrant for deployment by setting the `VAGRANT_VM_BOX` environment variable. This should be set to a [box name](https://www.vagrantup.com/docs/boxes.html) chosen from the publicly available collection of boxes. For example, setting `VAGRANT_VM_BOX` to `bento/ubuntu-16.04` will result in deployment to a 64-bit installation of Ubuntu Xenial 16.04.
+
+Note, currently, these install scripts are only tested against the following boxes: `bento/ubuntu-14.04` and `bento/ubuntu-16.04`
+
 ### AWS
 
 When using the `aws` provider to `vagrant up` it is necessary to define several environment variables in order to authenticate to AWS and supply a keypair with which Vagrant can log in to the new AWS EC2 instance being deployed.  These environment variables are as follows:
@@ -144,6 +152,10 @@ Port | Service
 443  | Application (HTTPS)
 
 For example, to access the Solr admin page in the VM from the local machine you would access this URL: `http://10.31.63.127:8983/solr`.  (Replace '10.31.63.127' with the appropriate IP if overridden via `SAMVERA_APP_IP`.)
+
+If the `vagrant-hostmanager` Vagrant plugin is installed, as recommended, then the local host's `/etc/hosts` file will be edited to insert a local hostname override. This hostname will define `project_name`.dld.vt.edu to be that of `SAMVERA_APP_IP` (or the default '10.31.63.127' if `SAMVERA_APP_IP` is not set). The `project_name` is the same setting in `ansible/site_secrets.yml`.
+
+Thus, with the `vagrant-hostmaster` plugin installed, it is possible to access the application more naturally via its hostname as described above, e.g., "https://data-repo.dld.lib.vt.edu" when `project_name` is set to "data-repo" when deploying.
 
 ### AWS
 

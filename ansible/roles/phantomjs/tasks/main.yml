@@ -18,9 +18,12 @@
       dest: /tmp/{{ phantomjs_src }}
     when: cached_pjs is failed
 
-  - name: unzip phantomjs
-    command: '/bin/tar --extract --bzip2 --file="/tmp/{{ phantomjs_src }}" --directory="{{ phantomjs_dir }}" --strip-components=1'
-    args:
+  - name: unarchive phantomjs
+    unarchive:
+      extra_opts: ['--strip-components=1', '--show-stored-names']
+      remote_src: yes
+      src: /tmp/{{ phantomjs_src }}
+      dest: '{{ phantomjs_dir }}'
       creates: '{{ phantomjs_dir }}/bin/phantomjs'
   become: yes
   become_user: '{{ project_owner }}'

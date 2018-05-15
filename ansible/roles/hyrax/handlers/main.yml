@@ -30,6 +30,6 @@
 
 - name: restart sidekiq workers
   service:
-    name: workers
+    name: "{{ sidekiq_service }}"
     state: restarted
   become: yes

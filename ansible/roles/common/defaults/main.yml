@@ -1,2 +1,3 @@
 ---
 java_vendor: openjdk
+perform_dist_upgrade: True

@@ -1,0 +1,10 @@
+---
+sufia_dependent_packages:
+    - git
+    - unzip
+    - imagemagick
+    - libreoffice
+    - sqlite3
+    - libsqlite3-dev
+    - zlib1g-dev
+    - libarchive-dev

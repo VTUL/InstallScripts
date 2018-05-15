@@ -1,0 +1,13 @@
+---
+hyrax_dependent_packages:
+  - git
+  - unzip
+  - imagemagick
+  - libreoffice
+  - zlib1g-dev
+  - libsqlite3-dev
+  - libarchive-dev
+sidekiq_service_files:
+  - file: systemd/sidekiq.service.j2
+    dest: /lib/systemd/system/sidekiq.service
+sidekiq_service: sidekiq
