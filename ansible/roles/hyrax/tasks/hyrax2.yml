@@ -21,7 +21,7 @@
     command: bundle exec rails vt_hyrax2:populate_users
     args:
       chdir: '{{ project_app_root }}'
-    when: copy_user_list is successful
+    when: copy_user_list is succeeded
 
   - name: copy list of admins
     copy:
@@ -39,7 +39,7 @@
     command: bundle exec rails vt_hyrax2:upgrade_users
     args:
       chdir: '{{ project_app_root }}'
-    when: copy_admin_list is successful
+    when: copy_admin_list is succeeded
   become: yes
   become_user: '{{ project_runner }}'
   environment:
