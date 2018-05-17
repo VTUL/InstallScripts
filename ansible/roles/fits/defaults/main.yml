@@ -1,3 +1,3 @@
 ---
-fits_version: "{{ '0.8.5' if project_name == 'iawa' else '0.6.2' }}"
+fits_version: "{% if project_name == 'data-repo' %}0.6.2{% elif project_name == 'iawa' %}0.8.5{% else %}1.0.5{% endif %}"
 fits_download_url: http://projects.iq.harvard.edu/files/fits/files
