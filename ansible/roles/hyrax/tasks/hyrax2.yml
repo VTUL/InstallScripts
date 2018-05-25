@@ -40,6 +40,11 @@
     args:
       chdir: '{{ project_app_root }}'
     when: copy_admin_list is successful
+
+  - name: add initial controlled vocabularies
+    command: bundle exec rails vt_hyrax2:add_controlled_vocabs
+    args:
+      chdir: '{{ project_app_root }}'
   become: yes
   become_user: '{{ project_runner }}'
   environment:
