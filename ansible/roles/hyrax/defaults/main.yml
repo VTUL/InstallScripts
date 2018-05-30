@@ -21,7 +21,7 @@ graylog_network_locality: WAN
 graylog_facility: "{{ project_name }}"
 graylog_verbosity: "info"
 # Active Job backend choice
-active_job_backend: "{{ 'sidekiq' if project_name == 'iawa' else 'resque' }}"
+active_job_backend: 'sidekiq'
 sidekiq_workers: 1
 # Google Analytics
 hyrax_google_analytics_comment_marker: "{{ '' if project_google_analytics_id is defined else '#' }}"

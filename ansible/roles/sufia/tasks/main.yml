@@ -1,19 +1,23 @@
 ---
+- name: get os-specific settings
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution|lower }}.yml"
+        - "{{ ansible_os_family|lower }}.yml"
+        - defaults.yml
+      paths:
+        - "{{ role_path }}/vars"
+
 - name: install apt dependencies
   apt:
     name: '{{ item }}'
     state: present
     cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
-  with_items:
-    - git
-    - unzip
-    - imagemagick
-    - libreoffice
-    - sqlite3
-    - libsqlite3-dev
-    - zlib1g-dev
-    - libarchive-dev
+  with_items: '{{ sufia_dependent_packages }}'
 
 - name: make sure project user owns the application
   file:

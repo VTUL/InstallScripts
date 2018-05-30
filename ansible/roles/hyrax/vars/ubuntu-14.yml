@@ -1,0 +1,15 @@
+---
+hyrax_dependent_packages:
+  - git
+  - unzip
+  - imagemagick
+  - libreoffice
+  - zlib1g-dev
+  - libsqlite3-dev
+  - libarchive-dev
+sidekiq_service_files:
+  - file: upstart/workers.conf.j2
+    dest: /etc/init/workers.conf
+  - file: upstart/sidekiq.conf.j2
+    dest: /etc/init/sidekiq.conf
+sidekiq_service: workers

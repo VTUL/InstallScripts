@@ -13,8 +13,7 @@
 # If no "--provider" is specified during "vagrant up" then the default
 # (VirtualBox) provider will be used.
 
-VAGRANTFILE_API_VERSION = "2"
-
+$vm_box = ENV['VAGRANT_VM_BOX'] || 'bento/ubuntu-14.04'
 $secrets_items = {}
 begin
   require 'yaml'
@@ -25,18 +24,28 @@ rescue => e
   abort "An error occurred processing 'ansible/site_secrets.yml'?: #{e}"
 end
 
+def box_name_to_ubuntu_release( box_name )
+  case box_name
+    when "bento/ubuntu-14.04" then [:trusty, "14.04"]
+    when "bento/ubuntu-16.04" then [:xenial, "16.04"]
+    when "ubuntu/trusty64"    then [:trusty, "14.04"]
+    when "ubuntu/xenial64"    then [:xenial, "16.04"]
+    else                           [:unknown, ""]
+  end
+end
+
 def site_file
   # If the APP_TYPE environment variable is defined and contains an acceptable
   # known value then we use that setting for the site file type.  Otherwise,
   # we try to guess it from the "project_name" setting in the ansible/site_secrets.yml
   # file (defaulting to "sufia").
-  app = "#{ENV['APP_TYPE']}"
-  if app == "sufia" or app == "hyrax" or app == "geoblacklight"
-    return app
+  app_type = "#{ENV['APP_TYPE']}"
+  if app_type == "sufia" or app_type == "hyrax" or app_type == "geoblacklight"
+    return app_type
   else
     # Try to guess the application type from the site_secrets.yml project_name
-    app = $secrets_items["project_name"]
-    case app
+    app_type = $secrets_items["project_name"]
+    case app_type
       when "iawa"              then "hyrax"
       when "data-repo"         then "sufia"
       when "geoblacklight"     then "geoblacklight"
@@ -72,7 +81,7 @@ def security_groups( env_var )
   end
 end
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+Vagrant.configure("2") do |config|
   # /etc/hosts management
   unless Vagrant.has_plugin?('vagrant-hostmanager')
     puts "### IMPORTANT NOTE ###"
@@ -90,24 +99,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision vagrant_ansible_provisioner() do |ansible|
     ansible.playbook = "ansible/#{site_file()}_site.yml"
     ansible.extra_vars = 'ansible/site_secrets.yml'
+    if box_name_to_ubuntu_release( $vm_box )[0] == :xenial
+      ansible.host_vars = {
+        :app => {'ansible_python_interpreter' => '/usr/bin/python3'}
+      }
+    end
     ansible.verbose = ""
   end
 
   # Application server
-  config.vm.define :hydravm do |hydravm|
-    hydravm.vm.hostname = "#{$secrets_items['project_name']}.dld.lib.vt.edu"
+  config.vm.define :app do |app|
+    app.vm.hostname = "#{$secrets_items['project_name']}.dld.lib.vt.edu"
 
-    hydravm.vm.provider :virtualbox do |vb, override|
+    app.vm.provider :virtualbox do |vb, override|
       vb.name = $secrets_items["vm_name"] if !$secrets_items["vm_name"].nil? && !$secrets_items["vm_name"].empty?
       vb.customize ["modifyvm", :id, "--description", "Created from Vagrantfile in #{Dir.pwd}"]
-      override.vm.box = "bento/ubuntu-14.04"
+      override.vm.box = $vm_box
       vb.memory = 4096
       vb.cpus = 2
       vm_ip = ENV['SAMVERA_APP_IP'] || '10.31.63.127'
       override.vm.network :private_network, ip: vm_ip
     end
 
-    hydravm.vm.provider :openstack do |os, override|
+    app.vm.provider :openstack do |os, override|
       keypair = "#{ENV['KEYPAIR_NAME']}"
       keypair_filename = "#{ENV['KEYPAIR_FILE']}"
       # OpenStack authentication information
@@ -127,7 +141,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       os.server_name  = site_file()
     end
 
-    hydravm.vm.provider :aws do |aws, override|
+    app.vm.provider :aws do |aws, override|
       keypair = "#{ENV['KEYPAIR_NAME']}"
       keypair_filename = "#{ENV['KEYPAIR_FILE']}"
       override.vm.box = "aws_dummy"

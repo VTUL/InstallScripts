@@ -1,0 +1,7 @@
+---
+common_essential_packages:
+  - acl
+  - build-essential
+  - apt-transport-https
+  - python-apt
+  - python-pip

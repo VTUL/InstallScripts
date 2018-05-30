@@ -3,16 +3,12 @@
     src: "{{ item.file }}"
     dest: "{{ item.dest }}"
     mode: 0755
-  with_items:
-    - file: workers.conf.j2
-      dest: /etc/init/workers.conf
-    - file: sidekiq.conf.j2
-      dest: /etc/init/sidekiq.conf
+  with_items: "{{ sidekiq_service_files }}"
   notify:
     - restart redis
     - restart sidekiq workers
 
 - name: ensure sidekiq runs at startup
   service:
-    name: workers
+    name: "{{ sidekiq_service }}"
     enabled: yes

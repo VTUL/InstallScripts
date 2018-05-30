@@ -1,7 +1,19 @@
 ---
+- name: get os-specific settings
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution|lower }}.yml"
+        - "{{ ansible_os_family|lower }}.yml"
+        - defaults.yml
+      paths:
+        - "{{ role_path }}/vars"
+
 - name: add repository
   apt_repository:
-    repo: 'ppa:mc3man/trusty-media'
+    repo: 'ppa:mc3man/{{ ffmpeg_repo_name }}-media'
     state: present
     update_cache: yes
 
