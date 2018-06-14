@@ -13,7 +13,7 @@
 # If no "--provider" is specified during "vagrant up" then the default
 # (VirtualBox) provider will be used.
 
-$vm_box = ENV['VAGRANT_VM_BOX'] || 'bento/ubuntu-14.04'
+$vm_box = ENV['VAGRANT_VM_BOX'] || 'bento/ubuntu-16.04'
 $secrets_items = {}
 begin
   require 'yaml'
