@@ -13,32 +13,3 @@
   become_user: '{{ project_runner }}'
   environment:
     RAILS_ENV: '{{ project_app_env }}'
-
-- block:
-  - name: ensure font directory exists
-    file:
-      path: '{{ project_app_root }}/app/assets/fonts'
-      state: directory
-
-  - name: find old font files
-    find:
-      path: '{{ project_app_root }}/app/assets/fonts/'
-    register: fonts
-
-  - name: delete old font files
-    file:
-      path: '{{ item.path }}'
-      state: absent
-    with_items: '{{ fonts.files }}'
-    notify: clear rails cache
-
-  - name: add new font files
-    unarchive:
-      src: '{{ local_files_dir }}/fonts.zip'
-      dest: '{{ project_app_root }}/app/assets/fonts/'
-    ignore_errors: True
-    notify: clear rails cache
-  become: yes
-  become_user: '{{ project_owner }}'
-  environment:
-    RAILS_ENV: '{{ project_app_env }}'
