@@ -1,7 +1,7 @@
 ---
 - block:
-  - name: create default collection type
-    command: bundle exec rails compel:create_default_collection_type
+  - name: create default hyrax collection type
+    command: bundle exec rails hyrax:default_collection_types:create
     args:
       chdir: '{{ project_app_root }}'
 
