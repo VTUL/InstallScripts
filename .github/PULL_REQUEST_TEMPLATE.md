@@ -1,14 +1,14 @@
 **The title of this pull-request should be a brief description of what the pull-request fixes/improves/changes. Ideally 50 characters or less.**
 * * *
 
-**JIRA Ticket**: (link)
+**JIRA Ticket**: (link) (:star:)
 
 * Other Relevant Links (Meeting note, project page, related pull requests, etc.)
 
-# What does this Pull Request do?
+# What does this Pull Request do? (:star:)
 A brief description of what the intended result of the PR will be and/or what problem it solves.
 
-# What's the changes?
+# What's the changes? (:star:)
 A in-depth description of the changes made by this PR. Technical details and possible side effects.
 
 Example:
@@ -34,3 +34,5 @@ Example:
 
 # Interested parties
 Tag (@ mention) interested parties
+
+(:star:) Required fields
