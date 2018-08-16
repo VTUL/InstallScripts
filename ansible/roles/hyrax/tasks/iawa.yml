@@ -1,5 +1,10 @@
 ---
 - block:
+  - name: create default hyrax collection type
+    command: bundle exec rails hyrax:default_collection_types:create
+    args:
+      chdir: '{{ project_app_root }}'
+
   - name: create roles
     command: bundle exec rails iawa:add_roles
     args:
