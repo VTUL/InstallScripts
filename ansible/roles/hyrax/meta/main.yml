@@ -10,5 +10,6 @@ dependencies:
   - { role: postfix }
   - { role: nodejs, nodejs_version: '6.x' }
   - { role: phantomjs, phantomjs_version: '2.1.1', when: project_app_env != 'production' }
+  - { role: chrome, when: project_app_env != 'production' }
   - { role: ruby, ruby_version: '2.3' }
   - { role: local_files }
