@@ -1,0 +1,20 @@
+---
+- name: add chrome apt key
+  apt_key:
+    url: https://dl-ssl.google.com/linux/linux_signing_key.pub
+    id: 7FAC5991
+    state: present
+
+- name: add chrome apt repo
+  apt_repository:
+    repo: 'deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main'
+    state: present
+    update_cache: yes
+
+- name: install google-chrome
+  apt:
+    name: google-chrome-{{ chrome_branch }}
+    state: present
+    force: yes
+    cache_valid_time: '{{ apt_cache_timeout }}'
+    update_cache: yes
