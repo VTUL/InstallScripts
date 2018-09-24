@@ -20,7 +20,7 @@
     update_cache: yes
   with_items:
     - nginx-extras
-    - passenger=1:5.2.*
+    - passenger={{ passenger_version }}
 
 - name: unlink default nginx site
   file:
