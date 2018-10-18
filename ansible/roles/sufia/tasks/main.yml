@@ -13,11 +13,10 @@
 
 - name: install apt dependencies
   apt:
-    name: '{{ item }}'
+    name: '{{ sufia_dependent_packages }}'
     state: present
     cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
-  with_items: '{{ sufia_dependent_packages }}'
 
 - name: make sure project user owns the application
   file:

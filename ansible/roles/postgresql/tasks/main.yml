@@ -25,21 +25,18 @@
 
 - name: install postgresql server packages
   apt:
-    name: '{{ item }}'
+    name: ['postgresql-{{ postgres_version }}']
     state: present
     cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
-  with_items:
-    - postgresql-{{ postgres_version }}
   when: postgresql_is_local
 
 - name: install postgresql client packages
   apt:
-    name: '{{ item }}'
+    name: '{{ postgresql_client_packages }}'
     state: present
     cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
-  with_items: "{{ postgresql_client_packages }}"
 
 - name: install access rules
   copy:
