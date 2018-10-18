@@ -13,13 +13,10 @@
 
 - name: install postfix application
   apt:
-    name: '{{ item }}'
+    name: ['postfix', 'mailutils']
     state: present
     cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
-  with_items:
-    - postfix
-    - mailutils
 
 - name: set postfix listening interfaces
   lineinfile:
