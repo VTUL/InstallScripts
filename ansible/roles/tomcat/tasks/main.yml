@@ -1,0 +1,35 @@
+---
+- name: get os-specific settings
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution|lower }}.yml"
+        - "{{ ansible_os_family|lower }}.yml"
+        - defaults.yml
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: ensure tomcat packages are installed
+  apt:
+    name: '{{ tomcat_packages }}'
+    cache_valid_time: '{{ apt_cache_timeout }}'
+    update_cache: yes
+    state: present
+
+- name: copy tomcat config file
+  template:
+    src: '{{ tomcat_server_xml_template }}'
+    dest: '{{ tomcat_server_xml }}'
+    mode: 0644
+
+- name: add line to specify java_home
+  lineinfile:
+    dest: '{{ tomcat_defaults }}'
+    line: "JAVA_HOME=/usr/lib/jvm/java-8-{{'openjdk-amd64' if java_vendor == 'openjdk' else 'oracle'}}"
+
+- name: ensure tomcat starts on boot
+  service:
+    name: '{{ tomcat_service }}'
+    enabled: yes

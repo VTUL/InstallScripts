@@ -1,0 +1,4 @@
+---
+postgresql_client_packages:
+  - libpq-dev
+  - python-psycopg2

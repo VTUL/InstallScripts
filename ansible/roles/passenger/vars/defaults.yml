@@ -1,0 +1,2 @@
+---
+passenger_packages: ['nginx-extras', 'passenger={{ passenger_version }}']
