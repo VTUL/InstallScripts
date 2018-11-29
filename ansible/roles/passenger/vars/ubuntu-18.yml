@@ -1,0 +1,2 @@
+---
+passenger_packages: ['nginx', 'libnginx-mod-http-passenger']

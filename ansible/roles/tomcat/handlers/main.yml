@@ -1,6 +1,6 @@
 ---
 - name: restart tomcat
   service:
-    name: tomcat7
+    name: '{{ tomcat_service }}'
     state: restarted
   become: yes

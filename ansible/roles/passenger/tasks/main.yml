@@ -1,4 +1,16 @@
 ---
+- name: get os-specific settings
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution|lower }}.yml"
+        - "{{ ansible_os_family|lower }}.yml"
+        - defaults.yml
+      paths:
+        - "{{ role_path }}/vars"
+
 - name: add passenger apt key
   apt_key:
     keyserver: keyserver.ubuntu.com
@@ -13,7 +25,7 @@
 
 - name: nginx and passenger installation
   apt:
-    name: ['nginx-extras', 'passenger={{ passenger_version }}']
+    name: '{{ passenger_packages }}'
     state: present
     force: yes
     cache_valid_time: '{{ apt_cache_timeout }}'
@@ -44,3 +56,4 @@
       line: 'worker_processes auto;'
     - regex: '^(\s*)# include /etc/nginx/passenger.conf;$'
       line: '\1include /etc/nginx/passenger.conf;'
+  when: ansible_distribution_release != 'bionic'

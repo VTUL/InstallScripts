@@ -1,7 +1,7 @@
 ---
 - name: stop tomcat
   service:
-    name: tomcat7
+    name: '{{ tomcat_service }}'
     state: stopped
 
 - name: add the fedora group
@@ -32,12 +32,12 @@
 
 - name: add fedora and java config options to tomcat
   lineinfile:
-    dest: /etc/default/tomcat7
+    dest: '{{ tomcat_defaults }}'
     line: JAVA_OPTS='-Dfcrepo.home={{ fedora_data_dir }} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server {{ fedora_java_vm_opts }}'
     regexp: "^JAVA_OPTS=.*"
     state: present
 
 - name: start tomcat
   service:
-    name: tomcat7
+    name: '{{ tomcat_service }}'
     state: started

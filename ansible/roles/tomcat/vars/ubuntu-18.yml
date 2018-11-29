@@ -1,0 +1,12 @@
+---
+tomcat_packages: ['tomcat8', 'tomcat8-admin']
+tomcat_server_xml: /etc/tomcat8/server.xml
+tomcat_server_xml_template: '{{ role_path }}/templates/tomcat8/server.xml.j2'
+tomcat_defaults: /etc/default/tomcat8
+tomcat_service: tomcat8
+tomcat_port: 8080
+tomcat_user: tomcat8
+tomcat_shutdown_port: 8005
+tomcat_connection_timeout: 20000
+tomcat_redirect_port: 8443
+tomcat_ajp_port: 8009
