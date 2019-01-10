@@ -18,6 +18,8 @@ Role variables are listed below, along with their defaults:
     fedora_user_home: /var/local/<tomcat_user>
     fedora_data_dir: /var/local/<tomcat_user>/fedora-data
     fedora_app_dir: /var/lib/<tomcat_user>/webapps
+    fedora_war_filename: fcrepo-webapp-<fedora_version>.war
+    fedora_war_base_url: http://repo1.maven.org/maven2/org/fcrepo/fcrepo-webapp/<fedora_version>
     fedora_java_vm_opts: -Xms512m -Xmx1024m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC
 
 
