@@ -19,3 +19,9 @@
     name: bundler
     state: latest
     user_install: no
+
+- name: install bundler
+  gem:
+    name: bundler
+    version: '~> 1.17'
+    user_install: no
