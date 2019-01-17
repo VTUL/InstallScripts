@@ -20,7 +20,7 @@
     state: latest
     user_install: no
 
-- name: install bundler
+- name: install 1.x version of bundler
   gem:
     name: bundler
     version: '~> 1.17'
