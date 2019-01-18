@@ -34,6 +34,21 @@
       dest: '{{ project_app_root }}/admin_list.txt'
     ignore_errors: False
     register: copy_admin_list
+
+  - name: copy carousel image package
+    copy:
+      src: "{{ local_files_dir }}/{{ carousel_pkg }}"
+      dest: '{{ project_app_root }}/{{ carousel_pkg }}'
+    ignore_errors: True
+    register: copy_carousel_image_package
+
+  - name: untar carousel image asset dir
+    unarchive:
+      src: '{{ project_app_root }}/{{ carousel_pkg }}'
+      dest: '{{ project_app_root }}/app/assets/images/vtul/'
+      remote_src: yes
+    ignore_errors: True
+    register: untar_carousel_images
   become: yes
   become_user: '{{ project_owner }}'
   environment:
