@@ -48,7 +48,7 @@
       dest: '{{ project_app_root }}/app/assets/images/vtul/'
       owner: '{{ project_owner }}'
       group: '{{ project_runner_group }}'
-      mode: "u=rX,g=rX,o="
+      mode: "u=rwX,g=rX,o="
       remote_src: yes
     ignore_errors: True
     when: copy_carousel_image_package is successful
