@@ -27,3 +27,5 @@ sidekiq_workers: 1
 hyrax_google_analytics_comment_marker: "{{ '' if project_google_analytics_id is defined else '#' }}"
 # Riiif cache cache_duration in seconds
 iiif_cache_duration: "{{ '2592000' if project_app_env == 'production' else '432000' }}"
+# Filename for optional carousel content
+carousel_pkg: 'carousel.tar.gz'
