@@ -46,9 +46,12 @@
     unarchive:
       src: '{{ project_app_root }}/{{ carousel_pkg }}'
       dest: '{{ project_app_root }}/app/assets/images/vtul/'
+      owner: '{{ project_owner }}'
+      group: '{{ project_runner_group }}'
+      mode: "u=rX,g=rX,o="
       remote_src: yes
     ignore_errors: True
-    register: untar_carousel_images
+    when: copy_carousel_image_package is successful
   become: yes
   become_user: '{{ project_owner }}'
   environment:
