@@ -42,10 +42,18 @@
     ignore_errors: True
     register: copy_carousel_image_package
 
+  - name: ensure carousel image directory exists
+    file:
+      path: '{{ project_app_root }}/app/assets/images/vtul/carousel'
+      owner: '{{ project_owner }}'
+      group: '{{ project_runner_group }}'
+      mode: "u=rwX,g=rX,o="
+      state: directory
+
   - name: untar carousel image asset dir
     unarchive:
       src: '{{ project_app_root }}/{{ carousel_pkg }}'
-      dest: '{{ project_app_root }}/app/assets/images/vtul/'
+      dest: '{{ project_app_root }}/app/assets/images/vtul/carousel/'
       owner: '{{ project_owner }}'
       group: '{{ project_runner_group }}'
       mode: "u=rwX,g=rX,o="
