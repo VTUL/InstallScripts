@@ -24,6 +24,7 @@
     name: "{{ sftp_user }}"
     group: "{{ sftp_chroot_group }}"
     shell: /usr/lib/openssh/sftp-server
+    password: "{{ lookup('password', '/dev/null length=23 encrypt=sha512_crypt') }}"
     state: present
 
 - name: ensure sftp upload user .ssh directory exists
