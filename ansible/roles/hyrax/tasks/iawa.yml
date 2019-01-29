@@ -60,6 +60,8 @@
       remote_src: yes
     ignore_errors: True
     when: copy_carousel_image_package is successful
+    notify:
+      - precompile assets
   become: yes
   become_user: '{{ project_owner }}'
   environment:
