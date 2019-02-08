@@ -9,6 +9,7 @@
   file:
     path: "{{ sftp_upload_root }}"
     owner: root
+    group: root
     mode: "0755"
     state: directory
 
