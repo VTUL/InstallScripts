@@ -3,17 +3,20 @@
   file:
     path: "{{ sftp_home_dir }}"
     owner: root
+    group: root
     mode: "0711"
     state: directory
 
 - name: ensure sftp chroot owner exists
   user:
     name: "{{ sftp_chroot_owner }}"
+    uid: "{{ sftp_chroot_uid }}"
     state: present
 
 - name: ensure sftp chroot group exists
   group:
     name: "{{ sftp_chroot_group }}"
+    gid: "{{ sftp_chroot_gid }}"
     state: present
 
 - name: ensure sftp user exists and is a member of sftp chroot group
@@ -22,6 +25,7 @@
     createhome: false
     home: "{{ sftp_home_dir }}"
     name: "{{ sftp_user }}"
+    uid: "{{ sftp_user_uid }}"
     group: "{{ sftp_chroot_group }}"
     shell: /usr/lib/openssh/sftp-server
     password: "{{ lookup('password', '/dev/null length=23 encrypt=sha512_crypt') }}"
@@ -29,8 +33,9 @@
 
 - name: ensure sftp upload user .ssh directory exists
   file:
-    path: "{{ sftp_home_dir}}/.ssh"
+    path: "{{ sftp_home_dir }}/.ssh"
     owner: "{{ sftp_user }}"
+    group: "{{ sftp_group }}"
     mode: "0500"
     state: directory
 

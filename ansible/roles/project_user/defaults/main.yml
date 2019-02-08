@@ -3,7 +3,15 @@
 project_owner_group_system: 'false'
 # Whether {{ project_runner_group }} is a system (lower-numbered gid) group
 project_runner_group_system: 'false'
+# Name of the user who owns/edits the application
+project_owner: 'hydra'
+# The numeric uid of {{ project_owner }}
+project_owner_uid: 60001
 # The numeric gid of {{ project_owner_group }}
-#project_owner_group_id: ''
+project_owner_gid: 60001
+# Name of the user running the application (should be different from project_owner)
+project_runner: 'railsapps'
+# The numeric uid of {{ project_runner }}
+project_runner_uid: 60002
 # The numeric gid of {{ project_runner_group }}
-#project_runner_group_id: ''
+project_runner_gid: 60002
