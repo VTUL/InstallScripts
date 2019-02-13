@@ -13,7 +13,7 @@
 # If no "--provider" is specified during "vagrant up" then the default
 # (VirtualBox) provider will be used.
 
-$vm_box = ENV['VAGRANT_VM_BOX'] || 'bento/ubuntu-18.04'
+$vm_box = ENV['VAGRANT_VM_BOX'] || 'ubuntu/bionic64'
 $secrets_items = {}
 begin
   require 'yaml'
@@ -101,7 +101,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision vagrant_ansible_provisioner() do |ansible|
     ansible.playbook = "ansible/#{site_file()}_site.yml"
     ansible.extra_vars = 'ansible/site_secrets.yml'
-    if box_name_to_ubuntu_release( $vm_box )[0] == :xenial
+    os_release = box_name_to_ubuntu_release( $vm_box )[0]
+    if os_release == :xenial or os_release == :bionic
       ansible.host_vars = {
         :app => {'ansible_python_interpreter' => '/usr/bin/python3'}
       }
