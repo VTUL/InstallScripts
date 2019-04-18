@@ -20,7 +20,25 @@
 
 - name: set postfix listening interfaces
   lineinfile:
-    dest: /etc/postfix/main.cf
-    regexp: '^inet_interfaces = .*$'
+    path: /etc/postfix/main.cf
+    regexp: '^inet_interfaces\s*=.*$'
     line: 'inet_interfaces = {{ postfix_inet_interfaces }}'
+    state: present
   notify: restart postfix
+
+- name: set smart host mail relay if defined
+  lineinfile:
+      path: /etc/postfix/main.cf
+      regexp: '^relayhost\s*=.*$'
+      line: 'relayhost = [{{ mail_relayhost|default("") }}]'
+      state: present
+  notify: restart postfix
+  when: mail_relayhost is defined
+
+- name: remove smart host mail relay if not defined
+  lineinfile:
+      path: /etc/postfix/main.cf
+      regexp: '^relayhost\s*=.*$'
+      state: absent
+  notify: restart postfix
+  when: mail_relayhost is not defined
