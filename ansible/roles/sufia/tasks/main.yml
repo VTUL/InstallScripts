@@ -214,6 +214,13 @@
   notify:
     - precompile assets
 
+- name: restart ruby applications when ruby version changed
+  command: /bin/true
+  notify:
+    - restart nginx
+    - restart resque
+  when: ruby_version_changed | default( False )
+
 - name: execute pending handlers for rake tasks to work
   meta: flush_handlers
   when: project_tasks.stat.exists
