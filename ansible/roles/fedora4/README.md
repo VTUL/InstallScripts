@@ -6,7 +6,9 @@ Creates the Fedora4 user and group, and installs Fedora 4.
 Requirements
 ------------
 
-Tomcat must be installed.  This role references variables from the `tomcat` role.
+Tomcat must be installed.  This role references variables from the `tomcat` role.  In addition, the `local_files` role must be installed
+due to the option of installing a locally-provided Fedora WAR file.
+This ensures any local files are present before executing this role.
 
 Role Variables
 --------------
