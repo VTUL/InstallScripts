@@ -10,9 +10,26 @@
     name:
       - ruby{{ ruby_version | default('2.3') }}
       - ruby{{ ruby_version | default('2.3') }}-dev
+      - ruby-switch
     state: present
     cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
+
+- name: determine existing default ruby version
+  command: ruby --version
+  register: existing_ruby_version
+
+- name: make selected ruby version explicitly the default
+  command: ruby-switch --set ruby{{ ruby_version | default('2.3') }}
+
+- name: determine new default ruby version
+  command: ruby --version
+  register: new_ruby_version
+
+- name: work out whether the default ruby has changed
+  set_fact:
+    ruby_version_changed: true
+  when: existing_ruby_version.stdout != new_ruby_version.stdout
 
 - name: install bundler
   gem:

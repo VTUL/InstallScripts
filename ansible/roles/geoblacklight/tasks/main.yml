@@ -13,3 +13,8 @@
 - include: geoblacklight_setup.yml
 - include: solr_setup.yml
 - include: cron.yml
+
+- name: restart ruby applications when ruby version changed
+  command: /bin/true
+  notify: restart nginx
+  when: ruby_version_changed | default( False )

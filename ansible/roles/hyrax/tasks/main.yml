@@ -158,6 +158,9 @@
     clean: yes
     exclude_groups: ''
   when: project_app_env != 'production'
+  notify:
+    - restart nginx
+    - restart sidekiq workers
   become: yes
   become_user: '{{ project_owner }}'
 
@@ -171,6 +174,9 @@
     clean: yes
     exclude_groups: 'development test'
   when: project_app_env == 'production'
+  notify:
+    - restart nginx
+    - restart sidekiq workers
   become: yes
   become_user: '{{ project_owner }}'
 
@@ -239,6 +245,13 @@
   when: project_app_env == 'production'
   notify:
     - precompile assets
+
+- name: restart ruby applications when ruby version changed
+  command: /bin/true
+  notify:
+    - restart nginx
+    - restart sidekiq workers
+  when: ruby_version_changed | default( False )
 
 - name: execute pending handlers for rake tasks to work
   meta: flush_handlers
