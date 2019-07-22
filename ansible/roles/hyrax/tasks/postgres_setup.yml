@@ -4,7 +4,7 @@
     name: '{{ project_db_user }}'
     password: '{{ project_db_password }}'
     role_attr_flags: CREATEDB
-  when: postgresql_is_local
+  when: postgresql_is_local|bool
 
 - name: create project database role on remote postgresql server
   postgresql_user:
@@ -21,7 +21,7 @@
     name: '{{ project_db_name }}'
     encoding: 'UTF-8'
     owner: '{{ project_db_user }}'
-  when: postgresql_is_local
+  when: postgresql_is_local|bool
 
 - name: create project database on remote postgresql server
   postgresql_db:

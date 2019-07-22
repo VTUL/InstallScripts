@@ -33,4 +33,6 @@
     src: /tmp/{{ phantomjs_src }}
     dest: '{{ local_files_dir }}/'
     flat: True
-  when: ansible_virtualization_type == 'virtualbox'
+  when:
+    - cached_pjs is failed
+    - ansible_virtualization_type == 'virtualbox'

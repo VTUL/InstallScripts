@@ -18,7 +18,7 @@
     autoclean: yes
     update_cache: yes
     cache_valid_time: '{{ apt_cache_timeout }}'
-  when: perform_dist_upgrade
+  when: perform_dist_upgrade|bool
 
 - name: install building software and build essentials
   apt:

@@ -4,4 +4,4 @@
     name: postgresql
     state: restarted
   become: yes
-  when: postgres_is_local
+  when: postgres_is_local|bool
