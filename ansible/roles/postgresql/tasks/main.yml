@@ -29,7 +29,7 @@
     state: present
     cache_valid_time: '{{ apt_cache_timeout }}'
     update_cache: yes
-  when: postgresql_is_local
+  when: postgresql_is_local|bool
 
 - name: install postgresql client packages
   apt:
@@ -45,13 +45,13 @@
     group: '{{ database_group }}'
     owner: '{{ database_user }}'
   register: configure_postgres
-  when: postgresql_is_local
+  when: postgresql_is_local|bool
 
 - name: ensure postgres starts on boot
   service:
     name: postgresql
     enabled: yes
-  when: postgresql_is_local
+  when: postgresql_is_local|bool
 
 - name: restart postgres server
   service:
