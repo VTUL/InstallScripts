@@ -18,3 +18,11 @@
   command: /bin/true
   notify: restart nginx
   when: ruby_version_changed | default( False )
+
+- name: remove Bootsnap load path cache
+  command: rm -r {{ project_app_root }}/tmp/cache/bootsnap-load-path-cache
+  ignore_errors: True
+
+- name: remove Bootsnap compile cache
+  command: rm -r {{ project_app_root }}/tmp/cache/bootsnap-compile-cache
+  ignore_errors: True
