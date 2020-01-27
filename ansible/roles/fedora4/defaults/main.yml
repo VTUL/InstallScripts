@@ -5,5 +5,5 @@ fedora_user_home: '/var/local/{{ fedora_user }}'
 fedora_data_dir: '{{ fedora_user_home }}/fedora-data'
 fedora_app_dir: '/var/lib/{{ tomcat_user }}/webapps'
 fedora_war_filename: 'fcrepo-webapp-{{ fedora_version }}.war'
-fedora_war_base_url: 'http://repo1.maven.org/maven2/org/fcrepo/fcrepo-webapp/{{ fedora_version }}'
+fedora_war_base_url: 'https://repo1.maven.org/maven2/org/fcrepo/fcrepo-webapp/{{ fedora_version }}'
 fedora_java_vm_opts: "{{ project_fedora_java_vm_opts | default('-Xms512m -Xmx1024m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC') }}"
