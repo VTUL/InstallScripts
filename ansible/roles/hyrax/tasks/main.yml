@@ -94,6 +94,8 @@
     recurse: yes
     state: directory
   with_items:
+    - path: "{{ project_app_root }}"
+      mode: "u=rwX,g=rwXs,o="
     - path: "{{ project_app_root }}/tmp"
       mode: "u=rwX,g=rwXs,o="
     - path: "{{ project_app_root }}/tmp/pids"
